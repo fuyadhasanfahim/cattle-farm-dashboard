@@ -127,7 +127,7 @@ export default function Sidebar() {
     const path = usePathname();
 
     return (
-        <ScrollArea className="w-full bg-white h-[calc(100vh-80px)] border-r">
+        <ScrollArea className="w-full bg-white h-[calc(100vh)] border-r">
             <div className="flex flex-col gap-2 p-4">
                 {sidebarItems.map(({ id, icon, label, link }) => (
                     <Link href={link} key={id}>
