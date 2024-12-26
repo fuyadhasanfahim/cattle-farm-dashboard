@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 export default async function Navbar() {
     return (
-        <nav className="px-4 md:px-6 lg:px-10 shadow-sm h-20 backdrop-blur w-full flex items-center">
+        <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
             <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
                 <Image
                     src={'/logo/logo.svg'}

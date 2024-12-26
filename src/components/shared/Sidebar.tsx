@@ -132,10 +132,10 @@ export default function Sidebar() {
                 {sidebarItems.map(({ id, icon, label, link }) => (
                     <Link href={link} key={id}>
                         <div
-                            className={`flex items-center gap-2 px-4 py-3 h-10 rounded-lg hover:bg-[#60c552] duration-200 transition-colors
+                            className={`flex items-center gap-2 px-4 py-3 h-10 rounded-lg hover:bg-[#52aa46] duration-200 transition-colors
                                 ${
                                     path === link
-                                        ? 'bg-[#52aa46]'
+                                        ? 'bg-[#52aa46] text-white'
                                         : 'bg-transparent'
                                 }`}
                         >
