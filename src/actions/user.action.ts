@@ -32,7 +32,7 @@ export async function ALogin(
     const { email, password } = result.data;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/auth/login`, {
+        const response = await fetch(`${process.env.BASE_API!}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
