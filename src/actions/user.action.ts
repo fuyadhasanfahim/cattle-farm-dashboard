@@ -1,20 +1,56 @@
 'use server';
 
+import { createSession, deleteSession } from '@/lib/sessions';
+import { userLoginValidationSchema } from '@/validator/user.validation.schema';
 import { redirect } from 'next/navigation';
 
-export async function ALogin(formData: FormData) {
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+interface IPreviousState {
+    error: {
+        email?: string | undefined;
+        password?: string | undefined;
+    };
+}
 
-    if (!email || !password) {
-        throw new Error('Please enter both email and password.');
+export async function ALogin(
+    previousState: IPreviousState | undefined,
+    formData: FormData
+) {
+    const result = userLoginValidationSchema.safeParse(
+        Object.fromEntries(formData)
+    );
+
+    if (!result.success) {
+        const fieldErrors = result.error.flatten().fieldErrors;
+        return {
+            error: {
+                email: fieldErrors.email?.join(', '),
+                password: fieldErrors.password?.join(', '),
+            },
+        };
     }
 
+    const { email, password } = result.data;
+
     try {
-        console.log({ email, password });
+        const response = await fetch(`http://localhost:3000/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const { user } = await response.json();
+
+        await createSession(user?._id);
     } catch (error) {
-        throw new Error((error as Error).message);
+        console.log(error);
     } finally {
         redirect('/');
     }
+}
+
+export async function ALogout() {
+    await deleteSession();
+    redirect('/login');
 }
