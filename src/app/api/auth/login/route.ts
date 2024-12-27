@@ -12,7 +12,11 @@ export async function POST(req: NextRequest) {
         const user = await UserModel.findOne({ email });
         if (!user) {
             return NextResponse.json(
-                { success: false, message: 'User does not exist.' },
+                {
+                    success: false,
+                    field: 'email',
+                    message: ['User does not exist.'],
+                },
                 { status: 404 }
             );
         }
@@ -20,7 +24,11 @@ export async function POST(req: NextRequest) {
         const isPasswordMatch = await compare(password, user.password);
         if (!isPasswordMatch) {
             return NextResponse.json(
-                { success: false, message: 'Invalid password.' },
+                {
+                    success: false,
+                    field: 'password',
+                    message: ['Invalid password.'],
+                },
                 { status: 401 }
             );
         }

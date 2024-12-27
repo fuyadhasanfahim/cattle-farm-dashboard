@@ -9,6 +9,7 @@ interface IPreviousState {
         email?: string | undefined;
         password?: string | undefined;
     };
+    success?: boolean;
 }
 
 export async function ALogin(
@@ -23,8 +24,12 @@ export async function ALogin(
         const fieldErrors = result.error.flatten().fieldErrors;
         return {
             error: {
-                email: fieldErrors.email?.join(', '),
-                password: fieldErrors.password?.join(', '),
+                email: fieldErrors.email
+                    ? fieldErrors.email.join(', ')
+                    : undefined,
+                password: fieldErrors.password
+                    ? fieldErrors.password.join(', ')
+                    : undefined,
             },
         };
     }
@@ -32,22 +37,58 @@ export async function ALogin(
     const { email, password } = result.data;
 
     try {
-        const response = await fetch(`${process.env.BASE_API!}/api/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+        const response = await fetch(
+            `${process.env.BASE_API!}/api/auth/login`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            }
+        );
 
-        const { user } = await response.json();
+        if (!response.ok) {
+            const { message, field } = await response.json();
 
-        await createSession(user?._id);
+            return {
+                error: {
+                    email: field === 'email' ? message : undefined,
+                    password: field === 'password' ? message : undefined,
+                },
+            };
+        }
+
+        if (response.status === 200) {
+            const { user } = await response.json();
+            await createSession(user?._id);
+
+            return {
+                error: {
+                    email: undefined,
+                    password: undefined,
+                },
+                success: true,
+            };
+        }
     } catch (error) {
         console.log(error);
-    } finally {
-        redirect('/');
+
+        return {
+            error: {
+                email:
+                    (error as Error).message || 'An unexpected error occurred.',
+                password: undefined,
+            },
+        };
     }
+
+    return {
+        error: {
+            email: undefined,
+            password: undefined,
+        },
+    };
 }
 
 export async function ALogout() {
