@@ -1,25 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { decrypt } from './lib/sessions';
+import withAuth from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
-const protectedRoutes = ['/'];
-const publicRoutes = ['/login'];
+export default withAuth(
+    function middleware() {
+        return NextResponse.next();
+    },
+    {
+        callbacks: {
+            authorized: ({ token, req }) => {
+                const { pathname } = req.nextUrl;
 
-export default async function middleware(req: NextRequest) {
-    const path = req.nextUrl.pathname;
+                if (pathname.startsWith('/api/webhook')) {
+                    return true;
+                }
 
-    const isProtectedRoute = protectedRoutes.includes(path);
-    const isPublicRoute = publicRoutes.includes(path);
+                if (
+                    pathname.startsWith('/api/auth') ||
+                    pathname === '/login' ||
+                    pathname === '/register'
+                ) {
+                    return true;
+                }
 
-    const cookie = req.cookies.get('session')?.value;
-    const session = cookie ? await decrypt(cookie) : null;
-
-    if (isProtectedRoute && !session?.userId) {
-        return NextResponse.redirect(new URL('/login', req.url));
+                return !!token;
+            },
+        },
     }
+);
 
-    if (isPublicRoute && session?.userId) {
-        return NextResponse.redirect(new URL('/', req.url));
-    }
-
-    return NextResponse.next();
-}
+export const config = {
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|public/).*)'],
+};
