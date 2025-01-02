@@ -25,26 +25,3 @@ export async function LoginAction(formData: FormData) {
         redirect('/');
     }
 }
-
-export async function RegisterAction(formData: FormData) {
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    try {
-        const res = await fetch('https://next-auth-tutorial-sigma.vercel.app/api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (!res.ok) {
-            throw new Error('Registration failed');
-        }
-
-        await res.json();
-    } catch (error) {
-        console.error('Registration error:', error);
-    }
-}
