@@ -1,5 +1,9 @@
+import HeroSection from '@/components/dashboard/HeroSection';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import TopDashboardCard from '@/components/dashboard/TopDashboardCard';
+import Charts from '@/components/dashboard/Charts';
+import BottomPieChart from '@/components/dashboard/BottomPieChart';
 
 export default async function dashboard() {
     const session = await getServerSession();
@@ -9,13 +13,20 @@ export default async function dashboard() {
     }
 
     return (
-        <div>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
-                accusamus ducimus provident cupiditate dolorum? Beatae a quasi
-                nostrum. Tempore, rerum sapiente ea exercitationem eius cumque
-                maxime consequuntur aut totam veniam.
-            </p>
-        </div>
+        <>
+            <HeroSection />
+
+            <div className="py-6">
+                <TopDashboardCard />
+            </div>
+
+            <div className="py-6">
+                <Charts />
+            </div>
+
+            <div className="py-6">
+                <BottomPieChart />
+            </div>
+        </>
     );
 }

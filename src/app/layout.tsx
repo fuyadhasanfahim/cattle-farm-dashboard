@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Poppins } from 'next/font/google';
 import './globals.css';
+
+const poppins = Poppins({
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-poppins',
+    weight: ['400', '900'],
+});
 
 const mahfujRumaysa = localFont({
     src: [
@@ -26,7 +34,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="bn">
-            <body className={`${mahfujRumaysa.className} antialiased`}>
+            <body
+                className={`${mahfujRumaysa.className} ${poppins.className} antialiased`}
+            >
                 {children}
             </body>
         </html>

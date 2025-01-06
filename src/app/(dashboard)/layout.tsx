@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <Navbar />
             </header>
             <div className="flex">
-                <div className="sticky top-0 left-0 w-full max-w-xs h-screen">
+                <div className="sticky top-0 left-0 w-full max-w-[250px] h-screen">
                     <Sidebar />
                 </div>
                 <main className="w-full h-full">
