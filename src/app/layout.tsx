@@ -1,25 +1,19 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import { Poppins } from 'next/font/google';
+import { Inter, Noto_Sans_Bengali } from 'next/font/google';
 import './globals.css';
 
-const poppins = Poppins({
+const inter = Inter({
     subsets: ['latin'],
     display: 'swap',
-    variable: '--font-poppins',
+    variable: '--font-inter',
     weight: ['400', '900'],
 });
 
-const mahfujRumaysa = localFont({
-    src: [
-        {
-            path: '/fonts/FN-Mahfuj-Rumaysa.ttf',
-            weight: '400',
-            style: 'normal',
-        },
-    ],
-    variable: '--font-mahfuj-rumaysa',
+const notoSansBengali = Noto_Sans_Bengali({
+    subsets: ['latin'],
     display: 'swap',
+    variable: '--font-noto-sans-bengali',
+    weight: ['400', '900'],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +29,7 @@ export default function RootLayout({
     return (
         <html lang="bn">
             <body
-                className={`${mahfujRumaysa.className} ${poppins.className} antialiased`}
+                className={`${inter.variable} ${notoSansBengali.variable} antialiased`}
             >
                 {children}
             </body>

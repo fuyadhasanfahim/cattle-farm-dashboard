@@ -140,7 +140,7 @@ export default function Sidebar() {
                                 }`}
                         >
                             {icon}
-                            {label}
+                            <span>{label}</span>
                         </div>
                     </Link>
                 ))}

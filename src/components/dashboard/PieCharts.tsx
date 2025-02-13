@@ -66,7 +66,7 @@ export default function PieCharts() {
 
     return (
         <div className="col-span-2 w-[280px] h-[350px] bg-white rounded-2xl shadow border">
-            <div className="text-[#52aa46] text-base font-bold font-['FN Mahfuj Rumaysa'] py-6 px-4">
+            <div className="text-[#52aa46] text-base font-bold font-notoSansBengali py-6 px-4">
                 গবাদি পশুর চিকিৎসা
             </div>
 

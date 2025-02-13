@@ -6,10 +6,10 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
                             ফিডিং
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১২ টাইম
                         </p>
                         <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
@@ -32,10 +32,10 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
                             কৃমিনাশক
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১৫
                         </p>
                         <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
@@ -58,10 +58,10 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
                             টিকাদান
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ৩২ টাইম
                         </p>
                         <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
@@ -84,10 +84,10 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
                             চিকিৎসা
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-['FN Mahfuj Rumaysa']">
+                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১২ টাইম
                         </p>
                         <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
