@@ -1,27 +1,26 @@
-'use client';
-
+import { toast } from '@/hooks/use-toast';
 import { signIn } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 
-export async function LoginAction(formData: FormData) {
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
+export const loginUser = async (data: { email: string; password: string }) => {
     try {
         const result = await signIn('credentials', {
             redirect: false,
-            email,
-            password,
+            email: data.email,
+            password: data.password,
         });
 
         if (!result || !result.ok) {
             throw new Error(result?.error || 'Login failed');
         }
 
-        console.log('Login successful:', result);
+        return { success: true };
     } catch (error) {
-        console.error('Login error:', error);
-    } finally {
-        redirect('/');
+        toast({
+            title: 'ত্রুটি!',
+            description:
+                (error as Error).message ||
+                'তথ্য জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে।',
+        });
+        return { success: false, error: (error as Error).message };
     }
-}
+};

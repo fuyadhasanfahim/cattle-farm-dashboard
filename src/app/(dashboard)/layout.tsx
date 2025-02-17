@@ -2,9 +2,9 @@ import Navbar from '@/components/shared/Navbar';
 import Sidebar from '@/components/shared/Sidebar';
 import { ReactNode } from 'react';
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default async function Layout({ children }: { children: ReactNode }) {
     return (
-        <body>
+        <main>
             <header className="w-full">
                 <Navbar />
             </header>
@@ -18,6 +18,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                     </div>
                 </main>
             </div>
-        </body>
+        </main>
     );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_Bengali } from 'next/font/google';
 import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
                 className={`${inter.variable} ${notoSansBengali.variable} antialiased`}
             >
                 {children}
+                <Toaster />
             </body>
         </html>
     );

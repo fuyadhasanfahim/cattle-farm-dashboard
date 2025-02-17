@@ -11,6 +11,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import AddCattle from './AddCattle';
+import { ScrollArea } from '../ui/scroll-area';
 
 export default function HeroSection() {
     const [open, setOpen] = useState(false);
@@ -29,7 +30,9 @@ export default function HeroSection() {
                         <VisuallyHidden>
                             <DialogTitle>Hidden Title</DialogTitle>
                         </VisuallyHidden>
-                        <AddCattle setOpen={setOpen} />
+                        <ScrollArea className="h-[80vh] py-6">
+                            <AddCattle setOpen={setOpen} />
+                        </ScrollArea>
                     </DialogContent>
                 </Dialog>
 
