@@ -56,18 +56,3 @@ export async function POST(req: NextRequest) {
         );
     }
 }
-
-// export async function GET() {
-//     try {
-//         await dbConnect();
-
-//         const cattle = await CattleModel.find({}).sort({ createdAt: -1 });
-
-//         return NextResponse.json(cattle);
-//     } catch (error) {
-//         return NextResponse.json(
-//             { error: (error as Error).message || 'Error fetching cattle' },
-//             { status: 500 }
-//         );
-//     }
-// }

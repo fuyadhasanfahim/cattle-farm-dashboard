@@ -36,36 +36,36 @@ import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '../ui/textarea';
 
 const genderOptions = [
-    { value: 'male', label: 'পুরুষ' },
-    { value: 'female', label: 'মহিলা' },
+    { value: 'পুরুষ', label: 'পুরুষ' },
+    { value: 'মহিলা', label: 'মহিলা' },
 ];
 
 const cattleTypeOptions = [
-    { value: 'cow', label: 'গরু' },
-    { value: 'buffalo', label: 'মহিষ' },
-    { value: 'goat', label: 'ছাগল' },
+    { value: 'গরু', label: 'গরু' },
+    { value: 'মহিষ', label: 'মহিষ' },
+    { value: 'ছাগল', label: 'ছাগল' },
 ];
 
 const categoryOptions = [
-    { value: 'bull', label: 'ষাঁড়' },
-    { value: 'dairy', label: 'দুগ্ধ' },
-    { value: 'beef', label: 'মাংস' },
-    { value: 'dual', label: 'দুগ্ধ ও মাংস' },
+    { value: 'ষাঁড়', label: 'ষাঁড়' },
+    { value: 'দুগ্ধ', label: 'দুগ্ধ' },
+    { value: 'মাংস', label: 'মাংস' },
+    { value: 'দুগ্ধ ও মাংস', label: 'দুগ্ধ ও মাংস' },
 ];
 
 const deathStatusOptions = [
-    { value: 'alive', label: 'জীবিত' },
-    { value: 'dead', label: 'মৃত' },
+    { value: 'জীবিত', label: 'জীবিত' },
+    { value: 'মৃত', label: 'মৃত' },
 ];
 
 const fatteningStatusOptions = [
-    { value: 'alive', label: 'জীবিত' },
-    { value: 'dead', label: 'মৃত' },
+    { value: 'জীবিত', label: 'জীবিত' },
+    { value: 'মৃত', label: 'মৃত' },
 ];
 
 const transferStatusOptions = [
-    { value: 'alive', label: 'জীবিত' },
-    { value: 'dead', label: 'মৃত' },
+    { value: 'জীবিত', label: 'জীবিত' },
+    { value: 'মৃত', label: 'মৃত' },
 ];
 
 export default function AddCattle({
@@ -119,11 +119,12 @@ export default function AddCattle({
 
             form.reset();
         } catch (error) {
-            console.log(error);
             toast({
                 variant: 'destructive',
                 title: 'ত্রুটি!',
-                description: 'ফর্ম জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে।',
+                description:
+                    (error as Error).message ||
+                    'ফর্ম জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে।',
                 action: (
                     <ToastAction altText="Try again">
                         আবার চেষ্টা করুন
