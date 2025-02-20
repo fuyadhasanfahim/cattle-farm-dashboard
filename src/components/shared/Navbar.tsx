@@ -11,11 +11,11 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
-import getLoggedInUser from '@/services/user/getLoggedInUser';
-import handleLogout from '@/services/user/handleLogout';
+import { getUserInfo } from '@/actions/user.action';
 
 export default async function Navbar() {
-    const user = await getLoggedInUser();
+    const user = await getUserInfo();
+    console.log(user);
 
     return (
         <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
@@ -50,20 +50,20 @@ export default async function Navbar() {
                             <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors duration-200">
                                 <Avatar className="h-10 w-10 border">
                                     <AvatarImage
-                                        src={user?.image || ''}
-                                        alt={`${user?.name}'s profile image`}
+                                        src={''}
+                                        alt={`'s profile image`}
                                     />
                                     <AvatarFallback className="bg-primary/10">
-                                        {user?.name?.charAt(0)?.toUpperCase()}
+                                        {/* {user?.name?.charAt(0)?.toUpperCase()} */}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="flex items-center gap-2">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium leading-none">
-                                            {user?.name}
+                                            {/* {user?.name} */}
                                         </span>
                                         <span className="text-xs text-muted-foreground mt-1">
-                                            {user?.email}
+                                            {/* {user?.email} */}
                                         </span>
                                     </div>
                                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -89,7 +89,6 @@ export default async function Navbar() {
                                 <Button
                                     variant="ghost"
                                     className="w-full justify-start gap-2 font-normal text-red-600 hover:text-red-600 hover:bg-red-100"
-                                    onClick={handleLogout}
                                 >
                                     <LogOut className="h-4 w-4" />
                                     Logout

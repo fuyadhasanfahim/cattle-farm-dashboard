@@ -111,7 +111,7 @@ export default function PieCharts() {
                                         colors[index % colors.length],
                                 }}
                             />
-                            <p className="text-black text-sm font-normal font-['FN Shorif Borsha Bijoy52']">
+                            <p className="text-black text-sm font-normal font-notoSansBengali">
                                 {entry.name}
                             </p>
                         </li>

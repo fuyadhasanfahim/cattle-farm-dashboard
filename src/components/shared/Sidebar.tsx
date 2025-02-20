@@ -140,7 +140,9 @@ export default function Sidebar() {
                                 }`}
                         >
                             {icon}
-                            <span>{label}</span>
+                            <span className="font-notoSansBengali">
+                                {label}
+                            </span>
                         </div>
                     </Link>
                 ))}

@@ -1,10 +1,14 @@
-export interface IUser {
-    _id: string;
+export default interface IUser {
     name: string;
     username: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
     password: string;
-    role: string;
+    isVerified: boolean;
+    isAdmin: boolean;
+    forgetPasswordToken: string;
+    forgetPasswordTokenExpiry: Date;
+    verifyToken: string;
+    verifyTokenExpiry: Date;
     profileImage: string;
 }

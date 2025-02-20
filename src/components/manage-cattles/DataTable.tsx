@@ -107,7 +107,7 @@ export default function DataTable() {
                             : 'border border-[#666666] text-[#666666]'
                     } justify-center items-center gap-2 flex`}
                 >
-                    <div className="text-xs font-normal font-['FN Shorif Borsha Bijoy52']">
+                    <div className="text-xs font-normal font-notoSansBengali">
                         {i.toString().padStart(2, '০')}
                     </div>
                 </div>
@@ -139,13 +139,13 @@ export default function DataTable() {
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
-                                    className="text-white font-normal font-['FN Shorif Borsha Bijoy52'] border border-dashed p-3"
+                                    className="text-white font-notoSansBengali border border-dashed p-3 font-semibold"
                                 >
                                     {header}
                                 </th>
                             ))}
 
-                            <th className="text-white font-normal font-['FN Shorif Borsha Bijoy52'] border border-dashed p-3">
+                            <th className="text-white font-normal font-notoSansBengali border border-dashed p-3">
                                 অ্যাকশান
                             </th>
                         </tr>
@@ -208,7 +208,7 @@ export default function DataTable() {
                     }`}
                 >
                     <ChevronLeft className="size-4" />
-                    <span className="text-[#666666] font-normal font-['FN Shorif Borsha Bijoy52']">
+                    <span className="text-[#666666] font-normal font-notoSansBengali">
                         পূর্ববর্তী
                     </span>
                 </div>
@@ -223,7 +223,7 @@ export default function DataTable() {
                             : ''
                     }`}
                 >
-                    <span className="text-[#666666] font-normal font-['FN Shorif Borsha Bijoy52']">
+                    <span className="text-[#666666] font-normal font-notoSansBengali">
                         পরবর্তী
                     </span>
                     <ChevronRight className="size-4" />

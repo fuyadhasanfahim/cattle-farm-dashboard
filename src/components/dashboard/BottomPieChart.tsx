@@ -12,7 +12,7 @@ export default async function BottomPieChart() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১২</span>
                         </div>
@@ -38,7 +38,7 @@ export default async function BottomPieChart() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১৫
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১৫</span>
                         </div>
@@ -64,7 +64,7 @@ export default async function BottomPieChart() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ৩২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>৩২</span>
                         </div>
@@ -90,7 +90,7 @@ export default async function BottomPieChart() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>০৫</span>
                         </div>

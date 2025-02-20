@@ -1,7 +1,7 @@
-import { IUser } from '@/types/user.interface';
+import IUser from '@/types/user.interface';
 import { model, models, Schema } from 'mongoose';
 
-const UserSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser>(
     {
         name: {
             type: String,
@@ -9,7 +9,6 @@ const UserSchema = new Schema<IUser>(
         },
         username: {
             type: String,
-            required: true,
             unique: true,
         },
         email: {
@@ -17,22 +16,42 @@ const UserSchema = new Schema<IUser>(
             required: true,
             unique: true,
         },
-        phone: {
+        phoneNumber: {
             type: String,
-            required: true,
             unique: true,
         },
         password: {
             type: String,
             required: true,
         },
-        role: {
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        isAdmin: {
+            type: Boolean,
+            default: false,
+        },
+        forgetPasswordToken: {
             type: String,
-            default: 'admin',
+            default: null,
+        },
+        forgetPasswordTokenExpiry: {
+            type: Date,
+            default: null,
+        },
+        verifyToken: {
+            type: String,
+            default: null,
+        },
+        verifyTokenExpiry: {
+            type: Date,
+            default: null,
         },
         profileImage: {
             type: String,
-            required: false,
+            default:
+                'https://res.cloudinary.com/dny7zfbg9/image/upload/v1740043768/hcmhd5w36fwnmllby6wo.png',
         },
     },
     {
@@ -40,5 +59,5 @@ const UserSchema = new Schema<IUser>(
     }
 );
 
-const UserModel = models?.User || model<IUser>('User', UserSchema);
+const UserModel = models?.users || model<IUser>('users', userSchema);
 export default UserModel;

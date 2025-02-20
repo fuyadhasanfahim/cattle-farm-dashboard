@@ -12,7 +12,7 @@ export default async function TopDashboardCard() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ১২
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১২</span>
                         </div>
@@ -38,7 +38,7 @@ export default async function TopDashboardCard() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ৫৫৫০০০০ টাকা
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>মোট গবাদি পশু:</span>
                             <span>৪০</span>
                         </div>
@@ -64,7 +64,7 @@ export default async function TopDashboardCard() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ২৫,৫০,০০০ টাকা
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>বিক্রিত গবাদি পশু:</span>
                             <span>০৬</span>
                         </div>
@@ -90,7 +90,7 @@ export default async function TopDashboardCard() {
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
                             মোট: ২৫০ লিটার
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-['FN Shorif Borsha Bijoy52'] flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>২৫০</span>
                         </div>
