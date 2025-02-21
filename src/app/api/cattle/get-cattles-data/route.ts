@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
 import Cattle from '@/models/cattle.model';
+import dbConfig from '@/lib/dbConfig';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
     try {
-        await dbConnect();
+        await dbConfig();
 
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');

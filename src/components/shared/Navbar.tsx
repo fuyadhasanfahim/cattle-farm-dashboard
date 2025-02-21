@@ -1,6 +1,7 @@
 import {
     Bell,
     ChevronDown,
+    Loader2,
     LogOut,
     MessageCircleMore,
     Search,
@@ -11,11 +12,27 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
-import { getUserInfo } from '@/actions/user.action';
+import { cookies } from 'next/headers';
 
 export default async function Navbar() {
-    const user = await getUserInfo();
-    console.log(user);
+    async function fetchProfile() {
+        try {
+            const cookieStore = await cookies();
+            const token = cookieStore.get('token')?.value;
+            const res = await fetch('http://localhost:3000/api/auth/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await res.json();
+
+            return data.user;
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        }
+    }
+
+    const user = await fetchProfile();
 
     return (
         <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
@@ -50,20 +67,20 @@ export default async function Navbar() {
                             <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors duration-200">
                                 <Avatar className="h-10 w-10 border">
                                     <AvatarImage
-                                        src={''}
+                                        src={user.profileImage || ''}
                                         alt={`'s profile image`}
                                     />
                                     <AvatarFallback className="bg-primary/10">
-                                        {/* {user?.name?.charAt(0)?.toUpperCase()} */}
+                                        <Loader2 className="animate-spin" />
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="flex items-center gap-2">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium leading-none">
-                                            {/* {user?.name} */}
+                                            {user?.name}
                                         </span>
                                         <span className="text-xs text-muted-foreground mt-1">
-                                            {/* {user?.email} */}
+                                            {user?.email}
                                         </span>
                                     </div>
                                     <ChevronDown className="h-4 w-4 text-muted-foreground" />

@@ -1,52 +1,39 @@
-import dbConfig from '@/lib/dbConfig';
-import UserModel from '@/models/user.model';
-import extractDataFromToken from '@/utils/extractDataFromToken';
 import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+import UserModel from '@/models/user.model';
+import dbConfig from '@/lib/dbConfig';
 
 export async function GET(request: NextRequest) {
     try {
         await dbConfig();
 
-        const userId = await extractDataFromToken(request);
-        if (!userId) {
+        const authHeader = request.headers.get('Authorization');
+        const token = authHeader?.split(' ')[1] || '';
+
+        if (!token) {
             return NextResponse.json(
-                {
-                    success: false,
-                    message: 'Invalid or expired token',
-                },
-                {
-                    status: 401,
-                }
+                { success: false, message: 'No token provided' },
+                { status: 401 }
             );
         }
 
-        const user = await UserModel.findById(userId).select('-password');
+        const decodedToken = jwt.verify(
+            token,
+            process.env.TOKEN_SECRET!
+        ) as jwt.JwtPayload;
+
+        const userId = decodedToken.id;
+        const user = await UserModel.findById(userId);
         if (!user) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: 'User not found',
-                },
-                {
-                    status: 404,
-                }
-            );
+            throw new Error('User not found');
         }
 
-        return NextResponse.json({
-            success: true,
-            user,
-        });
+        return NextResponse.json({ success: true, user });
     } catch (error) {
+        console.error('Error in GET /api/auth/profile:', error);
         return NextResponse.json(
-            {
-                success: false,
-                message: 'Internal server error',
-                error,
-            },
-            {
-                status: 500,
-            }
+            { success: false, message: 'Internal server error' },
+            { status: 500 }
         );
     }
 }

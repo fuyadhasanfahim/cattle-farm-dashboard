@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
 import CattleModel from '@/models/cattle.model';
+import dbConfig from '@/lib/dbConfig';
 
 export async function POST(req: NextRequest) {
     try {
-        await dbConnect();
+        await dbConfig();
 
         const body = await req.json();
 

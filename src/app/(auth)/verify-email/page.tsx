@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { Check, AlertCircle, Mail } from 'lucide-react';
@@ -8,7 +9,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function VerifyPage() {
+function VerifyEmailComponent() {
     const [token, setToken] = useState<string>('');
     const [verified, setVerified] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
@@ -121,5 +122,13 @@ export default function VerifyPage() {
                 </div>
             </div>
         </section>
+    );
+}
+
+export default function VerifyPage() {
+    return (
+        <Suspense fallback={<p className="text-center">Loading...</p>}>
+            <VerifyEmailComponent />
+        </Suspense>
     );
 }
