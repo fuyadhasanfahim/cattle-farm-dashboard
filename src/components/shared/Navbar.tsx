@@ -12,27 +12,12 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
-import { cookies } from 'next/headers';
+import { getUserData } from '@/actions/user.action';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Navbar() {
-    async function fetchProfile() {
-        try {
-            const cookieStore = await cookies();
-            const token = cookieStore.get('token')?.value;
-            const res = await fetch('http://localhost:3000/api/auth/profile', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = await res.json();
-
-            return data.user;
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-        }
-    }
-
-    const user = await fetchProfile();
+    const user = await getUserData();
 
     return (
         <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
@@ -67,7 +52,7 @@ export default async function Navbar() {
                             <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors duration-200">
                                 <Avatar className="h-10 w-10 border">
                                     <AvatarImage
-                                        src={user.profileImage || ''}
+                                        src={user?.profileImage || ''}
                                         alt={`'s profile image`}
                                     />
                                     <AvatarFallback className="bg-primary/10">
