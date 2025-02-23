@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
             .lean();
 
         const transformedData = cattles.map((cattle, index) => ({
+            _id: cattle._id!.toString(),
             'ক্রমিক নং': (skip + index + 1).toString(),
             'ট্যাগ আইডি': cattle.cattleId,
             'রেজিষ্ট্রেশন তাং': new Date(

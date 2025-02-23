@@ -29,11 +29,16 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import ICattleFormValues from '@/types/cattle.interface';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ToastAction } from '../ui/toast';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '../ui/textarea';
+
+interface UpdateCattleProps {
+    id?: string;
+    setOpen: (isOpen: boolean) => void;
+}
 
 const genderOptions = [
     { value: 'পুরুষ', label: 'পুরুষ' },
@@ -68,11 +73,7 @@ const transferStatusOptions = [
     { value: 'বিক্রি হয়েছে', label: 'বিক্রি হয়েছে' },
 ];
 
-export default function AddCattle({
-    setOpen,
-}: {
-    setOpen: (isOpen: boolean) => void;
-}) {
+export default function UpdateCattle({ id, setOpen }: UpdateCattleProps) {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -116,11 +117,62 @@ export default function AddCattle({
         form.setValue('age', calculateAge(date));
     };
 
+    useEffect(() => {
+        const fetchCattleData = async () => {
+            if (!id) return;
+
+            setIsLoading(true);
+            try {
+                const response = await fetch(`/api/cattle/get-cattle?id=${id}`);
+                const { cattle } = await response.json();
+
+                if (cattle) {
+                    // Convert string dates to Date objects
+                    const registrationDate = cattle.registrationDate
+                        ? new Date(cattle.registrationDate)
+                        : new Date();
+                    const birthDate = cattle.birthDate
+                        ? new Date(cattle.birthDate)
+                        : undefined;
+
+                    // Update form with existing data
+                    form.reset({
+                        ...cattle,
+                        registrationDate,
+                        birthDate,
+                        cattleId: cattle.cattleId || '',
+                        age: cattle.age || '',
+                        stallNo: cattle.stallNo || '',
+                        weight: cattle.weight || '',
+                        gender: cattle.gender || '',
+                        fatteningStatus: cattle.fatteningStatus || '',
+                        cattleType: cattle.cattleType || '',
+                        category: cattle.category || '',
+                        transferStatus: cattle.transferStatus || '',
+                        deathStatus: cattle.deathStatus || '',
+                        description: cattle.description || '',
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching cattle data:', error);
+                toast({
+                    variant: 'destructive',
+                    title: 'ত্রুটি!',
+                    description: 'তথ্য লোড করতে ব্যর্থ হয়েছে।',
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCattleData();
+    }, [id, form, toast]);
+
     const onSubmit = async (data: ICattleFormValues) => {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/cattle/add-cattle', {
-                method: 'POST',
+            const response = await fetch(`/api/cattle/update-cattle?id=${id}`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -287,7 +339,9 @@ export default function AddCattle({
                                                 selected={field.value}
                                                 onSelect={(date) => {
                                                     if (date) {
-                                                        handleBirthDateChange(date);
+                                                        handleBirthDateChange(
+                                                            date
+                                                        );
                                                     }
                                                 }}
                                                 disabled={(date) =>

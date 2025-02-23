@@ -1,7 +1,10 @@
 'use client';
 
+import { toast } from '@/hooks/use-toast';
 import { ChevronLeft, ChevronRight, Edit2, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Dialog, DialogContent } from '../ui/dialog';
+import UpdateCattle from './UpdateCattle';
 
 interface CattleData {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +27,8 @@ export default function DataTable() {
         totalItems: 0,
         itemsPerPage: 10,
     });
+    const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+    const [selectedCattleId, setSelectedCattleId] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true);
 
     const headers = [
@@ -116,6 +121,46 @@ export default function DataTable() {
         return pages;
     };
 
+    const handleDeleteCattle = async (id: string) => {
+        if (!id) return;
+
+        const confirmDelete = window.confirm(
+            'আপনি কি নিশ্চিত যে আপনি এই তথ্যটি মুছতে চান?'
+        );
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setTableData((prev) =>
+                    prev.filter((cattle) => cattle._id !== id)
+                );
+
+                toast({
+                    title: 'সফল',
+                    description: 'গবাদিপশুর তথ্য সফলভাবে মুছে ফেলা হয়েছে',
+                });
+            } else {
+                throw new Error('মুছে ফেলা যায়নি');
+            }
+        } catch (error) {
+            console.error('Error deleting cattle:', error);
+            toast({
+                title: 'ত্রুটি',
+                description: 'গবাদিপশুর তথ্য মুছে ফেলা যায়নি',
+                variant: 'destructive',
+            });
+        }
+    };
+
+    const handleEditClick = (cattleId: string) => {
+        setSelectedCattleId(cattleId);
+        setIsEditModalOpen(true);
+    };
+
     return (
         <section className="space-y-6">
             <form
@@ -173,8 +218,7 @@ export default function DataTable() {
                             tableData.map((row, rowIndex) => (
                                 <tr key={rowIndex} className="bg-white">
                                     {headers.map((header, colIndex) => {
-                                        console.log('Header:', header);
-                                        console.log('Row data:', row[header]);
+                                        console.log(row);
                                         return (
                                             <td
                                                 key={colIndex}
@@ -187,8 +231,18 @@ export default function DataTable() {
 
                                     <td className="p-3 border border-dashed">
                                         <div className="flex items-center gap-2 mx-auto">
-                                            <Edit2 className="size-5 cursor-pointer hover:text-yellow-600 transition-all" />
-                                            <Trash2 className="size-5 cursor-pointer hover:text-red-600 transition-all" />
+                                            <Edit2
+                                                className="size-5 cursor-pointer hover:text-yellow-600 transition-all"
+                                                onClick={() =>
+                                                    handleEditClick(row._id)
+                                                }
+                                            />
+                                            <Trash2
+                                                onClick={() =>
+                                                    handleDeleteCattle(row._id)
+                                                }
+                                                className="size-5 cursor-pointer hover:text-red-600 transition-all"
+                                            />
                                         </div>
                                     </td>
                                 </tr>
@@ -197,6 +251,20 @@ export default function DataTable() {
                     </tbody>
                 </table>
             </div>
+
+            {isEditModalOpen && (
+                <Dialog
+                    open={isEditModalOpen}
+                    onOpenChange={setIsEditModalOpen}
+                >
+                    <DialogContent className="max-w-4xl">
+                        <UpdateCattle
+                            id={selectedCattleId}
+                            setOpen={setIsEditModalOpen}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
 
             <div className="h-8 justify-start items-center gap-2 inline-flex">
                 <div
