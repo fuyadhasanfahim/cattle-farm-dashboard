@@ -16,37 +16,13 @@ const userSchema = new Schema<IUser>(
             required: true,
             unique: true,
         },
-        phoneNumber: {
-            type: String,
-            unique: true,
-        },
         password: {
             type: String,
             required: true,
         },
-        isVerified: {
-            type: Boolean,
-            default: false,
-        },
-        isAdmin: {
-            type: Boolean,
-            default: false,
-        },
-        forgetPasswordToken: {
+        role: {
             type: String,
-            default: null,
-        },
-        forgetPasswordTokenExpiry: {
-            type: Date,
-            default: null,
-        },
-        verifyToken: {
-            type: String,
-            default: null,
-        },
-        verifyTokenExpiry: {
-            type: Date,
-            default: null,
+            default: 'user',
         },
         profileImage: {
             type: String,

@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FormEvent, useState } from 'react';
 import axios from 'axios';
-import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
     const [data, setData] = useState<{
@@ -30,11 +30,7 @@ export default function LoginPage() {
             });
 
             if (response.status === 200) {
-                toast({
-                    title: 'Success',
-                    description: 'Redirect to Dashboard',
-                    variant: 'default',
-                });
+                toast.success('Login successful. Please wait...');
 
                 setData({
                     email: '',
@@ -44,12 +40,7 @@ export default function LoginPage() {
                 router.push('/');
             }
         } catch (error) {
-            console.log(error);
-            toast({
-                title: 'ত্রুটি!',
-                description: 'লগইন ব্যর্থ হয়েছে।',
-                variant: 'destructive',
-            });
+            toast.error((error as Error).message || 'Something went wrong.');
         } finally {
             setIsLoading(false);
         }
