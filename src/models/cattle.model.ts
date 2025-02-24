@@ -1,56 +1,81 @@
+import { ICattle } from '@/types/cattle.interface';
 import mongoose from 'mongoose';
 
-const cattleSchema = new mongoose.Schema(
+const cattleSchema = new mongoose.Schema<ICattle>(
     {
-        cattleId: {
+        ট্যাগ_আইডি: {
             type: String,
-            required: [true, 'Cattle ID is required'],
+            required: true,
         },
-        registrationDate: {
+        রেজিষ্ট্রেশনের_তারিখ: {
             type: Date,
-            required: [true, 'Registration date is required'],
+            required: true,
         },
-        birthDate: {
+        জন্ম_তারিখ: {
             type: Date,
-            required: [true, 'Registration date is required'],
+            required: true,
         },
-        age: {
+        বয়স: {
             type: String,
-            required: [true, 'Age is required'],
+            required: true,
         },
-        stallNo: {
+        স্টল_নম্বর: {
             type: String,
-            required: [true, 'Stall number is required'],
+            required: true,
         },
-        weight: {
+        জাত: {
+            type: String,
+            required: false,
+        },
+        বাবার_নাম: {
+            type: String,
+            required: false,
+        },
+        বাবার_আইডি: {
+            type: String,
+            required: false,
+        },
+        মায়ের_নাম: {
+            type: String,
+            required: false,
+        },
+        মায়ের_আইডি: {
+            type: String,
+            required: false,
+        },
+        পার্সেন্টেজ: {
+            type: String,
+            required: false,
+        },
+        ওজন: {
             type: String,
             required: [true, 'Weight is required'],
         },
-        gender: {
+        লিঙ্গ: {
             type: String,
             required: [true, 'Gender is required'],
         },
-        fatteningStatus: {
+        মোটাতাজা_করন_স্ট্যাটাস: {
             type: String,
             required: [true, 'Fattening status is required'],
         },
-        cattleType: {
+        গবাদিপশুর_ধরন: {
             type: String,
             required: [true, 'Cattle type is required'],
         },
-        category: {
+        গবাদিপশুর_ক্যাটাগরি: {
             type: String,
             required: [true, 'Category is required'],
         },
-        transferStatus: {
+        অবস্থান: {
             type: String,
             required: [true, 'Transfer status is required'],
         },
-        deathStatus: {
+        অবস্থা: {
             type: String,
             required: [true, 'Death status is required'],
         },
-        description: {
+        বিবরন: {
             type: String,
             required: [true, 'Description is required'],
         },
@@ -61,6 +86,6 @@ const cattleSchema = new mongoose.Schema(
 );
 
 const CattleModel =
-    mongoose.models?.Cattle || mongoose.model('Cattle', cattleSchema);
+    mongoose.models?.Cattle || mongoose.model<ICattle>('Cattle', cattleSchema);
 
 export default CattleModel;

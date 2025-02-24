@@ -6,50 +6,93 @@ export async function POST(req: NextRequest) {
     try {
         await dbConfig();
 
-        const body = await req.json();
+        const {
+            ট্যাগ_আইডি,
+            রেজিষ্ট্রেশনের_তারিখ,
+            জন্ম_তারিখ,
+            বয়স,
+            স্টল_নম্বর,
+            জাত,
+            বাবার_নাম,
+            বাবার_আইডি,
+            মায়ের_নাম,
+            মায়ের_আইডি,
+            পার্সেন্টেজ,
+            ওজন,
+            লিঙ্গ,
+            মোটাতাজা_করন_স্ট্যাটাস,
+            গবাদিপশুর_ধরন,
+            গবাদিপশুর_ক্যাটাগরি,
+            অবস্থান,
+            অবস্থা,
+            বিবরন,
+        } = await req.json();
 
-        const requiredFields = [
-            'cattleId',
-            'registrationDate',
-            'age',
-            'stallNo',
-            'weight',
-            'gender',
-            'fatteningStatus',
-            'cattleType',
-            'category',
-            'transferStatus',
-            'deathStatus',
-            'description',
-        ];
-
-        for (const field of requiredFields) {
-            if (!body[field]) {
-                return NextResponse.json(
-                    { error: `${field} is required` },
-                    { status: 400 }
-                );
-            }
+        if (
+            !ট্যাগ_আইডি ||
+            !রেজিষ্ট্রেশনের_তারিখ ||
+            !জন্ম_তারিখ ||
+            !বয়স ||
+            !স্টল_নম্বর ||
+            !জাত ||
+            !বাবার_নাম ||
+            !বাবার_আইডি ||
+            !মায়ের_নাম ||
+            !মায়ের_আইডি ||
+            !পার্সেন্টেজ ||
+            !ওজন ||
+            !লিঙ্গ ||
+            !মোটাতাজা_করন_স্ট্যাটাস ||
+            !গবাদিপশুর_ধরন ||
+            !গবাদিপশুর_ক্যাটাগরি ||
+            !অবস্থান ||
+            !অবস্থা ||
+            !বিবরন
+        ) {
+            return NextResponse.json({
+                success: false,
+                message: 'Please select all required fields!',
+            });
         }
 
         const existingCattle = await CattleModel.findOne({
-            cattleId: body.cattleId,
+            ট্যাগ_আইডি,
         });
-
         if (existingCattle) {
             return NextResponse.json(
-                { error: `Cattle with ID ${body.cattleId} already exists` },
+                { error: `Cattle with ID ${ট্যাগ_আইডি} already exists` },
                 { status: 409 }
             );
         }
 
-        const cattle = await CattleModel.create(body);
+        const cattle = await CattleModel.create({
+            ট্যাগ_আইডি,
+            রেজিষ্ট্রেশনের_তারিখ,
+            জন্ম_তারিখ,
+            বয়স,
+            স্টল_নম্বর,
+            জাত,
+            বাবার_নাম,
+            বাবার_আইডি,
+            মায়ের_নাম,
+            মায়ের_আইডি,
+            পার্সেন্টেজ,
+            ওজন,
+            লিঙ্গ,
+            মোটাতাজা_করন_স্ট্যাটাস,
+            গবাদিপশুর_ধরন,
+            গবাদিপশুর_ক্যাটাগরি,
+            অবস্থান,
+            অবস্থা,
+            বিবরন,
+        });
 
         return NextResponse.json(
             { message: 'Cattle created successfully', cattle },
             { status: 201 }
         );
     } catch (error) {
+        console.log(error);
         return NextResponse.json(
             { error: (error as Error).message || 'Error creating cattle' },
             { status: 500 }

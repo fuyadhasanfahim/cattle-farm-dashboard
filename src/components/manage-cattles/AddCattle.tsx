@@ -14,13 +14,6 @@ import { useForm } from 'react-hook-form';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -28,12 +21,12 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-import ICattleFormValues from '@/types/cattle.interface';
+import { ICattle } from '@/types/cattle.interface';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ToastAction } from '../ui/toast';
-import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '../ui/textarea';
+import toast from 'react-hot-toast';
+import SelectOption from '../shared/Select';
 
 const genderOptions = [
     { value: 'পুরুষ', label: 'পুরুষ' },
@@ -47,7 +40,6 @@ const cattleTypeOptions = [
 ];
 
 const categoryOptions = [
-    { value: 'ষাঁড়', label: 'ষাঁড়' },
     { value: 'দুগ্ধ', label: 'দুগ্ধ' },
     { value: 'মাংস', label: 'মাংস' },
     { value: 'দুগ্ধ ও মাংস', label: 'দুগ্ধ ও মাংস' },
@@ -73,51 +65,64 @@ export default function AddCattle({
 }: {
     setOpen: (isOpen: boolean) => void;
 }) {
-    const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
-    const form = useForm<ICattleFormValues>({
+    const form = useForm<ICattle>({
         defaultValues: {
-            cattleId: '',
-            registrationDate: new Date(),
-            birthDate: undefined,
-            age: '',
-            stallNo: '',
-            weight: '',
-            gender: '',
-            fatteningStatus: '',
-            cattleType: '',
-            category: '',
-            transferStatus: '',
-            deathStatus: '',
-            description: '',
+            ট্যাগ_আইডি: '',
+            রেজিষ্ট্রেশনের_তারিখ: new Date(),
+            জন্ম_তারিখ: undefined,
+            বয়স: '',
+            স্টল_নম্বর: '',
+            জাত: '',
+            বাবার_নাম: '',
+            বাবার_আইডি: '',
+            মায়ের_নাম: '',
+            মায়ের_আইডি: '',
+            পার্সেন্টেজ: '',
+            ওজন: '',
+            লিঙ্গ: '',
+            মোটাতাজা_করন_স্ট্যাটাস: '',
+            গবাদিপশুর_ধরন: '',
+            গবাদিপশুর_ক্যাটাগরি: '',
+            অবস্থান: '',
+            অবস্থা: '',
+            বিবরন: '',
         },
     });
 
     const calculateAge = (birthDate: Date) => {
         const now = new Date();
-        const diff = now.getTime() - birthDate.getTime();
-        const ageDate = new Date(diff);
-        const years = ageDate.getUTCFullYear() - 1970;
-        const months = ageDate.getUTCMonth();
-        const days = ageDate.getUTCDate() - 1;
+        let years = now.getFullYear() - birthDate.getFullYear();
+        let months = now.getMonth() - birthDate.getMonth();
+        let days = now.getDate() - birthDate.getDate();
 
-        if (years > 0) {
-            return `${years} বছর`;
-        } else if (months > 0) {
-            return `${months} মাস`;
-        } else {
-            return `${days} দিন`;
+        if (days < 0) {
+            months--;
+            const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+            days += prevMonth.getDate();
         }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const ageParts: string[] = [];
+        if (years > 0) ageParts.push(`${years} বছর`);
+        if (months > 0) ageParts.push(`${months} মাস`);
+        if (days > 0) ageParts.push(`${days} দিন`);
+
+        return ageParts.join(' ');
     };
 
     const handleBirthDateChange = (date: Date) => {
-        form.setValue('birthDate', date);
-        form.setValue('age', calculateAge(date));
+        form.setValue('জন্ম_তারিখ', date);
+        form.setValue('বয়স', calculateAge(date));
     };
 
-    const onSubmit = async (data: ICattleFormValues) => {
+    const onSubmit = async (data: ICattle) => {
         setIsLoading(true);
+        console.log(data);
         try {
             const response = await fetch('/api/cattle/add-cattle', {
                 method: 'POST',
@@ -128,32 +133,18 @@ export default function AddCattle({
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit form');
+                throw new Error('ফর্মটি জমা দিতে ব্যর্থ হয়েছে!');
             }
 
             await response.json();
-            toast({
-                title: 'সফল!',
-                description: 'গবাদি পশুর তথ্য সফলভাবে যোগ করা হয়েছে।',
-            });
+            toast.success('সফল! গবাদি পশুর তথ্য সফলভাবে যোগ করা হয়েছে।');
 
             setOpen(false);
-
             form.reset();
         } catch (error) {
-            toast({
-                variant: 'destructive',
-                title: 'ত্রুটি!',
-                description:
-                    (error as Error).message ||
-                    'ফর্ম জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে।',
-                action: (
-                    <ToastAction altText="Try again">
-                        আবার চেষ্টা করুন
-                    </ToastAction>
-                ),
-            });
-            console.error('Error submitting form:', error);
+            toast.error(
+                (error as Error).message || 'ফর্মটি জমা দিতে ব্যর্থ হয়েছে'
+            );
         } finally {
             setIsLoading(false);
         }
@@ -174,7 +165,7 @@ export default function AddCattle({
                     <div className="flex items-center gap-6">
                         <FormField
                             control={form.control}
-                            name="cattleId"
+                            name="ট্যাগ_আইডি"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>ট্যাগ আইডি</FormLabel>
@@ -191,7 +182,7 @@ export default function AddCattle({
                         />
                         <FormField
                             control={form.control}
-                            name="registrationDate"
+                            name="রেজিষ্ট্রেশনের_তারিখ"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>রেজিষ্ট্রেশন তাং</FormLabel>
@@ -246,10 +237,11 @@ export default function AddCattle({
                             )}
                         />
                     </div>
+
                     <div className="flex items-center gap-6">
                         <FormField
                             control={form.control}
-                            name="birthDate"
+                            name="জন্ম_তারিখ"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>জন্ম তারিখ</FormLabel>
@@ -287,7 +279,9 @@ export default function AddCattle({
                                                 selected={field.value}
                                                 onSelect={(date) => {
                                                     if (date) {
-                                                        handleBirthDateChange(date);
+                                                        handleBirthDateChange(
+                                                            date
+                                                        );
                                                     }
                                                 }}
                                                 disabled={(date) =>
@@ -306,7 +300,7 @@ export default function AddCattle({
 
                         <FormField
                             control={form.control}
-                            name="age"
+                            name="বয়স"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>বয়স/মাস</FormLabel>
@@ -327,7 +321,7 @@ export default function AddCattle({
                     <div className="flex items-center gap-6">
                         <FormField
                             control={form.control}
-                            name="stallNo"
+                            name="স্টল_নম্বর"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>স্টল নাং</FormLabel>
@@ -345,7 +339,7 @@ export default function AddCattle({
 
                         <FormField
                             control={form.control}
-                            name="weight"
+                            name="ওজন"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>ওজন/কেজি</FormLabel>
@@ -363,32 +357,37 @@ export default function AddCattle({
                     </div>
 
                     <div className="flex items-center gap-6">
+                        <SelectOption
+                            data={genderOptions}
+                            form={form}
+                            label="গবাদিপশুর লিঙ্গ"
+                            name="লিঙ্গ"
+                            placeholder="গবাদিপশুর লিঙ্গ নির্বাচন করুন"
+                        />
+
+                        <SelectOption
+                            data={fatteningStatusOptions}
+                            form={form}
+                            name="মোটাতাজা_করন_স্ট্যাটাস"
+                            label="মোটাতাজা করন স্ট্যাটাস"
+                            placeholder="মোটাতাজা করন স্ট্যাটাস নির্বাচন করুন"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-6">
                         <FormField
                             control={form.control}
-                            name="gender"
+                            name="জাত"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel>গবাদিপশুর লিঙ্গ</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="লিঙ্গ নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {genderOptions.map((option) => (
-                                                <SelectItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                >
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <FormLabel>জাত (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="জাত লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -396,97 +395,95 @@ export default function AddCattle({
 
                         <FormField
                             control={form.control}
-                            name="fatteningStatus"
+                            name="বাবার_নাম"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>বাবার নাম (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="বাবার নাম লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <FormField
+                            control={form.control}
+                            name="বাবার_আইডি"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>বাবার আইডি (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="বাবার আইডি লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="মায়ের_নাম"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>মার নাম (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="মার নাম লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <FormField
+                            control={form.control}
+                            name="মায়ের_আইডি"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>মার আইডি (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="মার আইডি লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="পার্সেন্টেজ"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>
-                                        মোটাতাজা করন স্ট্যাটাস
+                                        পার্সেন্টেজে (Optional)
                                     </FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {fatteningStatusOptions.map(
-                                                (option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="cattleType"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>গবাদিপশুর ধরন</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="পশুর ধরন নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {cattleTypeOptions.map((option) => (
-                                                <SelectItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                >
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>গবাদিপশুর ক্যাটাগরি</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="ক্যাটাগরি নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {categoryOptions.map((option) => (
-                                                <SelectItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                >
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="পার্সেন্টেজে লিখুন লিখুন"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -494,77 +491,45 @@ export default function AddCattle({
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="deathStatus"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>মৃত অবস্থা</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="মৃত অবস্থা নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {deathStatusOptions.map(
-                                                (option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                        <SelectOption
+                            data={cattleTypeOptions}
+                            form={form}
+                            name="গবাদিপশুর_ধরন"
+                            label="গবাদিপশুর ধরন"
+                            placeholder="গবাদিপশুর ধরন নির্বাচন করুন"
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="transferStatus"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>স্থানান্তর/বিক্রয়</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="স্থানান্তর/বিক্রয় নির্বাচন করুন" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {transferStatusOptions.map(
-                                                (option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                        <SelectOption
+                            data={categoryOptions}
+                            form={form}
+                            name="গবাদিপশুর_ক্যাটাগরি"
+                            label="গবাদিপশুর ক্যাটাগরি"
+                            placeholder="গবাদিপশুর ক্যাটাগরি নির্বাচন করুন"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <SelectOption
+                            data={deathStatusOptions}
+                            form={form}
+                            name="অবস্থা"
+                            label="মৃত অবস্থা"
+                            placeholder="মৃত অবস্থা নির্বাচন করুন"
+                        />
+
+                        <SelectOption
+                            data={transferStatusOptions}
+                            form={form}
+                            name="অবস্থান"
+                            label="স্থানান্তর/বিক্রয়"
+                            placeholder="স্থানান্তর/বিক্রয় নির্বাচন করুন"
                         />
                     </div>
 
                     <div>
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="বিবরন"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>বিবরন</FormLabel>
@@ -582,16 +547,8 @@ export default function AddCattle({
 
                     <div className="flex justify-end items-center gap-2">
                         <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                            disabled={isLoading}
-                        >
-                            বাতিল
-                        </Button>
-                        <Button
                             type="submit"
-                            className="bg-[#52aa46] hover:bg-[#4a9940]"
+                            className="btn-primary"
                             disabled={isLoading}
                         >
                             {isLoading ? (

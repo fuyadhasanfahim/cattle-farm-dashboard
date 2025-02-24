@@ -30,7 +30,7 @@ export default function HeroSection() {
                         <VisuallyHidden>
                             <DialogTitle>Hidden Title</DialogTitle>
                         </VisuallyHidden>
-                        <ScrollArea className="h-[80vh] py-6">
+                        <ScrollArea className="h-[500px] py-6">
                             <AddCattle setOpen={setOpen} />
                         </ScrollArea>
                     </DialogContent>

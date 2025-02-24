@@ -44,3 +44,7 @@ body {
         @apply bg-background text-foreground;
     }
 }
+
+.btn-primary {
+    @apply h-10 px-6 py-2 bg-[#52aa46] hover:bg-[#4a9940] text-white rounded-lg justify-start items-center gap-2 inline-flex font-notoSansBengali;
+}

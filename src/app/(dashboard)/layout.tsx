@@ -12,11 +12,11 @@ export default async function Layout({ children }: { children: ReactNode }) {
                 <div className="sticky top-0 left-0 w-full max-w-[250px] h-screen">
                     <Sidebar />
                 </div>
-                <main className="w-full h-full">
+                <section className="w-full h-full">
                     <div className="w-full bg-[#fbfff1] h-full min-h-[calc(100vh-80px)] p-4">
                         {children}
                     </div>
-                </main>
+                </section>
             </div>
         </main>
     );

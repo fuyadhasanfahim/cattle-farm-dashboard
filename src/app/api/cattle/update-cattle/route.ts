@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest) {
             );
         }
 
-        const data = request.json();
+        const data = await request.json();
 
         await dbConfig();
 

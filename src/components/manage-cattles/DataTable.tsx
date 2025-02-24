@@ -1,15 +1,18 @@
 'use client';
 
-import { toast } from '@/hooks/use-toast';
-import { ChevronLeft, ChevronRight, Edit2, Search, Trash2 } from 'lucide-react';
+import { ICattle } from '@/types/cattle.interface';
+import { format } from 'date-fns';
+import {
+    ChevronLeft,
+    ChevronRight,
+    Edit2,
+    Eye,
+    Search,
+    Trash2,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent } from '../ui/dialog';
-import UpdateCattle from './UpdateCattle';
-
-interface CattleData {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-}
+import toast from 'react-hot-toast';
 
 interface PaginationData {
     currentPage: number;
@@ -19,7 +22,7 @@ interface PaginationData {
 }
 
 export default function DataTable() {
-    const [tableData, setTableData] = useState<CattleData[]>([]);
+    const [tableData, setTableData] = useState<ICattle[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [pagination, setPagination] = useState<PaginationData>({
         currentPage: 1,
@@ -27,47 +30,48 @@ export default function DataTable() {
         totalItems: 0,
         itemsPerPage: 10,
     });
-    const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-    const [selectedCattleId, setSelectedCattleId] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
 
     const headers = [
-        'ক্রমিক নং',
-        'ট্যাগ আইডি',
-        'রেজিষ্ট্রেশন তাং',
-        'বয়স/মাস',
-        'স্টল নাং',
-        'ওজন/কেজি',
-        'গবাদিপশুর লিঙ্গ',
-        'মোটাতাজা করন স্ট্যাটাস',
-        'গবাদিপশুর ধরন',
-        'গবাদিপশুর ক্যাটাগরি',
-        'স্থানান্তর/বিক্রয়',
-        'মৃত অবস্থা',
-        'বিবরন',
+        'ট্যাগ_আইডি',
+        'রেজিষ্ট্রেশনের_তারিখ',
+        'স্টল_নম্বর',
+        'জাত',
+        'বাবার_নাম',
+        'পার্সেন্টেজ',
+        'ওজন',
+        'লিঙ্গ',
+        'মোটাতাজা_করন_স্ট্যাটাস',
+        'অবস্থান',
+        'অ্যাকশন',
     ];
 
     const fetchData = async () => {
-        setIsLoading(true);
         try {
+            setIsLoading(true);
             const response = await fetch(
                 `/api/cattle/get-cattles-data?page=${pagination.currentPage}&limit=${pagination.itemsPerPage}&search=${searchQuery}`
             );
-            const result = await response.json();
 
-            console.log(result.data);
-
-            if (result.success) {
-                setTableData(result?.data);
-                setPagination({
-                    currentPage: result.pagination.currentPage,
-                    totalPages: result.pagination.totalPages,
-                    totalItems: result.pagination.totalItems,
-                    itemsPerPage: result.pagination.itemsPerPage,
-                });
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
             }
+
+            const data = await response.json();
+            console.log(data);
+
+            setTableData(data.data || []);
+            setPagination((prev) => ({
+                ...prev,
+                totalItems: data.totalItems || 0,
+                totalPages: Math.ceil(
+                    (data.totalItems || 0) / pagination.itemsPerPage
+                ),
+            }));
         } catch (error) {
             console.error('Error fetching data:', error);
+            toast.error('তথ্য লোড করতে সমস্যা হয়েছে');
         } finally {
             setIsLoading(false);
         }
@@ -85,6 +89,46 @@ export default function DataTable() {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.totalPages) {
             setPagination((prev) => ({ ...prev, currentPage: newPage }));
+        }
+    };
+
+    const handleEditClick = (id: string) => {
+        router.push(`/manage-cattles/edit-cattle-data/${id}`);
+    };
+
+    const handleDeleteCattle = async (id: string) => {
+        if (!id) return;
+
+        const confirmDelete = window.confirm(
+            'আপনি কি নিশ্চিত যে আপনি এই তথ্যটি মুছতে চান?'
+        );
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setTableData((prev) =>
+                    prev.filter((cattle) => cattle._id !== id)
+                );
+                toast.success('সফল, গবাদিপশুর তথ্য সফলভাবে মুছে ফেলা হয়েছে');
+                // Refetch data if needed to update pagination
+                if (tableData.length === 1 && pagination.currentPage > 1) {
+                    setPagination((prev) => ({
+                        ...prev,
+                        currentPage: prev.currentPage - 1,
+                    }));
+                } else {
+                    fetchData();
+                }
+            } else {
+                throw new Error('মুছে ফেলা যায়নি');
+            }
+        } catch (error) {
+            console.error('Error deleting cattle:', error);
+            toast.error('ত্রুটি! গবাদিপশুর তথ্য মুছে ফেলা যায়নি');
         }
     };
 
@@ -106,7 +150,7 @@ export default function DataTable() {
                 <div
                     key={i}
                     onClick={() => handlePageChange(i)}
-                    className={`p-3 rounded-lg cursor-pointer ${
+                    className={`p-2 rounded-lg cursor-pointer ${
                         pagination.currentPage === i
                             ? 'bg-[#52aa46] text-white'
                             : 'border border-[#666666] text-[#666666]'
@@ -119,46 +163,6 @@ export default function DataTable() {
             );
         }
         return pages;
-    };
-
-    const handleDeleteCattle = async (id: string) => {
-        if (!id) return;
-
-        const confirmDelete = window.confirm(
-            'আপনি কি নিশ্চিত যে আপনি এই তথ্যটি মুছতে চান?'
-        );
-        if (!confirmDelete) return;
-
-        try {
-            const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
-                method: 'DELETE',
-            });
-
-            if (response.ok) {
-                setTableData((prev) =>
-                    prev.filter((cattle) => cattle._id !== id)
-                );
-
-                toast({
-                    title: 'সফল',
-                    description: 'গবাদিপশুর তথ্য সফলভাবে মুছে ফেলা হয়েছে',
-                });
-            } else {
-                throw new Error('মুছে ফেলা যায়নি');
-            }
-        } catch (error) {
-            console.error('Error deleting cattle:', error);
-            toast({
-                title: 'ত্রুটি',
-                description: 'গবাদিপশুর তথ্য মুছে ফেলা যায়নি',
-                variant: 'destructive',
-            });
-        }
-    };
-
-    const handleEditClick = (cattleId: string) => {
-        setSelectedCattleId(cattleId);
-        setIsEditModalOpen(true);
     };
 
     return (
@@ -184,15 +188,11 @@ export default function DataTable() {
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
-                                    className="text-white font-notoSansBengali border border-dashed p-3 font-semibold"
+                                    className="text-white font-notoSansBengali border border-dashed p-2 py-3"
                                 >
                                     {header}
                                 </th>
                             ))}
-
-                            <th className="text-white font-normal font-notoSansBengali border border-dashed p-3">
-                                অ্যাকশান
-                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -200,7 +200,7 @@ export default function DataTable() {
                             <tr className="bg-white">
                                 <td
                                     colSpan={headers.length}
-                                    className="text-center p-4"
+                                    className="text-center p-4 font-notoSansBengali"
                                 >
                                     লোড হচ্ছে...
                                 </td>
@@ -209,7 +209,7 @@ export default function DataTable() {
                             <tr className="bg-white">
                                 <td
                                     colSpan={headers.length}
-                                    className="text-center p-4"
+                                    className="text-center p-4 font-notoSansBengali"
                                 >
                                     কোন তথ্য পাওয়া যায়নি
                                 </td>
@@ -217,20 +217,46 @@ export default function DataTable() {
                         ) : (
                             tableData.map((row, rowIndex) => (
                                 <tr key={rowIndex} className="bg-white">
-                                    {headers.map((header, colIndex) => {
-                                        console.log(row);
-                                        return (
-                                            <td
-                                                key={colIndex}
-                                                className="p-3 border border-dashed"
-                                            >
-                                                {row[header] || ''}
-                                            </td>
-                                        );
-                                    })}
-
-                                    <td className="p-3 border border-dashed">
-                                        <div className="flex items-center gap-2 mx-auto">
+                                    <td className="p-2 text-center border border-dashed">
+                                        {row.ট্যাগ_আইডি}
+                                    </td>
+                                    <td className="p-2 text-center border border-dashed">
+                                        {row.রেজিষ্ট্রেশনের_তারিখ
+                                            ? format(
+                                                  new Date(
+                                                      row.রেজিষ্ট্রেশনের_তারিখ
+                                                  ),
+                                                  'dd-MM-yy'
+                                              )
+                                            : null}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        {row.স্টল_নম্বর}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        {row.জাত}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        {row.বাবার_নাম}
+                                    </td>
+                                    <td className="p-2 text-center border border-dashed">
+                                        {row.পার্সেন্টেজ}
+                                    </td>
+                                    <td className="p-2 text-center border border-dashed">
+                                        {row.ওজন}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        {row.লিঙ্গ}
+                                    </td>
+                                    <td className="p-2 text-center border border-dashed">
+                                        {row.মোটাতাজা_করন_স্ট্যাটাস}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        {row.অবস্থান}
+                                    </td>
+                                    <td className="p-2 border border-dashed">
+                                        <div className="flex items-center justify-between gap-2 mx-auto">
+                                            <Eye className="size-5 cursor-pointer hover:text-green-600 transition-all" />
                                             <Edit2
                                                 className="size-5 cursor-pointer hover:text-yellow-600 transition-all"
                                                 onClick={() =>
@@ -252,51 +278,43 @@ export default function DataTable() {
                 </table>
             </div>
 
-            {isEditModalOpen && (
-                <Dialog
-                    open={isEditModalOpen}
-                    onOpenChange={setIsEditModalOpen}
-                >
-                    <DialogContent className="max-w-4xl">
-                        <UpdateCattle
-                            id={selectedCattleId}
-                            setOpen={setIsEditModalOpen}
-                        />
-                    </DialogContent>
-                </Dialog>
+            {!isLoading && tableData.length > 0 && (
+                <div className="h-8 justify-start items-center gap-2 inline-flex">
+                    <div
+                        onClick={() =>
+                            handlePageChange(pagination.currentPage - 1)
+                        }
+                        className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
+                            pagination.currentPage === 1
+                                ? 'opacity-50 cursor-not-allowed'
+                                : ''
+                        }`}
+                    >
+                        <ChevronLeft className="size-4" />
+                        <span className="text-[#666666] font-normal font-notoSansBengali">
+                            পূর্ববর্তী
+                        </span>
+                    </div>
+
+                    {renderPaginationNumbers()}
+
+                    <div
+                        onClick={() =>
+                            handlePageChange(pagination.currentPage + 1)
+                        }
+                        className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
+                            pagination.currentPage === pagination.totalPages
+                                ? 'opacity-50 cursor-not-allowed'
+                                : ''
+                        }`}
+                    >
+                        <span className="text-[#666666] font-normal font-notoSansBengali">
+                            পরবর্তী
+                        </span>
+                        <ChevronRight className="size-4" />
+                    </div>
+                </div>
             )}
-
-            <div className="h-8 justify-start items-center gap-2 inline-flex">
-                <div
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
-                    className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
-                        pagination.currentPage === 1
-                            ? 'opacity-50 cursor-not-allowed'
-                            : ''
-                    }`}
-                >
-                    <ChevronLeft className="size-4" />
-                    <span className="text-[#666666] font-normal font-notoSansBengali">
-                        পূর্ববর্তী
-                    </span>
-                </div>
-
-                {renderPaginationNumbers()}
-
-                <div
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
-                        pagination.currentPage === pagination.totalPages
-                            ? 'opacity-50 cursor-not-allowed'
-                            : ''
-                    }`}
-                >
-                    <span className="text-[#666666] font-normal font-notoSansBengali">
-                        পরবর্তী
-                    </span>
-                    <ChevronRight className="size-4" />
-                </div>
-            </div>
         </section>
     );
 }

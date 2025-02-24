@@ -34,31 +34,12 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean();
 
-        const transformedData = cattles.map((cattle, index) => ({
-            _id: cattle._id!.toString(),
-            'ক্রমিক নং': (skip + index + 1).toString(),
-            'ট্যাগ আইডি': cattle.cattleId,
-            'রেজিষ্ট্রেশন তাং': new Date(
-                cattle.registrationDate
-            ).toLocaleDateString('bn-BD'),
-            'বয়স/মাস': cattle.age,
-            'স্টল নাং': cattle.stallNo,
-            'ওজন/কেজি': cattle.weight,
-            'গবাদিপশুর লিঙ্গ': cattle.gender,
-            'মোটাতাজা করন স্ট্যাটাস': cattle.fatteningStatus,
-            'গবাদিপশুর ধরন': cattle.cattleType,
-            'গবাদিপশুর ক্যাটাগরি': cattle.category,
-            'স্থানান্তর/বিক্রয়': cattle.transferStatus,
-            'মৃত অবস্থা': cattle.deathStatus,
-            'বিবরন': cattle.description,
-        }));
-
         const totalPages = Math.ceil(totalItems / limit);
 
         return NextResponse.json(
             {
                 success: true,
-                data: transformedData,
+                data: cattles,
                 pagination: {
                     currentPage: page,
                     totalPages,
