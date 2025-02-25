@@ -1,0 +1,14 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export default function page() {
+    return (
+        <Card className="font-notoSansBengali">
+            <CardHeader>
+                <CardTitle>দুধ সংগ্রহের ফর্ম</CardTitle>
+            </CardHeader>
+            <CardContent>
+                
+            </CardContent>
+        </Card>
+    );
+}
