@@ -25,6 +25,7 @@ interface SelectOptionProps<T extends FieldValues> {
     name: Path<T>;
     label: string;
     placeholder: string;
+    required?: boolean;
 }
 
 export default function SelectOption<T extends FieldValues>({
@@ -47,7 +48,9 @@ export default function SelectOption<T extends FieldValues>({
                     >
                         <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder={placeholder} />
+                                <SelectValue
+                                    placeholder={placeholder}
+                                />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
