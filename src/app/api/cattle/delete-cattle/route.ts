@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(request: NextRequest) {
     try {
-        console.log('Received DELETE request');
-
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
 
