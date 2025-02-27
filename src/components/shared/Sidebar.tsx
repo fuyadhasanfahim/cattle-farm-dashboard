@@ -4,6 +4,7 @@ import icons from '@/assets/icons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Users2 } from 'lucide-react';
 
 const {
     accounts,
@@ -87,36 +88,42 @@ const sidebarItems = [
     },
     {
         id: 11,
+        icon: sale,
+        label: 'কাস্টমার',
+        link: '/customers',
+    },
+    {
+        id: 12,
         icon: party,
         label: 'পার্টি',
         link: '/party',
     },
     {
-        id: 12,
+        id: 13,
         icon: supplier,
         label: 'সরবরাহকারী',
         link: '/supplier',
     },
     {
-        id: 13,
+        id: 14,
         icon: accounts,
         label: 'একাউন্টস',
         link: '/accounts',
     },
     {
-        id: 14,
+        id: 15,
         icon: inventoryManagement,
         label: 'ইনভেন্টরি ম্যানেজমেন্ট',
         link: '/inventory-management',
     },
     {
-        id: 15,
+        id: 16,
         icon: loneManagement,
         label: 'লোন ম্যানেজমেন্ট',
         link: '/loan-management',
     },
     {
-        id: 16,
+        id: 17,
         icon: report,
         label: 'রিপোর্ট',
         link: '/reports',
@@ -139,7 +146,11 @@ export default function Sidebar() {
                                         : 'bg-transparent'
                                 }`}
                         >
-                            {icon}
+                            {label === 'কাস্টমার' ? (
+                                <Users2 className="size-4" />
+                            ) : (
+                                icon
+                            )}
                             <span className="font-notoSansBengali">
                                 {label}
                             </span>

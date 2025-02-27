@@ -62,11 +62,8 @@ export default function SelectOption<T extends FieldValues>({
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            {data.map((option) => (
-                                <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                >
+                            {data.map((option, index) => (
+                                <SelectItem key={index} value={option.value}>
                                     {option.label}
                                 </SelectItem>
                             ))}
