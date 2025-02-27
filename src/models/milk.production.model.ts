@@ -19,8 +19,8 @@ const milkProductionSchema = new Schema<IMilkProduction>(
             type: String,
             required: true,
         },
-        সেশন: {
-            type: Date,
+        ফ্যাট_শতাংশ: {
+            type: String,
             required: true,
         },
         সময়: {

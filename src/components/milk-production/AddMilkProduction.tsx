@@ -45,6 +45,7 @@ const milkingOptions = [
 export default function AddMilkProduction() {
     const [isLoading, setIsLoading] = useState(false);
     const [cattles, setCattles] = useState<ICattle[]>([]);
+    const [cattlesMap, setCattlesMap] = useState<Record<string, ICattle>>({});
     const router = useRouter();
 
     const form = useForm<IMilkProduction>({
@@ -53,10 +54,12 @@ export default function AddMilkProduction() {
             গবাদি_পশুর_ধরণ: '',
             দুধ_সংগ্রহের_তারিখ: new Date(),
             দুধের_পরিমাণ: '',
-            সেশন: new Date(),
+            ফ্যাট_শতাংশ: '',
             সময়: '',
         },
     });
+
+    const selectedTagId = form.watch('গবাদি_পশুর_ট্যাগ_আইডি');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,7 +67,16 @@ export default function AddMilkProduction() {
                 const response = await fetch('/api/cattle/get-all-tag-id');
                 const { data } = await response.json();
 
+                const cattleMap = data.reduce(
+                    (acc: Record<string, ICattle>, cattle: ICattle) => {
+                        acc[cattle.ট্যাগ_আইডি] = cattle;
+                        return acc;
+                    },
+                    {}
+                );
+
                 setCattles(data);
+                setCattlesMap(cattleMap);
             } catch (error) {
                 toast.error(
                     (error as Error).message || 'Something went wrong.'
@@ -75,18 +87,14 @@ export default function AddMilkProduction() {
         fetchData();
     }, []);
 
-    const handleCattleTagChange = (selectedTagId: string) => {
-        const selectedCattle = cattles.find(
-            (cattle) => cattle.ট্যাগ_আইডি === selectedTagId
-        );
-
-        if (selectedCattle) {
-            form.setValue('গবাদি_পশুর_ট্যাগ_আইডি', selectedTagId);
-            form.setValue('গবাদি_পশুর_ধরণ', selectedCattle.গবাদিপশুর_ধরন || '');
-
-            console.log(selectedCattle.গবাদিপশুর_ধরন);
+    useEffect(() => {
+        if (selectedTagId && cattlesMap[selectedTagId]) {
+            form.setValue(
+                'গবাদি_পশুর_ধরণ',
+                cattlesMap[selectedTagId]?.গবাদিপশুর_ধরন || ''
+            );
         }
-    };
+    }, [selectedTagId, cattlesMap, form]);
 
     const onSubmit = async (data: IMilkProduction) => {
         setIsLoading(true);
@@ -131,26 +139,26 @@ export default function AddMilkProduction() {
                         name="গবাদি_পশুর_ট্যাগ_আইডি"
                         label="গবাদি পশুর ট্যাগ আইডি"
                         placeholder="গবাদি পশুর ট্যাগ আইডি নির্বাচন করুন"
-                        onChange={handleCattleTagChange}
                         required
                     />
 
-                    <SelectOption
-                        data={[
-                            {
-                                value:
-                                    form.watch('গবাদি_পশুর_ধরণ') ||
-                                    'placeholder',
-                                label:
-                                    form.watch('গবাদি_পশুর_ধরণ') ||
-                                    'আগে গবাদি পশুর ট্যাগ আইডি দিন',
-                            },
-                        ]}
-                        form={form}
+                    <FormField
+                        control={form.control}
                         name="গবাদি_পশুর_ধরণ"
-                        label="গবাদি পশুর ধরণ"
-                        placeholder="গবাদি পশুর ধরণ নির্বাচন করুন"
-                        required
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>গবাদি পশুর ধরণ</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="গবাদি পশুর ধরণ"
+                                        readOnly
+                                        className="bg-gray-50"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
                 </div>
 
@@ -209,62 +217,6 @@ export default function AddMilkProduction() {
                         )}
                     />
 
-                    <FormField
-                        control={form.control}
-                        name="সেশন"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>সেশন</FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant="outline"
-                                                className={cn(
-                                                    'w-full pl-3 text-left font-normal',
-                                                    !field.value &&
-                                                        'text-muted-foreground'
-                                                )}
-                                            >
-                                                {field.value ? (
-                                                    format(field.value, 'PPP')
-                                                ) : (
-                                                    <span>
-                                                        তারিখ নির্বাচন করুন
-                                                    </span>
-                                                )}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
-                                    >
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={(date) => {
-                                                if (date) {
-                                                    field.onChange(date);
-                                                }
-                                            }}
-                                            disabled={(date) =>
-                                                date > new Date() ||
-                                                date < new Date('1900-01-01')
-                                            }
-                                            required
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <div className="flex items-center gap-6">
                     <SelectOption
                         data={milkingOptions}
                         form={form}
@@ -273,18 +225,78 @@ export default function AddMilkProduction() {
                         placeholder="দুধ দোহনের সময় নির্বাচন করুন"
                         required
                     />
+                </div>
 
+                <div className="flex items-center gap-6">
                     <FormField
                         control={form.control}
                         name="দুধের_পরিমাণ"
+                        rules={{
+                            required: 'দুধের পরিমাণ প্রয়োজনীয়!',
+                            validate: (value) =>
+                                !isNaN(Number(value)) ||
+                                'শুধুমাত্র সংখ্যা লিখুন!',
+                        }}
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel>দুধের পরিমাণ</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="দুধের_পরিমাণ লিখুন"
-                                        type="number"
-                                        required
+                                        placeholder="দুধের পরিমাণ লিখুন"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        onInput={(e) => {
+                                            e.currentTarget.value =
+                                                e.currentTarget.value.replace(
+                                                    /\D/g,
+                                                    ''
+                                                );
+                                            field.onChange(e);
+                                        }}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="ফ্যাট_শতাংশ"
+                        rules={{
+                            required: 'ফ্যাট শতাংশ প্রয়োজনীয়!',
+                            validate: (value) => {
+                                if (isNaN(Number(value)))
+                                    return 'শুধুমাত্র সংখ্যা লিখুন!';
+                                if (parseFloat(value) > 100)
+                                    return 'ফ্যাট শতাংশ সর্বোচ্চ ১০০ হতে পারে!';
+                                return true;
+                            },
+                        }}
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>ফ্যাট শতাংশ</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="ফ্যাট শতাংশ লিখুন"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        onInput={(e) => {
+                                            e.currentTarget.value =
+                                                e.currentTarget.value.replace(
+                                                    /\D/g,
+                                                    ''
+                                                );
+                                            if (
+                                                parseFloat(
+                                                    e.currentTarget.value
+                                                ) > 100
+                                            ) {
+                                                e.currentTarget.value = '100';
+                                            }
+                                            field.onChange(e);
+                                        }}
                                         {...field}
                                     />
                                 </FormControl>

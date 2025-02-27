@@ -3,7 +3,7 @@ import CattleModel from '@/models/cattle.model';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
     try {
         const {
             দুধ_সংগ্রহের_তারিখ,
@@ -47,53 +47,36 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const normalizedDate = new Date(দুধ_সংগ্রহের_তারিখ)
-            .toISOString()
-            .split('T')[0];
+        const updatedMilkProduction =
+            await MilkProductionModel.findOneAndUpdate(
+                { গবাদি_পশুর_ট্যাগ_আইডি },
+                {
+                    দুধ_সংগ্রহের_তারিখ,
+                    গবাদি_পশুর_ধরণ,
+                    ফ্যাট_শতাংশ,
+                    দুধের_পরিমাণ,
+                    সময়,
+                },
+                { new: true }
+            );
 
-        const isDuplicate = await MilkProductionModel.findOne({
-            দুধ_সংগ্রহের_তারিখ: {
-                $gte: new Date(normalizedDate),
-                $lt: new Date(
-                    new Date(normalizedDate).setDate(
-                        new Date(normalizedDate).getDate() + 1
-                    )
-                ),
-            },
-            গবাদি_পশুর_ট্যাগ_আইডি,
-            সময়,
-            দুধের_পরিমাণ,
-        });
-
-        if (isDuplicate) {
+        if (!updatedMilkProduction) {
             return NextResponse.json(
                 {
                     success: false,
-                    message:
-                        'Duplicate entry! Milk production record already exists for this date, cattle ID, time, and quantity.',
+                    message: 'Milk production record not found!',
                 },
-                { status: 409 }
+                { status: 404 }
             );
         }
-
-        const milkProduction = new MilkProductionModel({
-            দুধ_সংগ্রহের_তারিখ,
-            গবাদি_পশুর_ধরণ,
-            ফ্যাট_শতাংশ,
-            গবাদি_পশুর_ট্যাগ_আইডি,
-            দুধের_পরিমাণ,
-            সময়,
-        });
-
-        await milkProduction.save();
 
         return NextResponse.json(
             {
                 success: true,
-                message: 'Milk production added successfully!',
-                data: milkProduction,
+                message: 'Milk production updated successfully!',
+                data: updatedMilkProduction,
             },
-            { status: 201 }
+            { status: 200 }
         );
     } catch (error) {
         return NextResponse.json(
@@ -101,7 +84,7 @@ export async function POST(request: NextRequest) {
                 success: false,
                 message:
                     (error as Error).message ||
-                    'An error occurred while adding milk production.',
+                    'An error occurred while updating milk production.',
             },
             { status: 500 }
         );

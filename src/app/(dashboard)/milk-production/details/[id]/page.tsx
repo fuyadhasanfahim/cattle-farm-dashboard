@@ -1,16 +1,29 @@
 'use client';
 
 import { IMilkProduction } from '@/types/milk.production.interface';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Edit2, Milk, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function Details() {
     const { id } = useParams();
     const [data, setData] = useState<IMilkProduction | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +45,7 @@ export default function Details() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-green-100">
+            <div className="flex items-center justify-center min-h-screen">
                 <div className="p-8 rounded-lg bg-white shadow-md flex flex-col items-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mb-4"></div>
                     <div className="text-green-600 text-lg font-medium">
@@ -62,10 +75,33 @@ export default function Details() {
         );
     }
 
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await fetch(
+                `/api/milk-production/delete-milk-production?id=${id}`,
+                {
+                    method: 'DELETE',
+                }
+            );
+
+            if (response.ok) {
+                toast.success('ডেটা সফলভাবে মুছে ফেলা হয়েছে');
+                router.push('/milk-production');
+            } else {
+                toast.error('ডেটা মুছে ফেলার সময় কিছু সমস্যা হয়েছে।');
+            }
+        } catch (error) {
+            toast.error(
+                (error as Error).message ||
+                    'ডেটা মুছে ফেলার সময় কিছু সমস্যা হয়েছে।'
+            );
+        }
+    };
+
     return (
         <section className="min-h-screen">
-            <Card className="max-w-4xl mx-auto shadow-lg">
-                <CardHeader className="bg-green-50 border-b border-green-100">
+            <Card className="max-w-4xl mx-auto">
+                <CardHeader className="bg-green-50 border-b border-green-100 rounded-t-xl">
                     <div className="flex items-center space-x-3">
                         <div className="p-3 bg-green-500 text-white rounded-full">
                             <Milk size={28} />
@@ -104,8 +140,8 @@ export default function Details() {
                     />
 
                     <InfoCard
-                        title="সেশন"
-                        value={format(new Date(data.সেশন), 'dd-MM-yyyy')}
+                        title="ফ্যাট শতাংশ"
+                        value={`${data.ফ্যাট_শতাংশ}%`}
                         icon="🗓️"
                     />
 
@@ -139,19 +175,47 @@ export default function Details() {
                             <span>ফিরে যান</span>
                         </button>
                         <button
-                            onClick={() => window.history.back()}
+                            onClick={() =>
+                                router.push(
+                                    `/milk-production/update-milk-production/${data._id}`
+                                )
+                            }
                             className="px-6 py-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors shadow-md flex items-center space-x-2"
                         >
                             <Edit2 className="size-5" />
                             <span>এডিট</span>
                         </button>
-                        <button
-                            onClick={() => window.history.back()}
-                            className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors shadow-md flex items-center space-x-2"
-                        >
-                            <Trash2 className="size-5" />
-                            <span>ডিলিট</span>
-                        </button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <button className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors shadow-md flex items-center space-x-2">
+                                    <Trash2 className="size-5" />
+                                    <span>ডিলিট</span>
+                                </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                        তুমি কি পুরোপুরি নিশ্চিত?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
+                                        এটি স্থায়ীভাবে এই ডেটা মুছে ফেলবে এবং
+                                        আমাদের সার্ভার থেকে তোমার ডেটা মুছে
+                                        ফেলবে।
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                        বাতিল করুন
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => handleDelete(data._id)}
+                                    >
+                                        চালিয়ে যান
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </CardContent>
             </Card>

@@ -6,9 +6,11 @@ export async function GET() {
     try {
         await dbConfig();
 
-        const milkProductions = await MilkProductionModel.find();
+        const milkProductions = await MilkProductionModel.find().sort(
+            '-createdAt'
+        );
 
-        if (!milkProductions) {
+        if (milkProductions.length === 0) {
             throw new Error(`Could not find milk production data`);
         }
 

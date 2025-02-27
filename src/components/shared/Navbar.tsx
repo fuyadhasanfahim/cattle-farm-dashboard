@@ -21,12 +21,12 @@ export default async function Navbar() {
 
     return (
         <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
-            <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+            <div className="w-full flex items-center justify-between">
                 <Image
-                    src={'/logo/logo.svg'}
+                    src={'/logo/logo.png'}
                     alt="logo"
-                    width={168}
-                    height={52}
+                    width={60}
+                    height={60}
                 />
 
                 <form className="relative w-[433px] h-[45px]">
