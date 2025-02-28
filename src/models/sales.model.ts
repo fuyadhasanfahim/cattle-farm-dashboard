@@ -20,23 +20,28 @@ const salesSchema = new Schema<ISales>(
             required: false,
         },
         দুধের_পরিমাণ: {
-            type: Number,
+            type: String,
+            required: true,
         },
         প্রতি_লিটারের_দাম: {
-            type: Number,
+            type: String,
+            required: true,
         },
         মোট_মূল্য: {
-            type: Number,
+            type: String,
+            required: true,
         },
         পরিশোধিত_পরিমাণ: {
-            type: Number,
+            type: String,
+            required: true,
         },
         পরিশোধ_পদ্ধতি: {
             type: String,
             required: true,
         },
         বকেয়া_পরিমাণ: {
-            type: Number,
+            type: String,
+            required: true,
         },
     },
     {

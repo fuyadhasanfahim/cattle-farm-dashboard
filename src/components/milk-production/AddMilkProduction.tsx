@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { IMilkProduction } from '@/types/milk.production.interface';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { IMilkProduction } from "@/types/milk.production.interface";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
@@ -10,41 +10,41 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
-import SelectOption from '../shared/Select';
-import toast from 'react-hot-toast';
-import { Input } from '../ui/input';
-import { useRouter } from 'next/navigation';
+} from "../ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon, Loader2, Save } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import SelectOption from "../shared/Select";
+import toast from "react-hot-toast";
+import { Input } from "../ui/input";
+import { useRouter } from "next/navigation";
 
 const milkingOptions = [
     {
-        value: 'সকাল',
-        label: 'সকাল',
+        value: "সকাল",
+        label: "সকাল",
     },
     {
-        value: 'দুপুর',
-        label: 'দুপুর',
+        value: "দুপুর",
+        label: "দুপুর",
     },
     {
-        value: 'বিকেল',
-        label: 'বিকেল',
+        value: "বিকেল",
+        label: "বিকেল",
     },
     {
-        value: 'সন্ধ্যা',
-        label: 'সন্ধ্যা',
+        value: "সন্ধ্যা",
+        label: "সন্ধ্যা",
     },
 ];
 
 const cattleTypeOptions = [
     {
-        value: 'গরু',
-        label: 'গরু',
+        value: "গরু",
+        label: "গরু",
     },
 ];
 
@@ -55,11 +55,11 @@ export default function AddMilkProduction() {
 
     const form = useForm<IMilkProduction>({
         defaultValues: {
-            গবাদি_পশুর_ধরণ: '',
+            গবাদি_পশুর_ধরণ: "",
             দুধ_সংগ্রহের_তারিখ: new Date(),
             দুধের_পরিমাণ: 0,
             ফ্যাট_শতাংশ: 0,
-            সময়: '',
+            সময়: "",
             মোট_দুধের_পরিমাণ: totalMilk,
         },
     });
@@ -69,11 +69,11 @@ export default function AddMilkProduction() {
 
         try {
             const response = await fetch(
-                '/api/milk-production/add-milk-production',
+                "/api/milk-production/add-milk-production",
                 {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify(data),
                 }
@@ -83,19 +83,19 @@ export default function AddMilkProduction() {
 
             if (response.ok) {
                 setTotalMilk(result.data.মোট_দুধের_পরিমাণ);
-                toast.success('দুধ উৎপাদন তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।');
+                toast.success("দুধ উৎপাদন তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।");
                 form.reset();
             } else {
                 toast.error(
                     result.message ||
-                        'দুধ উৎপাদন তথ্য সংরক্ষণ করতে ব্যর্থ হয়েছে।'
+                        "দুধ উৎপাদন তথ্য সংরক্ষণ করতে ব্যর্থ হয়েছে।"
                 );
             }
         } catch (error) {
-            toast.error((error as Error).message || 'Something went wrong.');
+            toast.error((error as Error).message || "Something went wrong.");
         } finally {
             setIsLoading(false);
-            router.push('/milk-production');
+            router.push("/milk-production");
         }
     };
 
@@ -145,13 +145,13 @@ export default function AddMilkProduction() {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    'w-full pl-3 text-left font-normal',
+                                                    "w-full pl-3 text-left font-normal",
                                                     !field.value &&
-                                                        'text-muted-foreground'
+                                                        "text-muted-foreground"
                                                 )}
                                             >
                                                 {field.value ? (
-                                                    format(field.value, 'PPP')
+                                                    format(field.value, "PPP")
                                                 ) : (
                                                     <span>
                                                         তারিখ নির্বাচন করুন
@@ -175,7 +175,7 @@ export default function AddMilkProduction() {
                                             }}
                                             disabled={(date) =>
                                                 date > new Date() ||
-                                                date < new Date('1900-01-01')
+                                                date < new Date("1900-01-01")
                                             }
                                             initialFocus
                                             required
@@ -202,10 +202,10 @@ export default function AddMilkProduction() {
                         control={form.control}
                         name="দুধের_পরিমাণ"
                         rules={{
-                            required: 'দুধের পরিমাণ প্রয়োজনীয়!',
+                            required: "দুধের পরিমাণ প্রয়োজনীয়!",
                             validate: (value) =>
                                 !isNaN(Number(value)) ||
-                                'শুধুমাত্র সংখ্যা লিখুন!',
+                                "শুধুমাত্র সংখ্যা লিখুন!",
                         }}
                         render={({ field }) => (
                             <FormItem className="w-full">
@@ -219,7 +219,7 @@ export default function AddMilkProduction() {
                                             e.currentTarget.value =
                                                 e.currentTarget.value.replace(
                                                     /\D/g,
-                                                    ''
+                                                    ""
                                                 );
                                             field.onChange(e);
                                         }}
@@ -235,12 +235,12 @@ export default function AddMilkProduction() {
                         control={form.control}
                         name="ফ্যাট_শতাংশ"
                         rules={{
-                            required: 'ফ্যাট শতাংশ প্রয়োজনীয়!',
+                            required: "ফ্যাট শতাংশ প্রয়োজনীয়!",
                             validate: (value) => {
                                 if (isNaN(Number(value)))
-                                    return 'শুধুমাত্র সংখ্যা লিখুন!';
+                                    return "শুধুমাত্র সংখ্যা লিখুন!";
                                 if (value > 100)
-                                    return 'ফ্যাট শতাংশ সর্বোচ্চ ১০০ হতে পারে!';
+                                    return "ফ্যাট শতাংশ সর্বোচ্চ ১০০ হতে পারে!";
                                 return true;
                             },
                         }}
@@ -256,14 +256,14 @@ export default function AddMilkProduction() {
                                             e.currentTarget.value =
                                                 e.currentTarget.value.replace(
                                                     /\D/g,
-                                                    ''
+                                                    ""
                                                 );
                                             if (
                                                 parseFloat(
                                                     e.currentTarget.value
                                                 ) > 100
                                             ) {
-                                                e.currentTarget.value = '100';
+                                                e.currentTarget.value = "100";
                                             }
                                             field.onChange(e);
                                         }}

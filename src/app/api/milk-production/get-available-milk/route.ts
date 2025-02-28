@@ -1,6 +1,6 @@
-import dbConfig from '@/lib/dbConfig';
-import MilkProductionModel from '@/models/milk.production.model';
-import { NextResponse } from 'next/server';
+import dbConfig from "@/lib/dbConfig";
+import MilkProductionModel from "@/models/milk.production.model";
+import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
@@ -13,14 +13,14 @@ export async function GET() {
         if (!latestMilkProduction) {
             return NextResponse.json({
                 success: false,
-                message: 'No milk production data found',
+                message: "No milk production data found",
                 status: 404,
             });
         }
 
         return NextResponse.json({
             success: true,
-            message: 'Data retrieved successfully',
+            message: "Data retrieved successfully",
             data: latestMilkProduction,
         });
     } catch (error) {
@@ -28,7 +28,7 @@ export async function GET() {
             success: false,
             message:
                 (error as Error).message ||
-                'An error occurred while processing the request',
+                "An error occurred while processing the request",
             status: 500,
         });
     }

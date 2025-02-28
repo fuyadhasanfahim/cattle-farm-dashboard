@@ -1,6 +1,6 @@
-import dbConfig from '@/lib/dbConfig';
-import MilkProductionModel from '@/models/milk.production.model';
-import { NextRequest, NextResponse } from 'next/server';
+import dbConfig from "@/lib/dbConfig";
+import MilkProductionModel from "@/models/milk.production.model";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
             সময়,
         } = await request.json();
 
-        console.log('Request Body:', {
+        console.log("Request Body:", {
             দুধ_সংগ্রহের_তারিখ,
             গবাদি_পশুর_ধরণ,
             ফ্যাট_শতাংশ,
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: 'All fields are required!',
+                    message: "All fields are required!",
                 },
                 { status: 400 }
             );
@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
 
         const normalizedDate = new Date(দুধ_সংগ্রহের_তারিখ)
             .toISOString()
-            .split('T')[0];
+            .split("T")[0];
 
-        console.log('Normalized Date:', normalizedDate);
+        console.log("Normalized Date:", normalizedDate);
 
         const isDuplicate = await MilkProductionModel.findOne({
             দুধ_সংগ্রহের_তারিখ: {
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
                 {
                     success: false,
                     message:
-                        'Duplicate entry! Milk production record already exists for this date, cattle ID, time, and quantity.',
+                        "Duplicate entry! Milk production record already exists for this date, cattle ID, time, and quantity.",
                 },
                 { status: 409 }
             );
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
         await milkProduction.save();
 
-        console.log('Milk Production Saved:', milkProduction);
+        console.log("Milk Production Saved:", milkProduction);
 
         const totalMilk = await MilkProductionModel.aggregate([
             {
@@ -97,12 +97,12 @@ export async function POST(request: NextRequest) {
             {
                 $group: {
                     _id: null,
-                    total: { $sum: '$দুধের_পরিমাণ' },
+                    total: { $sum: "$দুধের_পরিমাণ" },
                 },
             },
         ]);
 
-        console.log('Total Milk Aggregation Result:', totalMilk);
+        console.log("Total Milk Aggregation Result:", totalMilk);
 
         const newTotal = totalMilk.length > 0 ? totalMilk[0].total : 0;
 
@@ -110,12 +110,12 @@ export async function POST(request: NextRequest) {
             মোট_দুধের_পরিমাণ: newTotal,
         });
 
-        console.log('Updated Milk Production with Total:', newTotal);
+        console.log("Updated Milk Production with Total:", newTotal);
 
         return NextResponse.json(
             {
                 success: true,
-                message: 'Milk production added successfully!',
+                message: "Milk production added successfully!",
                 data: {
                     ...milkProduction.toObject(),
                     মোট_দুধের_পরিমাণ: newTotal,
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
         );
     } catch (error) {
         console.error(
-            'Error in POST /api/milk-production/add-milk-production:',
+            "Error in POST /api/milk-production/add-milk-production:",
             error
         );
         return NextResponse.json(
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
                 success: false,
                 message:
                     (error as Error).message ||
-                    'An error occurred while adding milk production.',
+                    "An error occurred while adding milk production.",
             },
             { status: 500 }
         );

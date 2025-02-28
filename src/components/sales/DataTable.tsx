@@ -1,9 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Eye } from 'lucide-react';
-import { format } from 'date-fns';
-import { ISales } from '@/types/sales.interface';
+import { useState, useEffect } from "react";
+import { Eye } from "lucide-react";
+import { format } from "date-fns";
+
+interface ISales {
+    _id: string;
+    createdAt: Date;
+    বিক্রয়ের_ধরণ: string;
+    বিক্রয়ের_তারিখ: Date;
+    গ্রাহকের_মোবাইল_নম্বর: string;
+    গ্রাহকের_নাম: string;
+    দুধের_পরিমাণ: string;
+    প্রতি_লিটারের_দাম: string;
+    মোট_মূল্য: string;
+    পরিশোধিত_পরিমাণ: string;
+    পরিশোধ_পদ্ধতি: string;
+    বকেয়া_পরিমাণ: string;
+}
 
 export default function DataTable() {
     const [data, setData] = useState<ISales[]>([]);
@@ -17,7 +31,7 @@ export default function DataTable() {
 
                 setData(data);
             } catch (error) {
-                console.error('Error fetching milk collection data:', error);
+                console.error("Error fetching milk sales data:", error);
             } finally {
                 setLoading(false);
             }
@@ -27,29 +41,29 @@ export default function DataTable() {
     }, []);
 
     const handleLocationChange = (id: string) => {
-        console.log('View details for ID:', id);
+        console.log("View details for ID:", id);
     };
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-md my-10">
-            <h1 className="text-2xl font-bold mb-6">দুধ সংগ্রহ ডেটা</h1>
+            <h1 className="text-2xl font-bold mb-6">বিক্রয় ডেটা</h1>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-green-500">
                     <tr>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            ট্যাগ আইডি
+                            বিক্রয় আইডি
                         </th>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            গবাদি পশুর ধরণ
+                            বিক্রয়ের ধরণ
                         </th>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
                             দুধের পরিমাণ
                         </th>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            দুধ সংগ্রহের তারিখ
+                            বিক্রয়ের তারিখ
                         </th>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            সময়
+                            তৈরি হওয়ার তারিখ
                         </th>
                         <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
                             অ্যাকশন
@@ -59,7 +73,7 @@ export default function DataTable() {
                 <tbody className="bg-white divide-y divide-gray-200">
                     {loading ? (
                         <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center">
+                            <td colSpan={6} className="px-6 py-4 text-center">
                                 লোড হচ্ছে...
                             </td>
                         </tr>
@@ -67,10 +81,10 @@ export default function DataTable() {
                         data.map((item) => (
                             <tr key={item._id}>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.গবাদি_পশুর_ট্যাগ_আইডি}
+                                    {item._id}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.গবাদি_পশুর_ধরণ}
+                                    {item.বিক্রয়ের_ধরণ}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
                                     {item.দুধের_পরিমাণ} লিটার
@@ -79,12 +93,17 @@ export default function DataTable() {
                                     {item.বিক্রয়ের_তারিখ
                                         ? format(
                                               new Date(item.বিক্রয়ের_তারিখ),
-                                              'dd-MMMM-yyyy'
+                                              "dd-MMMM-yyyy"
                                           )
-                                        : 'N/A'}
+                                        : "N/A"}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {format(item.createdAt, 'dd-MMMM-yyyy')}
+                                    {item.createdAt
+                                        ? format(
+                                              new Date(item.createdAt),
+                                              "dd-MMMM-yyyy"
+                                          )
+                                        : "N/A"}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
                                     <div className="w-full flex items-center justify-center">
