@@ -9,7 +9,6 @@ export interface IPayment {
     তারিখ: Date;
     পরিমাণ: number;
     পদ্ধতি: string;
-    মন্তব্য?: string;
 }
 
 export interface ICustomer {

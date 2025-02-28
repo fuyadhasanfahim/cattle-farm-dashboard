@@ -39,10 +39,6 @@ const paymentSchema = new Schema<IPayment>(
             type: String,
             required: true,
         },
-        মন্তব্য: {
-            type: String,
-            required: false,
-        },
     },
     {
         timestamps: true,
