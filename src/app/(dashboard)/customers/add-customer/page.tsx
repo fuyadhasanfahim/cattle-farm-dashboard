@@ -21,6 +21,8 @@ import SelectOption from '@/components/shared/Select';
 import { useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 const customerTypeOptions = [
     {
         value: 'খুচরা',

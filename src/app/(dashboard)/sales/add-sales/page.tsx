@@ -30,6 +30,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { formValidationSchema } from '@/validator/sales.validation.schema';
 import { useRouter } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 const salesTypeOptions = [
     {
         value: 'দুধ',
