@@ -1,5 +1,4 @@
 import dbConfig from '@/lib/dbConfig';
-import CattleModel from '@/models/cattle.model';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -9,16 +8,19 @@ export async function PATCH(request: NextRequest) {
             দুধ_সংগ্রহের_তারিখ,
             গবাদি_পশুর_ধরণ,
             ফ্যাট_শতাংশ,
-            গবাদি_পশুর_ট্যাগ_আইডি,
+            মোট_দুধের_পরিমাণ,
             দুধের_পরিমাণ,
             সময়,
         } = await request.json();
+
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
 
         if (
             !দুধ_সংগ্রহের_তারিখ ||
             !গবাদি_পশুর_ধরণ ||
             !ফ্যাট_শতাংশ ||
-            !গবাদি_পশুর_ট্যাগ_আইডি ||
+            !মোট_দুধের_পরিমাণ ||
             !দুধের_পরিমাণ ||
             !সময়
         ) {
@@ -33,29 +35,16 @@ export async function PATCH(request: NextRequest) {
 
         await dbConfig();
 
-        const isIdExist = await CattleModel.findOne({
-            ট্যাগ_আইডি: গবাদি_পশুর_ট্যাগ_আইডি,
-        });
-
-        if (!isIdExist) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: 'Cattle ID not found!',
-                },
-                { status: 404 }
-            );
-        }
-
         const updatedMilkProduction =
-            await MilkProductionModel.findOneAndUpdate(
-                { গবাদি_পশুর_ট্যাগ_আইডি },
+            await MilkProductionModel.findByIdAndUpdate(
+                id,
                 {
                     দুধ_সংগ্রহের_তারিখ,
                     গবাদি_পশুর_ধরণ,
                     ফ্যাট_শতাংশ,
                     দুধের_পরিমাণ,
                     সময়,
+                    মোট_দুধের_পরিমাণ,
                 },
                 { new: true }
             );

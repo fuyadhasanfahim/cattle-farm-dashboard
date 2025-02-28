@@ -9,11 +9,11 @@ export const milkProductionValidationSchema = z.object({
     গবাদি_পশুর_ধরণ: z.string({
         required_error: 'গবাদি পশুর ধরণ প্রয়োজন',
     }),
-    ফ্যাট_শতাংশ: z.string({
+    ফ্যাট_শতাংশ: z.number({
         required_error: 'সেশন প্রয়োজন',
     }),
-    গবাদি_পশুর_ট্যাগ_আইডি: z.string({
-        required_error: 'গবাদি পশুর ট্যাগ আইডি প্রয়োজন',
+    মোট_দুধের_পরিমাণ: z.number({
+        required_error: 'মোট দুধের পরিমাণ প্রয়োজন',
     }),
     দুধের_পরিমাণ: z.string().refine((value) => !isNaN(parseFloat(value)), {
         message: 'দুধের পরিমাণ অবশ্যই একটি সংখ্যা হতে হবে',

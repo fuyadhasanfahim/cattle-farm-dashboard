@@ -3,10 +3,6 @@ import { model, models, Schema } from 'mongoose';
 
 const milkProductionSchema = new Schema<IMilkProduction>(
     {
-        গবাদি_পশুর_ট্যাগ_আইডি: {
-            type: String,
-            required: true,
-        },
         দুধ_সংগ্রহের_তারিখ: {
             type: Date,
             required: true,
@@ -16,11 +12,16 @@ const milkProductionSchema = new Schema<IMilkProduction>(
             required: true,
         },
         দুধের_পরিমাণ: {
-            type: String,
+            type: Number,
             required: true,
+            default: 0,
+        },
+        মোট_দুধের_পরিমাণ: {
+            type: Number,
+            default: 0,
         },
         ফ্যাট_শতাংশ: {
-            type: String,
+            type: Number,
             required: true,
         },
         সময়: {
@@ -32,6 +33,30 @@ const milkProductionSchema = new Schema<IMilkProduction>(
         timestamps: true,
     }
 );
+
+milkProductionSchema.post('save', async function () {
+    const MilkProductionModel =
+        models?.MilkProductions ||
+        model('MilkProductions', milkProductionSchema);
+
+    const totalMilk = await MilkProductionModel.aggregate([
+        {
+            $match: { _id: this._id },
+        },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: '$দুধের_পরিমাণ' },
+            },
+        },
+    ]);
+
+    const newTotal = totalMilk.length > 0 ? totalMilk[0].total : 0;
+
+    await MilkProductionModel.findByIdAndUpdate(this._id, {
+        মোট_দুধের_পরিমাণ: newTotal,
+    });
+});
 
 const MilkProductionModel =
     models?.MilkProductions || model('MilkProductions', milkProductionSchema);

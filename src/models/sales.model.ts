@@ -11,16 +11,16 @@ const salesSchema = new Schema<ISales>(
             type: Date,
             required: true,
         },
+        গ্রাহকের_মোবাইল_নম্বর: {
+            type: String,
+            required: false,
+        },
+        গ্রাহকের_নাম: {
+            type: String,
+            required: false,
+        },
         দুধের_পরিমাণ: {
             type: Number,
-        },
-        গবাদি_পশুর_ট্যাগ_আইডি: {
-            type: String,
-            required: true,
-        },
-        গবাদি_পশুর_ধরণ: {
-            type: String,
-            required: true,
         },
         প্রতি_লিটারের_দাম: {
             type: Number,
@@ -28,7 +28,14 @@ const salesSchema = new Schema<ISales>(
         মোট_মূল্য: {
             type: Number,
         },
-        বিক্রয়_মূল্য: {
+        পরিশোধিত_পরিমাণ: {
+            type: Number,
+        },
+        পরিশোধ_পদ্ধতি: {
+            type: String,
+            required: true,
+        },
+        বকেয়া_পরিমাণ: {
             type: Number,
         },
     },

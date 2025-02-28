@@ -44,7 +44,7 @@ export default function DataTable() {
                     <thead className="bg-green-500">
                         <tr>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed rounded-tl-lg  text-white uppercase tracking-wider">
-                                ট্যাগ আইডি
+                                মোট দুধের পরিমাণ
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
                                 গবাদি পশুর ধরণ
@@ -80,7 +80,7 @@ export default function DataTable() {
                             data.map((item) => (
                                 <tr key={item._id}>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.গবাদি_পশুর_ট্যাগ_আইডি}
+                                        {item.মোট_দুধের_পরিমাণ} লিটার
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.গবাদি_পশুর_ধরণ}

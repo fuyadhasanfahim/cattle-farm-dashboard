@@ -111,7 +111,7 @@ export default function Details() {
                                 দুধ উৎপাদন ডিটেইলস
                             </CardTitle>
                             <p className="text-green-600 mt-1">
-                                ট্যাগ আইডি: {data.গবাদি_পশুর_ট্যাগ_আইডি}
+                                মোট দুধের পরিমাণ: {data.মোট_দুধের_পরিমাণ} লিটার
                             </p>
                         </div>
                     </div>

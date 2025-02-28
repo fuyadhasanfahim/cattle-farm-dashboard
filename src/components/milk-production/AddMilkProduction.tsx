@@ -1,7 +1,7 @@
 'use client';
 
 import { IMilkProduction } from '@/types/milk.production.interface';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     Form,
@@ -19,7 +19,6 @@ import { CalendarIcon, Loader2, Save } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import SelectOption from '../shared/Select';
 import toast from 'react-hot-toast';
-import { ICattle } from '@/types/cattle.interface';
 import { Input } from '../ui/input';
 import { useRouter } from 'next/navigation';
 
@@ -42,59 +41,28 @@ const milkingOptions = [
     },
 ];
 
+const cattleTypeOptions = [
+    {
+        value: 'গরু',
+        label: 'গরু',
+    },
+];
+
 export default function AddMilkProduction() {
     const [isLoading, setIsLoading] = useState(false);
-    const [cattles, setCattles] = useState<ICattle[]>([]);
-    const [cattlesMap, setCattlesMap] = useState<Record<string, ICattle>>({});
+    const [totalMilk, setTotalMilk] = useState(0);
     const router = useRouter();
 
     const form = useForm<IMilkProduction>({
         defaultValues: {
-            গবাদি_পশুর_ট্যাগ_আইডি: '',
             গবাদি_পশুর_ধরণ: '',
             দুধ_সংগ্রহের_তারিখ: new Date(),
-            দুধের_পরিমাণ: '',
-            ফ্যাট_শতাংশ: '',
+            দুধের_পরিমাণ: 0,
+            ফ্যাট_শতাংশ: 0,
             সময়: '',
+            মোট_দুধের_পরিমাণ: totalMilk,
         },
     });
-
-    const selectedTagId = form.watch('গবাদি_পশুর_ট্যাগ_আইডি');
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/cattle/get-all-tag-id');
-                const { data } = await response.json();
-
-                const cattleMap = data.reduce(
-                    (acc: Record<string, ICattle>, cattle: ICattle) => {
-                        acc[cattle.ট্যাগ_আইডি] = cattle;
-                        return acc;
-                    },
-                    {}
-                );
-
-                setCattles(data);
-                setCattlesMap(cattleMap);
-            } catch (error) {
-                toast.error(
-                    (error as Error).message || 'Something went wrong.'
-                );
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (selectedTagId && cattlesMap[selectedTagId]) {
-            form.setValue(
-                'গবাদি_পশুর_ধরণ',
-                cattlesMap[selectedTagId]?.গবাদিপশুর_ধরন || ''
-            );
-        }
-    }, [selectedTagId, cattlesMap, form]);
 
     const onSubmit = async (data: IMilkProduction) => {
         setIsLoading(true);
@@ -111,12 +79,17 @@ export default function AddMilkProduction() {
                 }
             );
 
-            if (response.ok) {
-                toast.success('দুধ উৎপাদন তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।');
+            const result = await response.json();
 
+            if (response.ok) {
+                setTotalMilk(result.data.মোট_দুধের_পরিমাণ);
+                toast.success('দুধ উৎপাদন তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।');
                 form.reset();
             } else {
-                toast.error('দুধ উৎপাদন তথ্য সংরক্ষণ করতে ব্যর্থ হয়েছে।');
+                toast.error(
+                    result.message ||
+                        'দুধ উৎপাদন তথ্য সংরক্ষণ করতে ব্যর্থ হয়েছে।'
+                );
             }
         } catch (error) {
             toast.error((error as Error).message || 'Something went wrong.');
@@ -131,28 +104,25 @@ export default function AddMilkProduction() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <div className="flex items-center gap-6">
                     <SelectOption
-                        data={cattles.map((cattle) => ({
-                            value: cattle.ট্যাগ_আইডি,
-                            label: cattle.ট্যাগ_আইডি,
-                        }))}
+                        data={cattleTypeOptions}
                         form={form}
-                        name="গবাদি_পশুর_ট্যাগ_আইডি"
-                        label="গবাদি পশুর ট্যাগ আইডি"
-                        placeholder="গবাদি পশুর ট্যাগ আইডি নির্বাচন করুন"
+                        name="গবাদি_পশুর_ধরণ"
+                        label="গবাদি পশুর ধরণ"
+                        placeholder="গবাদি পশুর ধরণ নির্বাচন করুন"
                         required
                     />
 
                     <FormField
                         control={form.control}
-                        name="গবাদি_পশুর_ধরণ"
+                        name="মোট_দুধের_পরিমাণ"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>গবাদি পশুর ধরণ</FormLabel>
+                                <FormLabel>মোট দুধের পরিমাণ</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="গবাদি পশুর ধরণ"
+                                        placeholder="মোট দুধের পরিমাণ লিখুন"
+                                        inputMode="numeric"
                                         readOnly
-                                        className="bg-gray-50"
                                         {...field}
                                     />
                                 </FormControl>
@@ -269,7 +239,7 @@ export default function AddMilkProduction() {
                             validate: (value) => {
                                 if (isNaN(Number(value)))
                                     return 'শুধুমাত্র সংখ্যা লিখুন!';
-                                if (parseFloat(value) > 100)
+                                if (value > 100)
                                     return 'ফ্যাট শতাংশ সর্বোচ্চ ১০০ হতে পারে!';
                                 return true;
                             },

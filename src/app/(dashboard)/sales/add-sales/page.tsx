@@ -19,18 +19,32 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { ICattle } from '@/types/cattle.interface';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save } from 'lucide-react';
+import { CalendarIcon, Loader2, Plus, Save, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { formValidationSchema } from '@/validator/sales.validation.schema';
 import { useRouter } from 'next/navigation';
+import { ISales } from '@/types/sales.interface';
 
 export const dynamic = 'force-dynamic';
+
+const paymentTypeOptions = [
+    {
+        value: 'টাকা',
+        label: 'টাকা',
+    },
+    {
+        value: 'অনলাইন পেমেন্ট',
+        label: 'অনলাইন পেমেন্ট',
+    },
+    {
+        value: 'ব্যাংক পেমেন্ট',
+        label: 'ব্যাংক পেমেন্ট',
+    },
+];
 
 const salesTypeOptions = [
     {
@@ -38,15 +52,46 @@ const salesTypeOptions = [
         label: 'দুধ',
     },
     {
+        value: 'মাছ',
+        label: 'মাছ',
+    },
+    {
+        value: 'ছাগল',
+        label: 'ছাগল',
+    },
+    {
+        value: 'গরু',
+        label: 'গরু',
+    },
+    {
         value: 'অন্যান্য',
         label: 'অন্যান্য',
     },
 ];
 
+const formValidationSchema = z.object({
+    বিক্রয়ের_ধরণ: z
+        .string()
+        .min(1, { message: 'বিক্রয়ের ধরণ নির্বাচন করুন' }),
+    বিক্রয়ের_তারিখ: z.coerce.date(), // Ensuring date type
+    গ্রাহকের_মোবাইল_নম্বর: z
+        .string()
+        .min(1, { message: 'গ্রাহকের মোবাইল নম্বর আবশ্যক' }),
+    গ্রাহকের_নাম: z.string().min(1, { message: 'গ্রাহকের নাম আবশ্যক' }),
+    দুধের_পরিমাণ: z.number().optional(),
+    প্রতি_লিটারের_দাম: z.number().optional(),
+    মোট_মূল্য: z.number().optional(),
+    পরিশোধিত_পরিমাণ: z.number().min(1),
+    পরিশোধ_পদ্ধতি: z
+        .string()
+        .min(1, { message: 'পরিশোধ পদ্ধতি নির্বাচন করুন' }),
+    বকেয়া_পরিমাণ: z.number().min(1),
+});
+
 export default function AddSales() {
     const [isLoading, setIsLoading] = useState(false);
-    const [cattles, setCattles] = useState<ICattle[]>([]);
-    const [cattlesMap, setCattlesMap] = useState<Record<string, ICattle>>({});
+    const [isSearching, setIsSearching] = useState(false);
+    const [availableMilk, setAvailableMilk] = useState(0);
     const [selectedSalesType, setSelectedSalesType] = useState('');
 
     const form = useForm({
@@ -54,92 +99,146 @@ export default function AddSales() {
         defaultValues: {
             বিক্রয়ের_ধরণ: '',
             বিক্রয়ের_তারিখ: new Date(),
-            দুধের_পরিমাণ: '',
-            গবাদি_পশুর_ট্যাগ_আইডি: '',
-            গবাদি_পশুর_ধরন: '',
-            প্রতি_লিটারের_দাম: '',
-            মোট_মূল্য: '',
-            বিক্রয়_মূল্য: '',
+            দুধের_পরিমাণ: 0,
+            গ্রাহকের_মোবাইল_নম্বর: '',
+            গ্রাহকের_নাম: '',
+            প্রতি_লিটারের_দাম: 0,
+            মোট_মূল্য: 0,
+            পরিশোধিত_পরিমাণ: 0,
+            পরিশোধ_পদ্ধতি: '',
+            বকেয়া_পরিমাণ: 0,
         },
     });
     const router = useRouter();
     const salesType = form.watch('বিক্রয়ের_ধরণ');
     const দুধের_পরিমাণ = form.watch('দুধের_পরিমাণ');
     const প্রতি_লিটারের_দাম = form.watch('প্রতি_লিটারের_দাম');
-    const selectedTagId = form.watch('গবাদি_পশুর_ট্যাগ_আইডি');
+    const গ্রাহকের_মোবাইল_নম্বর = form.watch('গ্রাহকের_মোবাইল_নম্বর');
 
     useEffect(() => {
         setSelectedSalesType(salesType);
     }, [salesType]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/cattle/get-all-tag-id');
-                const { data } = await response.json();
+        if (salesType === 'দুধ') {
+            fetchAvailableMilk();
+        }
+    }, [salesType]);
 
-                const cattleMap = data.reduce(
-                    (acc: Record<string, ICattle>, cattle: ICattle) => {
-                        acc[cattle.ট্যাগ_আইডি] = cattle;
-                        return acc;
-                    },
-                    {}
-                );
+    const fetchAvailableMilk = async () => {
+        try {
+            const response = await fetch(
+                '/api/milk-production/get-available-milk'
+            );
+            const { data } = await response.json();
 
-                setCattles(data);
-                setCattlesMap(cattleMap);
-            } catch (error) {
-                toast.error(
-                    (error as Error).message || 'Something went wrong.'
-                );
+            if (response.ok) {
+                setAvailableMilk(data.মোট_দুধের_পরিমাণ || 0);
+            } else {
+                toast.error('দুধের স্টক তথ্য লোড করতে সমস্যা হয়েছে');
             }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (selectedTagId && cattlesMap[selectedTagId]) {
-            form.setValue(
-                'গবাদি_পশুর_ধরন',
-                cattlesMap[selectedTagId]?.গবাদিপশুর_ধরন || ''
+        } catch (error) {
+            toast.error(
+                (error as Error).message ||
+                    'দুধের স্টক তথ্য লোড করতে সমস্যা হয়েছে'
             );
         }
-    }, [selectedTagId, cattlesMap, form]);
+    };
 
     useEffect(() => {
         if (selectedSalesType === 'দুধ' && দুধের_পরিমাণ && প্রতি_লিটারের_দাম) {
-            const quantity = parseFloat(দুধের_পরিমাণ);
-            const pricePerLiter = parseFloat(প্রতি_লিটারের_দাম);
+            const quantity = দুধের_পরিমাণ;
+            const pricePerLiter = প্রতি_লিটারের_দাম;
 
             if (!isNaN(quantity) && !isNaN(pricePerLiter)) {
                 const totalPrice = (quantity * pricePerLiter).toFixed(2);
-                form.setValue('মোট_মূল্য', totalPrice);
+                form.setValue('মোট_মূল্য', parseFloat(totalPrice));
             }
         }
     }, [দুধের_পরিমাণ, প্রতি_লিটারের_দাম, selectedSalesType, form]);
 
-    const onSubmit = async (data: z.infer<typeof formValidationSchema>) => {
+    const searchCustomer = async () => {
+        if (!গ্রাহকের_মোবাইল_নম্বর || গ্রাহকের_মোবাইল_নম্বর.length < 3) {
+            toast.error('সঠিক ফোন নম্বর প্রদান করুন');
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            const response = await fetch(
+                `/api/customers/get-customer-by-phone-number?mobile_number=${গ্রাহকের_মোবাইল_নম্বর}`
+            );
+            const { data } = await response.json();
+
+            console.log(data);
+
+            if (response.ok) {
+                form.setValue('গ্রাহকের_নাম', data.নাম || '');
+                toast.success('গ্রাহক খুঁজে পাওয়া গেছে');
+            } else {
+                form.setValue('গ্রাহকের_নাম', '');
+                toast.error('গ্রাহক খুঁজে পাওয়া যায়নি');
+            }
+        } catch (error) {
+            toast.error(
+                (error as Error).message || 'গ্রাহক খোঁজার সময় সমস্যা হয়েছে'
+            );
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const onSubmit = async (data: ISales) => {
+        if (data.বিক্রয়ের_ধরণ === 'দুধ') {
+            if (data.দুধের_পরিমাণ) {
+                const requestedQuantity = data.দুধের_পরিমাণ;
+                if (isNaN(requestedQuantity) || requestedQuantity <= 0) {
+                    toast.error('দুধের সঠিক পরিমাণ প্রদান করুন');
+                    return;
+                }
+
+                if (requestedQuantity > availableMilk) {
+                    toast.error(
+                        `পর্যাপ্ত দুধ নেই। স্টকে আছে ${availableMilk} লিটার`
+                    );
+                    return;
+                }
+
+                if (!data.গ্রাহকের_মোবাইল_নম্বর || !data.গ্রাহকের_নাম) {
+                    toast.error('গ্রাহকের তথ্য প্রদান করুন');
+                    return;
+                }
+            }
+        }
+
         setIsLoading(true);
         try {
             const response = await fetch(`/api/sales/add-sales`, {
                 method: 'POST',
-
                 body: JSON.stringify(data),
             });
 
+            const result = await response.json();
+
             if (response.ok) {
                 toast.success('বিক্রয় সফলভাবে যোগ করা হয়েছে!');
-
                 form.reset();
-
                 router.push('/sales');
+            } else {
+                toast.error(result.message || 'কিছু ভুল হয়েছে!');
             }
         } catch (error) {
             toast.error((error as Error).message || 'কিছু ভুল হয়েছে!');
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const navigateToAddCustomer = () => {
+        if (গ্রাহকের_মোবাইল_নম্বর) {
+            localStorage.setItem('tempCustomerPhone', গ্রাহকের_মোবাইল_নম্বর);
+        }
+        router.push('/customers/add-customer');
     };
 
     return (
@@ -232,29 +331,68 @@ export default function AddSales() {
                         {selectedSalesType === 'দুধ' && (
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <SelectOption
-                                        data={cattles.map((cattle) => ({
-                                            value: cattle.ট্যাগ_আইডি,
-                                            label: cattle.ট্যাগ_আইডি,
-                                        }))}
-                                        form={form}
-                                        name="গবাদি_পশুর_ট্যাগ_আইডি"
-                                        label="গবাদি পশুর ট্যাগ আইডি"
-                                        placeholder="গবাদি পশুর ট্যাগ আইডি নির্বাচন করুন"
-                                        required
-                                    />
+                                    <div className="relative">
+                                        <FormField
+                                            control={form.control}
+                                            name="গ্রাহকের_মোবাইল_নম্বর"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormLabel>
+                                                        গ্রাহকের ফোন নম্বর
+                                                    </FormLabel>
+                                                    <div className="flex gap-2">
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="গ্রাহকের ফোন নম্বর লিখুন"
+                                                                type="text"
+                                                                required
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            onClick={
+                                                                searchCustomer
+                                                            }
+                                                            disabled={
+                                                                isSearching
+                                                            }
+                                                        >
+                                                            {isSearching ? (
+                                                                <Loader2 className="size-4 animate-spin" />
+                                                            ) : (
+                                                                <Search className="size-4" />
+                                                            )}
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            onClick={
+                                                                navigateToAddCustomer
+                                                            }
+                                                            className="bg-green-50 hover:bg-green-100"
+                                                        >
+                                                            <Plus className="size-4 text-green-600" />
+                                                        </Button>
+                                                    </div>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
 
                                     <FormField
                                         control={form.control}
-                                        name="গবাদি_পশুর_ধরন"
+                                        name="গ্রাহকের_নাম"
                                         render={({ field }) => (
                                             <FormItem className="w-full">
                                                 <FormLabel>
-                                                    গবাদিপশুর ধরন
+                                                    গ্রাহকের নাম
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="গবাদিপশুর ধরন"
+                                                        placeholder="গ্রাহকের নাম"
                                                         readOnly
                                                         className="bg-gray-50"
                                                         {...field}
@@ -283,6 +421,10 @@ export default function AddSales() {
                                                         {...field}
                                                     />
                                                 </FormControl>
+                                                <p className="text-xs text-amber-600 mt-1">
+                                                    স্টকে উপলব্ধ:{' '}
+                                                    {availableMilk} লিটার
+                                                </p>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -336,65 +478,55 @@ export default function AddSales() {
                             </>
                         )}
 
-                        {selectedSalesType === 'অন্যান্য' && (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <SelectOption
-                                        data={cattles.map((cattle) => ({
-                                            value: cattle.ট্যাগ_আইডি,
-                                            label: cattle.ট্যাগ_আইডি,
-                                        }))}
-                                        form={form}
-                                        name="গবাদি_পশুর_ট্যাগ_আইডি"
-                                        label="গবাদি পশুর ট্যাগ আইডি"
-                                        placeholder="গবাদি পশুর ট্যাগ আইডি নির্বাচন করুন"
-                                        required
-                                    />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="পরিশোধিত_পরিমাণ"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>
+                                            পরিশোধিত পরিমাণ (৳)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="পরিশোধিত পরিমাণ লিখুন"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="গবাদি_পশুর_ধরন"
-                                        render={({ field }) => (
-                                            <FormItem className="w-full">
-                                                <FormLabel>
-                                                    গবাদিপশুর ধরন
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="গবাদিপশুর ধরন"
-                                                        readOnly
-                                                        className="bg-gray-50"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                            <FormField
+                                control={form.control}
+                                name="বকেয়া_পরিমাণ"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>বকেয়া পরিমাণ (৳)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="বকেয়া পরিমাণ লিখুন"
+                                                type="text"
+                                                readOnly
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="বিক্রয়_মূল্য"
-                                        render={({ field }) => (
-                                            <FormItem className="w-full">
-                                                <FormLabel>
-                                                    বিক্রয় মূল্য (৳)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="বিক্রয় মূল্য লিখুন"
-                                                        type="text"
-                                                        required
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </>
-                        )}
+                            <SelectOption
+                                data={paymentTypeOptions}
+                                form={form}
+                                name="বিক্রয়ের_ধরণ"
+                                label="বিক্রয়ের ধরণ"
+                                placeholder="বিক্রয়ের ধরণ নির্বাচন করুন"
+                                required
+                            />
+                        </div>
 
                         <div className="flex items-center justify-center pt-4">
                             <Button
