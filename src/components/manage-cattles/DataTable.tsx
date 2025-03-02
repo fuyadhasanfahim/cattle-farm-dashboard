@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { ICattle } from '@/types/cattle.interface';
-import { format } from 'date-fns';
+import { ICattle } from "@/types/cattle.interface";
+import { format } from "date-fns";
 import {
     ChevronLeft,
     ChevronRight,
@@ -9,87 +9,67 @@ import {
     Eye,
     Search,
     Trash2,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-
-interface PaginationData {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
-}
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function DataTable() {
     const [tableData, setTableData] = useState<ICattle[]>([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [pagination, setPagination] = useState<PaginationData>({
-        currentPage: 1,
-        totalPages: 1,
-        totalItems: 0,
-        itemsPerPage: 10,
-    });
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const itemsPerPage = 10;
     const router = useRouter();
 
     const headers = [
-        'ট্যাগ_আইডি',
-        'রেজিষ্ট্রেশনের_তারিখ',
-        'স্টল_নম্বর',
-        'জাত',
-        'বাবার_নাম',
-        'পার্সেন্টেজ',
-        'ওজন',
-        'লিঙ্গ',
-        'মোটাতাজা_করন_স্ট্যাটাস',
-        'অবস্থান',
-        'অ্যাকশন',
+        "Tag ID",
+        "Registration Date",
+        "Stall Number",
+        "Breed",
+        "Father's Name",
+        "Percentage",
+        "Weight",
+        "Gender",
+        "Fattening Status",
+        "Location",
+        "Actions",
     ];
 
     const fetchData = async () => {
         try {
             setIsLoading(true);
             const response = await fetch(
-                `/api/cattle/get-cattles-data?page=${pagination.currentPage}&limit=${pagination.itemsPerPage}&search=${searchQuery}`
+                `/api/cattle/get-cattles-data?page=${currentPage}&limit=${15}&search=${searchQuery}`
             );
 
             if (!response.ok) {
-                throw new Error('Failed to fetch data');
+                throw new Error("Failed to fetch data");
             }
 
-            const data = await response.json();
-            console.log(data);
-
-            setTableData(data.data || []);
-            setPagination((prev) => ({
-                ...prev,
-                totalItems: data.totalItems || 0,
-                totalPages: Math.ceil(
-                    (data.totalItems || 0) / pagination.itemsPerPage
-                ),
-            }));
+            const result = await response.json();
+            setTableData(result.data || []);
+            setTotalItems(result.data.length || 0);
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('তথ্য লোড করতে সমস্যা হয়েছে');
+            console.error("Error fetching data:", error);
+            toast.error("Failed to load data");
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        const debounceTimer = setTimeout(() => {
-            fetchData();
-        }, 300);
+        fetchData();
+    }, [currentPage, searchQuery]);
 
-        return () => clearTimeout(debounceTimer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pagination.currentPage, searchQuery]);
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1);
+    };
 
     const handlePageChange = (newPage: number) => {
-        if (newPage >= 1 && newPage <= pagination.totalPages) {
-            setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        }
+        setCurrentPage(newPage);
     };
 
     const handleEditClick = (id: string) => {
@@ -100,69 +80,113 @@ export default function DataTable() {
         if (!id) return;
 
         const confirmDelete = window.confirm(
-            'আপনি কি নিশ্চিত যে আপনি এই তথ্যটি মুছতে চান?'
+            "Are you sure you want to delete this record?"
         );
         if (!confirmDelete) return;
 
         try {
             const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
-                method: 'DELETE',
+                method: "DELETE",
             });
 
             if (response.ok) {
-                setTableData((prev) =>
-                    prev.filter((cattle) => cattle._id !== id)
-                );
-                toast.success('সফল, গবাদিপশুর তথ্য সফলভাবে মুছে ফেলা হয়েছে');
-                // Refetch data if needed to update pagination
-                if (tableData.length === 1 && pagination.currentPage > 1) {
-                    setPagination((prev) => ({
-                        ...prev,
-                        currentPage: prev.currentPage - 1,
-                    }));
-                } else {
-                    fetchData();
-                }
+                toast.success("Cattle record deleted successfully");
+                fetchData();
             } else {
-                throw new Error('মুছে ফেলা যায়নি');
+                throw new Error("Failed to delete");
             }
         } catch (error) {
-            console.error('Error deleting cattle:', error);
-            toast.error('ত্রুটি! গবাদিপশুর তথ্য মুছে ফেলা যায়নি');
+            console.error("Error deleting cattle:", error);
+            toast.error("Error! Failed to delete cattle record");
         }
     };
 
-    const renderPaginationNumbers = () => {
-        const pages = [];
-        const maxVisiblePages = 3;
-        let startPage = Math.max(1, pagination.currentPage - 1);
-        const endPage = Math.min(
-            pagination.totalPages,
-            startPage + maxVisiblePages - 1
-        );
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-        if (endPage - startPage + 1 < maxVisiblePages) {
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    const Pagination = () => {
+        if (totalPages <= 1 || tableData.length === 0) return null;
+
+        const pages = [];
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
         }
 
         for (let i = startPage; i <= endPage; i++) {
             pages.push(
-                <div
+                <button
                     key={i}
                     onClick={() => handlePageChange(i)}
-                    className={`p-2 rounded-lg cursor-pointer ${
-                        pagination.currentPage === i
-                            ? 'bg-[#52aa46] text-white'
-                            : 'border border-[#666666] text-[#666666]'
-                    } justify-center items-center gap-2 flex`}
+                    className={`px-3 py-1 mx-1 rounded-md ${
+                        currentPage === i
+                            ? "bg-[#52aa46] text-white"
+                            : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    }`}
                 >
-                    <div className="text-xs font-normal font-notoSansBengali">
-                        {i.toString().padStart(2, '০')}
-                    </div>
-                </div>
+                    {i}
+                </button>
             );
         }
-        return pages;
+
+        return (
+            <div className="flex items-center justify-center mt-4">
+                <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
+                        currentPage === 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-100"
+                    }`}
+                >
+                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    <span>Previous</span>
+                </button>
+
+                {startPage > 1 && (
+                    <>
+                        <button
+                            onClick={() => handlePageChange(1)}
+                            className="px-3 py-1 mx-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                            1
+                        </button>
+                        {startPage > 2 && <span className="mx-1">...</span>}
+                    </>
+                )}
+
+                {pages}
+
+                {endPage < totalPages && (
+                    <>
+                        {endPage < totalPages - 1 && (
+                            <span className="mx-1">...</span>
+                        )}
+                        <button
+                            onClick={() => handlePageChange(totalPages)}
+                            className="px-3 py-1 mx-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                            {totalPages}
+                        </button>
+                    </>
+                )}
+
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
+                        currentPage === totalPages
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-100"
+                    }`}
+                >
+                    <span>Next</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                </button>
+            </div>
+        );
     };
 
     return (
@@ -175,8 +199,8 @@ export default function DataTable() {
                 <input
                     type="search"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="অনুসন্ধান করুণ"
+                    onChange={handleSearchChange}
+                    placeholder="Search..."
                     className="w-full h-full pl-10 pr-3 bg-white rounded-lg focus:border-[#52aa46] placeholder:text-muted-foreground outline outline-1 outline-[#52aa46] focus:outline-2"
                 />
             </form>
@@ -188,7 +212,7 @@ export default function DataTable() {
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
-                                    className="text-white font-notoSansBengali border border-dashed p-2 py-3"
+                                    className="text-white border border-dashed p-2 py-3"
                                 >
                                     {header}
                                 </th>
@@ -200,18 +224,18 @@ export default function DataTable() {
                             <tr className="bg-white">
                                 <td
                                     colSpan={headers.length}
-                                    className="text-center p-4 font-notoSansBengali"
+                                    className="text-center p-4"
                                 >
-                                    লোড হচ্ছে...
+                                    Loading...
                                 </td>
                             </tr>
                         ) : tableData.length === 0 ? (
                             <tr className="bg-white">
                                 <td
                                     colSpan={headers.length}
-                                    className="text-center p-4 font-notoSansBengali"
+                                    className="text-center p-4"
                                 >
-                                    কোন তথ্য পাওয়া যায়নি
+                                    No data found
                                 </td>
                             </tr>
                         ) : (
@@ -226,7 +250,7 @@ export default function DataTable() {
                                                   new Date(
                                                       row.রেজিষ্ট্রেশনের_তারিখ
                                                   ),
-                                                  'dd-MM-yy'
+                                                  "dd-MM-yy"
                                               )
                                             : null}
                                     </td>
@@ -278,41 +302,11 @@ export default function DataTable() {
                 </table>
             </div>
 
+            <Pagination />
+
             {!isLoading && tableData.length > 0 && (
-                <div className="h-8 justify-start items-center gap-2 inline-flex">
-                    <div
-                        onClick={() =>
-                            handlePageChange(pagination.currentPage - 1)
-                        }
-                        className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
-                            pagination.currentPage === 1
-                                ? 'opacity-50 cursor-not-allowed'
-                                : ''
-                        }`}
-                    >
-                        <ChevronLeft className="size-4" />
-                        <span className="text-[#666666] font-normal font-notoSansBengali">
-                            পূর্ববর্তী
-                        </span>
-                    </div>
-
-                    {renderPaginationNumbers()}
-
-                    <div
-                        onClick={() =>
-                            handlePageChange(pagination.currentPage + 1)
-                        }
-                        className={`px-4 py-2 rounded-lg border border-[#666666] justify-center items-center gap-2 flex cursor-pointer ${
-                            pagination.currentPage === pagination.totalPages
-                                ? 'opacity-50 cursor-not-allowed'
-                                : ''
-                        }`}
-                    >
-                        <span className="text-[#666666] font-normal font-notoSansBengali">
-                            পরবর্তী
-                        </span>
-                        <ChevronRight className="size-4" />
-                    </div>
+                <div className="text-center text-sm text-gray-600 mt-2">
+                    Total {totalItems} items, Page {currentPage} / {totalPages}
                 </div>
             )}
         </section>
