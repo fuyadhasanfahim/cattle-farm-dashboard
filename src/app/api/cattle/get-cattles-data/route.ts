@@ -32,7 +32,8 @@ export async function GET(request: NextRequest) {
         const cattles = await Cattle.find(searchQuery)
             .skip(skip)
             .limit(limit)
-            .lean();
+            .lean()
+            .sort('-createdAt');
 
         const totalPages = Math.ceil(totalItems / limit);
 

@@ -77,7 +77,7 @@ const cattleSchema = new mongoose.Schema<ICattle>(
         },
         বিবরন: {
             type: String,
-            required: [true, 'Description is required'],
+            required: false,
         },
     },
     {
