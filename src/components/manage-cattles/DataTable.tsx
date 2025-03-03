@@ -24,17 +24,17 @@ export default function DataTable() {
     const router = useRouter();
 
     const headers = [
-        'Tag ID',
-        'Registration Date',
-        'Stall Number',
-        'Breed',
-        "Father's Name",
-        'Percentage',
-        'Weight',
-        'Gender',
-        'Fattening Status',
-        'Location',
-        'Actions',
+        'ট্যাগ আইডি',
+        'রেজিষ্ট্রেশনের তারিখ',
+        'স্টল নম্বর',
+        'বয়স',
+        'ওজন',
+        'পার্সেন্টেজ',
+        'ওজন',
+        'লিঙ্গ',
+        'মোটাতাজা করন স্ট্যাটাস',
+        'অবস্থান',
+        'অ্যাকশন',
     ];
 
     useEffect(() => {
@@ -259,17 +259,19 @@ export default function DataTable() {
                                               )
                                             : null}
                                     </td>
-                                    <td className="p-2 border border-dashed">
+                                    <td className="p-2 border border-dashed text-center">
                                         {row.স্টল_নম্বর}
                                     </td>
-                                    <td className="p-2 border border-dashed">
-                                        {row.জাত}
+                                    <td className="p-2 border border-dashed text-center">
+                                        {row.বয়স}
                                     </td>
-                                    <td className="p-2 border border-dashed">
-                                        {row.বাবার_নাম}
+                                    <td className="p-2 border border-dashed text-center">
+                                        {row.ওজন}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.পার্সেন্টেজ}
+                                        {row.পার্সেন্টেজ
+                                            ? row.পার্সেন্টেজ
+                                            : 'N/A'}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
                                         {row.ওজন}

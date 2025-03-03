@@ -27,6 +27,7 @@ import { Loader2 } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
 import SelectOption from '../shared/Select';
+import { useRouter } from 'next/navigation';
 
 const genderOptions = [
     { value: 'পুরুষ', label: 'পুরুষ' },
@@ -66,6 +67,7 @@ export default function AddCattle({
     setOpen: (isOpen: boolean) => void;
 }) {
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const form = useForm<ICattle>({
         defaultValues: {
@@ -139,8 +141,9 @@ export default function AddCattle({
             await response.json();
             toast.success('সফল! গবাদি পশুর তথ্য সফলভাবে যোগ করা হয়েছে।');
 
-            setOpen(false);
+            router.refresh();
             form.reset();
+            setOpen(false);
         } catch (error) {
             toast.error(
                 (error as Error).message || 'ফর্মটি জমা দিতে ব্যর্থ হয়েছে'
@@ -532,7 +535,7 @@ export default function AddCattle({
                             name="বিবরন"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel>বিবরন</FormLabel>
+                                    <FormLabel>বিবরন (Optional)</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="পশুর বিবরন লিখুন"
