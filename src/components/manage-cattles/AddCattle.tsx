@@ -124,7 +124,6 @@ export default function AddCattle({
 
     const onSubmit = async (data: ICattle) => {
         setIsLoading(true);
-        console.log(data);
         try {
             const response = await fetch('/api/cattle/add-cattle', {
                 method: 'POST',

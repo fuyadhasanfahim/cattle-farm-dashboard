@@ -11,7 +11,6 @@ export default function HeroSection() {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Searching for:', query);
-        // Implement search functionality here
     };
 
     return (

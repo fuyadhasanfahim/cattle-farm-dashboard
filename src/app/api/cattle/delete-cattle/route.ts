@@ -14,8 +14,6 @@ export async function DELETE(request: NextRequest) {
             );
         }
 
-        console.log('Extracted ID:', id);
-
         await dbConfig();
 
         const cattle = await CattleModel.findById(id);

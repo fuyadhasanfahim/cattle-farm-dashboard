@@ -8,7 +8,6 @@ export async function PATCH(req: NextRequest) {
 
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
-        console.log(id);
 
         if (!id) {
             return NextResponse.json(
@@ -19,8 +18,6 @@ export async function PATCH(req: NextRequest) {
 
         const { নাম, মোবাইল_নম্বর, ঠিকানা, গ্রাহকের_ধরণ, মন্তব্য } =
             await req.json();
-
-        console.log(নাম, মোবাইল_নম্বর, ঠিকানা, গ্রাহকের_ধরণ, মন্তব্য);
 
         if (!নাম || !মোবাইল_নম্বর || !ঠিকানা || !গ্রাহকের_ধরণ) {
             return NextResponse.json(

@@ -7,22 +7,29 @@ const milkProductionSchema = new Schema<IMilkProduction>(
             type: Date,
             required: true,
         },
+        গবাদি_পশুর_ট্যাগ_আইডি: {
+            type: String,
+            required: true,
+        },
         গবাদি_পশুর_ধরণ: {
             type: String,
             required: true,
         },
-        দুধের_পরিমাণ: {
-            type: Number,
-            required: true,
-            default: 0,
-        },
         মোট_দুধের_পরিমাণ: {
-            type: Number,
-            default: 0,
+            type: String,
+            required: true,
+        },
+        বিক্রি_যোগ্য_দুধের_পরিমাণ: {
+            type: String,
+            required: true,
+        },
+        খাওয়ার_জন্য_দুধের_পরিমাণ: {
+            type: String,
+            required: true,
         },
         ফ্যাট_শতাংশ: {
-            type: Number,
-            required: true,
+            type: String,
+            required: false,
         },
         সময়: {
             type: String,
@@ -33,30 +40,6 @@ const milkProductionSchema = new Schema<IMilkProduction>(
         timestamps: true,
     }
 );
-
-milkProductionSchema.post('save', async function () {
-    const MilkProductionModel =
-        models?.MilkProductions ||
-        model('MilkProductions', milkProductionSchema);
-
-    const totalMilk = await MilkProductionModel.aggregate([
-        {
-            $match: { _id: this._id },
-        },
-        {
-            $group: {
-                _id: null,
-                total: { $sum: '$দুধের_পরিমাণ' },
-            },
-        },
-    ]);
-
-    const newTotal = totalMilk.length > 0 ? totalMilk[0].total : 0;
-
-    await MilkProductionModel.findByIdAndUpdate(this._id, {
-        মোট_দুধের_পরিমাণ: newTotal,
-    });
-});
 
 const MilkProductionModel =
     models?.MilkProductions || model('MilkProductions', milkProductionSchema);

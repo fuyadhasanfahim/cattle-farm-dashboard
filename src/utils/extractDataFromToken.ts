@@ -12,6 +12,6 @@ export default async function extractDataFromToken(request: NextRequest) {
 
         return decodedToken.id;
     } catch (error) {
-        console.log((error as Error).message);
+        throw new Error((error as Error).message);
     }
 }

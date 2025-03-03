@@ -43,10 +43,6 @@ export async function PUT(req: NextRequest) {
 
         const updatedMilkAmount = currentMilkAmount - soldMilkAmount;
 
-        console.log(`Previous Milk Amount: ${currentMilkAmount}`);
-        console.log(`Sold Milk Amount: ${soldMilkAmount}`);
-        console.log(`Updated Milk Amount: ${updatedMilkAmount}`);
-
         if (updatedMilkAmount < 0) {
             return NextResponse.json({
                 error: `পর্যাপ্ত দুধ নেই। বর্তমানে মোট দুধের পরিমাণ ${currentMilkAmount} লিটার।`,

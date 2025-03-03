@@ -77,8 +77,8 @@ export default function DataTable() {
                                 </td>
                             </tr>
                         ) : data?.length > 0 ? (
-                            data.map((item) => (
-                                <tr key={item._id}>
+                            data.map((item, index) => (
+                                <tr key={index}>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.মোট_দুধের_পরিমাণ} লিটার
                                     </td>
@@ -86,7 +86,7 @@ export default function DataTable() {
                                         {item.গবাদি_পশুর_ধরণ}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.দুধের_পরিমাণ} লিটার
+                                        {item.মোট_দুধের_পরিমাণ} লিটার
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.দুধ_সংগ্রহের_তারিখ
@@ -108,7 +108,7 @@ export default function DataTable() {
                                         <div
                                             className="w-full flex items-center justify-center gap-2 group hover:cursor-pointer"
                                             onClick={() =>
-                                                handleLocationChange(item._id)
+                                                handleLocationChange(item._id!)
                                             }
                                         >
                                             <Eye className="size-5 group-hover:text-yellow-500" />
