@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ICattle } from "@/types/cattle.interface";
-import { format } from "date-fns";
+import { ICattle } from '@/types/cattle.interface';
+import { format } from 'date-fns';
 import {
     ChevronLeft,
     ChevronRight,
@@ -9,14 +9,14 @@ import {
     Eye,
     Search,
     Trash2,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function DataTable() {
     const [tableData, setTableData] = useState<ICattle[]>([]);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,42 +24,44 @@ export default function DataTable() {
     const router = useRouter();
 
     const headers = [
-        "Tag ID",
-        "Registration Date",
-        "Stall Number",
-        "Breed",
+        'Tag ID',
+        'Registration Date',
+        'Stall Number',
+        'Breed',
         "Father's Name",
-        "Percentage",
-        "Weight",
-        "Gender",
-        "Fattening Status",
-        "Location",
-        "Actions",
+        'Percentage',
+        'Weight',
+        'Gender',
+        'Fattening Status',
+        'Location',
+        'Actions',
     ];
 
-    const fetchData = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(
-                `/api/cattle/get-cattles-data?page=${currentPage}&limit=${15}&search=${searchQuery}`
-            );
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch data");
-            }
-
-            const result = await response.json();
-            setTableData(result.data || []);
-            setTotalItems(result.data.length || 0);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            toast.error("Failed to load data");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+
+                const response = await fetch(
+                    `/api/cattle/get-cattles-data?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const result = await response.json();
+                setTableData(result.data || []);
+
+                setTotalItems(result.pagination?.totalItems);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                toast.error('Failed to load data');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
         fetchData();
     }, [currentPage, searchQuery]);
 
@@ -80,24 +82,27 @@ export default function DataTable() {
         if (!id) return;
 
         const confirmDelete = window.confirm(
-            "Are you sure you want to delete this record?"
+            'Are you sure you want to delete this record?'
         );
         if (!confirmDelete) return;
 
         try {
             const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
-                method: "DELETE",
+                method: 'DELETE',
             });
 
             if (response.ok) {
-                toast.success("Cattle record deleted successfully");
-                fetchData();
+                toast.success('Cattle record deleted successfully');
+
+                setTableData((prev) =>
+                    prev.filter((cattle) => cattle._id !== id)
+                );
             } else {
-                throw new Error("Failed to delete");
+                throw new Error('Failed to delete');
             }
         } catch (error) {
-            console.error("Error deleting cattle:", error);
-            toast.error("Error! Failed to delete cattle record");
+            console.error('Error deleting cattle:', error);
+            toast.error('Error! Failed to delete cattle record');
         }
     };
 
@@ -108,7 +113,7 @@ export default function DataTable() {
 
         const pages = [];
         let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, startPage + 4);
+        const endPage = Math.min(totalPages, startPage + 4);
 
         if (endPage - startPage < 4) {
             startPage = Math.max(1, endPage - 4);
@@ -121,8 +126,8 @@ export default function DataTable() {
                     onClick={() => handlePageChange(i)}
                     className={`px-3 py-1 mx-1 rounded-md ${
                         currentPage === i
-                            ? "bg-[#52aa46] text-white"
-                            : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                            ? 'bg-[#52aa46] text-white'
+                            : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
                     }`}
                 >
                     {i}
@@ -137,8 +142,8 @@ export default function DataTable() {
                     disabled={currentPage === 1}
                     className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
                         currentPage === 1
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:bg-gray-100"
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-gray-100'
                     }`}
                 >
                     <ChevronLeft className="w-4 h-4 mr-1" />
@@ -178,8 +183,8 @@ export default function DataTable() {
                     disabled={currentPage === totalPages}
                     className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
                         currentPage === totalPages
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:bg-gray-100"
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-gray-100'
                     }`}
                 >
                     <span>Next</span>
@@ -250,7 +255,7 @@ export default function DataTable() {
                                                   new Date(
                                                       row.রেজিষ্ট্রেশনের_তারিখ
                                                   ),
-                                                  "dd-MM-yy"
+                                                  'dd-MM-yy'
                                               )
                                             : null}
                                     </td>

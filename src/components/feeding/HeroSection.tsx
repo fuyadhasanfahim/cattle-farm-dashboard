@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { Plus, Search } from "lucide-react";
-import Link from "next/link";
-import { Input } from "../ui/input";
-import { useState } from "react";
+import { Plus, Search } from 'lucide-react';
+import Link from 'next/link';
+import { Input } from '../ui/input';
+import { useState } from 'react';
 
 export default function HeroSection() {
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Searching for:", query);
+        console.log('Searching for:', query);
     };
 
     return (
         <section className="flex items-center justify-between">
-            <Link href={"/feeding/add-food"} className="btn-primary">
+            <Link href={'/feeding/add-food'} className="btn-primary">
                 <Plus className="size-5" />
                 <span>খাদ্যের পরিমান যোগ করুন</span>
             </Link>
 
-            <Link href={"/feeding/add-feeding"} className="btn-primary">
+            <Link href={'/feeding/add-feeding'} className="btn-primary">
                 <Plus className="size-5" />
                 <span>গবাদি পশুদের খাওয়ানো</span>
             </Link>
