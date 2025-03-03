@@ -1,6 +1,6 @@
-import dbConfig from "@/lib/dbConfig";
-import MilkProductionModel from "@/models/milk.production.model";
-import { NextRequest, NextResponse } from "next/server";
+import dbConfig from '@/lib/dbConfig';
+import MilkProductionModel from '@/models/milk.production.model';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(req: NextRequest) {
     await dbConfig();
@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest) {
 
         if (!দুধের_পরিমাণ) {
             return NextResponse.json({
-                error: "দুধের পরিমাণ প্রদান করা হয়নি।",
+                error: 'দুধের পরিমাণ প্রদান করা হয়নি।',
             });
         }
 
@@ -18,7 +18,7 @@ export async function PUT(req: NextRequest) {
 
         if (isNaN(soldMilkAmount) || soldMilkAmount <= 0) {
             return NextResponse.json({
-                error: "সঠিক দুধের পরিমাণ প্রদান করুন।",
+                error: 'সঠিক দুধের পরিমাণ প্রদান করুন।',
             });
         }
 
@@ -29,15 +29,15 @@ export async function PUT(req: NextRequest) {
 
         if (!latestMilkProduction) {
             return NextResponse.json({
-                error: "কোনো দুধ উৎপাদন ডাটা পাওয়া যায়নি।",
+                error: 'কোনো দুধ উৎপাদন ডাটা পাওয়া যায়নি।',
             });
         }
 
-        let currentMilkAmount = Number(latestMilkProduction.মোট_দুধের_পরিমাণ);
+        const currentMilkAmount = Number(latestMilkProduction.মোট_দুধের_পরিমাণ);
 
         if (isNaN(currentMilkAmount)) {
             return NextResponse.json({
-                error: "ডাটাবেজে মোট দুধের পরিমাণ সঠিকভাবে সংরক্ষিত নেই।",
+                error: 'ডাটাবেজে মোট দুধের পরিমাণ সঠিকভাবে সংরক্ষিত নেই।',
             });
         }
 
@@ -62,16 +62,16 @@ export async function PUT(req: NextRequest) {
 
         if (!updatedDoc) {
             return NextResponse.json({
-                error: "দুধের পরিমাণ আপডেট করা যায়নি।",
+                error: 'দুধের পরিমাণ আপডেট করা যায়নি।',
             });
         }
 
         return NextResponse.json({
-            message: "মোট দুধের পরিমাণ সফলভাবে আপডেট হয়েছে।",
+            message: 'মোট দুধের পরিমাণ সফলভাবে আপডেট হয়েছে।',
             updatedMilkAmount: updatedDoc.মোট_দুধের_পরিমাণ,
         });
     } catch (error) {
-        console.error("Milk update error:", error);
-        return NextResponse.json({ error: "অভ্যন্তরীণ সার্ভার সমস্যা।" });
+        console.error('Milk update error:', error);
+        return NextResponse.json({ error: 'অভ্যন্তরীণ সার্ভার সমস্যা।' });
     }
 }

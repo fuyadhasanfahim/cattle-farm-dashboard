@@ -1,6 +1,7 @@
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Form,
     FormControl,
@@ -8,28 +9,32 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
 
 export default function AddFood() {
     const form = useForm({
         defaultValues: {
-            মোট_দুধের_পরিমাণ: "",
+            মোট_দুধের_পরিমাণ: '',
             দুধ_সংগ্রহের_তারিখ: new Date(),
         },
     });
 
-    const onSubmit = (data: any) => {
-        console.log("Submitted Data:", data);
+    const onSubmit = (data: {
+        মোট_দুধের_পরিমাণ: string;
+        দুধ_সংগ্রহের_তারিখ: Date;
+    }) => {
+        console.log('Submitted Data:', data);
     };
 
     return (
@@ -72,15 +77,15 @@ export default function AddFood() {
                                                     <Button
                                                         variant="outline"
                                                         className={cn(
-                                                            "w-full pl-3 text-left font-normal",
+                                                            'w-full pl-3 text-left font-normal',
                                                             !field.value &&
-                                                                "text-muted-foreground"
+                                                                'text-muted-foreground'
                                                         )}
                                                     >
                                                         {field.value ? (
                                                             format(
                                                                 field.value,
-                                                                "PPP"
+                                                                'PPP'
                                                             )
                                                         ) : (
                                                             <span>
@@ -106,7 +111,7 @@ export default function AddFood() {
                                                         date > new Date() ||
                                                         date <
                                                             new Date(
-                                                                "1900-01-01"
+                                                                '1900-01-01'
                                                             )
                                                     }
                                                     initialFocus

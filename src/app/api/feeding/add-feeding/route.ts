@@ -1,5 +1,5 @@
-import FeedingModel from "@/models/feeding.model";
-import { NextRequest, NextResponse } from "next/server";
+import FeedingModel from '@/models/feeding.model';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "All fields are required",
+                    message: 'All fields are required',
                 },
                 {
                     status: 400,
@@ -22,12 +22,23 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
             {
                 success: true,
-                message: "Successfully Created",
+                message: 'Successfully Created',
                 data,
             },
             {
                 status: 201,
             }
         );
-    } catch (error) {}
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json(
+            {
+                success: false,
+                message: 'An error occurred',
+            },
+            {
+                status: 500,
+            }
+        );
+    }
 }
