@@ -40,6 +40,8 @@ export async function POST(request: NextRequest) {
             পেমেন্টের_ধরণ,
         });
 
+        await data.save();
+
         return NextResponse.json(
             {
                 success: true,

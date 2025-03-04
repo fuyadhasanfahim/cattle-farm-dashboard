@@ -20,11 +20,6 @@ export default function HeroSection() {
                 <span>খাদ্যের পরিমান যোগ করুন</span>
             </Link>
 
-            <Link href={'/feeding/add-feeding'} className="btn-primary">
-                <Plus className="size-5" />
-                <span>গবাদি পশুদের খাওয়ানো</span>
-            </Link>
-
             <form onSubmit={handleSearch}>
                 <div className="w-full max-w-lg flex items-center px-4 bg-white rounded-md border border-gray-200 shadow group group-focus-visible:ring-1">
                     <Search className="size-5 text-gray-500" />
