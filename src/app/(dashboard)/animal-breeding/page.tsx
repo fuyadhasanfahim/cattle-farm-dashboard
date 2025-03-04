@@ -1,5 +1,5 @@
-import DataTable from '@/components/manage-cattles/DataTable';
-import HeroSection from '@/components/manage-cattles/HeroSection';
+import DataTable from '@/components/animal-breeding/DataTable';
+import HeroSection from '@/components/animal-breeding/HeroSection';
 
 export const dynamic = 'force-dynamic';
 
