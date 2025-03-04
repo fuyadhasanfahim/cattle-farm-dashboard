@@ -3,7 +3,6 @@
 import { IMilkProduction } from '@/types/milk.production.interface';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Edit2, Milk, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -118,25 +117,30 @@ export default function Details() {
                 </CardHeader>
                 <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InfoCard
-                        title="গবাদি পশুর ধরণ"
-                        value={data.গবাদি_পশুর_ধরণ}
+                        title="গবাদি পশুর ট্যাগ আইডি"
+                        value={`ট্যাগ আইডি: ${data.গবাদি_পশুর_ট্যাগ_আইডি}`}
                         icon="🐄"
                     />
 
                     <InfoCard
-                        title="দুধের পরিমাণ"
-                        value={`${data.দুধের_পরিমাণ} লিটার`}
+                        title="মোট দুধের পরিমাণ"
+                        value={`${data.মোট_দুধের_পরিমাণ} লিটার`}
                         icon="🥛"
                         highlight={true}
                     />
 
                     <InfoCard
-                        title="দুধ সংগ্রহের তারিখ"
-                        value={format(
-                            new Date(data.দুধ_সংগ্রহের_তারিখ),
-                            'dd-MM-yyyy'
-                        )}
-                        icon="📅"
+                        title="বিক্রি যোগ্য দুধের পরিমাণ"
+                        value={`${data.বিক্রি_যোগ্য_দুধের_পরিমাণ} লিটার`}
+                        icon="🥛"
+                        highlight={true}
+                    />
+
+                    <InfoCard
+                        title="খাওয়ার জন্য দুধের পরিমাণ"
+                        value={`${data.খাওয়ার_জন্য_দুধের_পরিমাণ} লিটার`}
+                        icon="🥛"
+                        highlight={true}
                     />
 
                     <InfoCard
@@ -146,25 +150,6 @@ export default function Details() {
                     />
 
                     <InfoCard title="সময়" value={data.সময়} icon="⏰" />
-
-                    <InfoCard
-                        title="তৈরি করা হয়েছে"
-                        value={format(
-                            new Date(data.createdAt),
-                            'dd-MM-yyyy hh:mm a'
-                        )}
-                        icon="✅"
-                    />
-
-                    <InfoCard
-                        title="আপডেট করা হয়েছে"
-                        value={format(
-                            new Date(data.updatedAt),
-                            'dd-MM-yyyy hh:mm a'
-                        )}
-                        icon="🔄"
-                        className="md:col-span-2"
-                    />
 
                     <div className="md:col-span-2 flex justify-center gap-5 mt-4">
                         <button
@@ -209,7 +194,7 @@ export default function Details() {
                                         বাতিল করুন
                                     </AlertDialogCancel>
                                     <AlertDialogAction
-                                        onClick={() => handleDelete(data._id)}
+                                        onClick={() => handleDelete(data._id!)}
                                     >
                                         চালিয়ে যান
                                     </AlertDialogAction>
@@ -251,7 +236,7 @@ function InfoCard({
                     <p
                         className={`mt-1 ${
                             highlight
-                                ? 'text-xl font-bold text-green-600'
+                                ? 'text-xl font-bold text-green-600 font-notoSansBengali'
                                 : 'text-gray-700'
                         }`}
                     >

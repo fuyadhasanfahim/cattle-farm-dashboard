@@ -8,4 +8,6 @@ export interface IMilkProduction {
     খাওয়ার_জন্য_দুধের_পরিমাণ: string;
     ফ্যাট_শতাংশ?: string;
     সময়: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
