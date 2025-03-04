@@ -1,40 +1,40 @@
-import dbConfig from "@/lib/dbConfig";
-import SalesModel from "@/models/sales.model";
-import { NextRequest, NextResponse } from "next/server";
+import dbConfig from '@/lib/dbConfig';
+import SalesModel from '@/models/sales.model';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
     await dbConfig();
 
     try {
         const {
-            বিক্রয়ের_ধরণ,
-            বিক্রয়ের_তারিখ,
-            গ্রাহকের_নাম,
-            গ্রাহকের_মোবাইল_নম্বর,
-            দুধের_পরিমাণ,
-            পরিশোধ_পদ্ধতি,
-            পরিশোধিত_পরিমাণ,
-            প্রতি_লিটারের_দাম,
-            বকেয়া_পরিমাণ,
-            মোট_মূল্য,
+            salesType,
+            salesDate,
+            buyersPhoneNumber,
+            buyersName,
+            milkQuantity,
+            perLiterPrice,
+            totalPrice,
+            paymentAmount,
+            paymentMethod,
+            dueAmount,
         } = await req.json();
 
         if (
-            !বিক্রয়ের_ধরণ ||
-            !বিক্রয়ের_তারিখ ||
-            !গ্রাহকের_নাম ||
-            !গ্রাহকের_মোবাইল_নম্বর ||
-            !দুধের_পরিমাণ ||
-            !পরিশোধ_পদ্ধতি ||
-            !পরিশোধিত_পরিমাণ ||
-            !প্রতি_লিটারের_দাম ||
-            !বকেয়া_পরিমাণ ||
-            !মোট_মূল্য
+            !salesType ||
+            !salesDate ||
+            !buyersPhoneNumber ||
+            !buyersName ||
+            !milkQuantity ||
+            !perLiterPrice ||
+            !totalPrice ||
+            !paymentAmount ||
+            !paymentMethod ||
+            !dueAmount
         ) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "Please fill all required fields!",
+                    message: 'Please fill all required fields!',
                 },
                 {
                     status: 400,
@@ -43,16 +43,16 @@ export async function POST(req: NextRequest) {
         }
 
         const newSale = new SalesModel({
-            বিক্রয়ের_ধরণ,
-            বিক্রয়ের_তারিখ,
-            গ্রাহকের_নাম,
-            গ্রাহকের_মোবাইল_নম্বর,
-            দুধের_পরিমাণ,
-            পরিশোধ_পদ্ধতি,
-            পরিশোধিত_পরিমাণ,
-            প্রতি_লিটারের_দাম,
-            বকেয়া_পরিমাণ,
-            মোট_মূল্য,
+            salesType,
+            salesDate,
+            buyersPhoneNumber,
+            buyersName,
+            milkQuantity,
+            perLiterPrice,
+            totalPrice,
+            paymentAmount,
+            paymentMethod,
+            dueAmount,
         });
 
         await newSale.save();
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 success: true,
-                message: "Created Successfully!",
+                message: 'Created Successfully!',
                 data: newSale,
             },
             {
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         return NextResponse.json({
             success: false,
-            message: "An error occurred while creating a new sale.",
+            message: 'An error occurred while creating a new sale.',
             error,
             status: 500,
         });

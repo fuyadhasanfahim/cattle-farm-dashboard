@@ -44,19 +44,22 @@ export default function DataTable() {
                     <thead className="bg-green-500">
                         <tr>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed rounded-tl-lg  text-white uppercase tracking-wider">
-                                মোট দুধের পরিমাণ
+                                ক্রমিক নং
+                            </th>
+                            <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider">
+                                মোট পরিমাণ
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                গবাদি পশুর ধরণ
+                                ট্যাগ আইডি
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                দুধের পরিমাণ
+                                বিক্রি পরিমাণ
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                দুধ সংগ্রহের তারিখ
+                                তারিখ
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                ফ্যাট শতাংশ
+                                ফ্যাট
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
                                 সময়
@@ -80,13 +83,16 @@ export default function DataTable() {
                             data.map((item, index) => (
                                 <tr key={index}>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.মোট_দুধের_পরিমাণ} লিটার
-                                    </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.গবাদি_পশুর_ধরণ}
+                                        {index + 1}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.মোট_দুধের_পরিমাণ} লিটার
+                                    </td>
+                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {item.গবাদি_পশুর_ট্যাগ_আইডি}
+                                    </td>
+                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {item.বিক্রি_যোগ্য_দুধের_পরিমাণ} লিটার
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.দুধ_সংগ্রহের_তারিখ
@@ -94,7 +100,7 @@ export default function DataTable() {
                                                   new Date(
                                                       item.দুধ_সংগ্রহের_তারিখ
                                                   ),
-                                                  'dd-MM-yy'
+                                                  'MMMM dd, yyyy'
                                               )
                                             : 'N/A'}
                                     </td>

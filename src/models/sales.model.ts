@@ -3,44 +3,44 @@ import { model, models, Schema } from 'mongoose';
 
 const salesSchema = new Schema<ISales>(
     {
-        বিক্রয়ের_ধরণ: {
+        salesType: {
             type: String,
             required: true,
         },
-        বিক্রয়ের_তারিখ: {
+        salesDate: {
             type: Date,
             required: true,
         },
-        গ্রাহকের_মোবাইল_নম্বর: {
+        buyersPhoneNumber: {
             type: String,
             required: false,
         },
-        গ্রাহকের_নাম: {
+        buyersName: {
             type: String,
             required: false,
         },
-        দুধের_পরিমাণ: {
+        milkQuantity: {
+            type: Number,
+            required: true,
+        },
+        perLiterPrice: {
+            type: Number,
+            required: true,
+        },
+        totalPrice: {
+            type: Number,
+            required: true,
+        },
+        paymentAmount: {
+            type: Number,
+            required: true,
+        },
+        paymentMethod: {
             type: String,
             required: true,
         },
-        প্রতি_লিটারের_দাম: {
-            type: String,
-            required: true,
-        },
-        মোট_মূল্য: {
-            type: String,
-            required: true,
-        },
-        পরিশোধিত_পরিমাণ: {
-            type: String,
-            required: true,
-        },
-        পরিশোধ_পদ্ধতি: {
-            type: String,
-            required: true,
-        },
-        বকেয়া_পরিমাণ: {
-            type: String,
+        dueAmount: {
+            type: Number,
             required: true,
         },
     },

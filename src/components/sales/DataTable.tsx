@@ -1,23 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
-import { format } from "date-fns";
-
-interface ISales {
-    _id: string;
-    createdAt: Date;
-    বিক্রয়ের_ধরণ: string;
-    বিক্রয়ের_তারিখ: Date;
-    গ্রাহকের_মোবাইল_নম্বর: string;
-    গ্রাহকের_নাম: string;
-    দুধের_পরিমাণ: string;
-    প্রতি_লিটারের_দাম: string;
-    মোট_মূল্য: string;
-    পরিশোধিত_পরিমাণ: string;
-    পরিশোধ_পদ্ধতি: string;
-    বকেয়া_পরিমাণ: string;
-}
+import { useState, useEffect } from 'react';
+import { Eye } from 'lucide-react';
+import { format } from 'date-fns';
+import { ISales } from '@/types/sales.interface';
 
 export default function DataTable() {
     const [data, setData] = useState<ISales[]>([]);
@@ -31,7 +17,7 @@ export default function DataTable() {
 
                 setData(data);
             } catch (error) {
-                console.error("Error fetching milk sales data:", error);
+                console.error('Error fetching milk sales data:', error);
             } finally {
                 setLoading(false);
             }
@@ -41,7 +27,7 @@ export default function DataTable() {
     }, []);
 
     const handleLocationChange = (id: string) => {
-        console.log("View details for ID:", id);
+        console.log('View details for ID:', id);
     };
 
     return (
@@ -50,23 +36,29 @@ export default function DataTable() {
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-green-500">
                     <tr>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            বিক্রয় আইডি
+                        <th className="px-3 py-2 text-base font-semibold border border-dashed text-white tracking-wider text-center rounded-tl-lg">
+                            Serial No.
                         </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            বিক্রয়ের ধরণ
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Sales Type
                         </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            দুধের পরিমাণ
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Sales Amount
                         </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            বিক্রয়ের তারিখ
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Sales Date
                         </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            তৈরি হওয়ার তারিখ
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Total Amount
                         </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider text-center">
-                            অ্যাকশন
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Payment Amount
+                        </th>
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
+                            Payment Type
+                        </th>
+                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center rounded-tr-lg">
+                            Action
                         </th>
                     </tr>
                 </thead>
@@ -74,43 +66,44 @@ export default function DataTable() {
                     {loading ? (
                         <tr>
                             <td colSpan={6} className="px-6 py-4 text-center">
-                                লোড হচ্ছে...
+                                Loading...
                             </td>
                         </tr>
                     ) : (
-                        data.map((item) => (
-                            <tr key={item._id}>
+                        data.map((item, index) => (
+                            <tr key={index}>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item._id}
+                                    {index + 1}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.বিক্রয়ের_ধরণ}
+                                    {item.salesType}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.দুধের_পরিমাণ} লিটার
+                                    {item.milkQuantity} Liter
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.বিক্রয়ের_তারিখ
+                                    {item.salesDate
                                         ? format(
-                                              new Date(item.বিক্রয়ের_তারিখ),
-                                              "dd-MMMM-yyyy"
+                                              new Date(item.salesDate),
+                                              'MMMM dd, yyyy'
                                           )
-                                        : "N/A"}
+                                        : 'N/A'}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.createdAt
-                                        ? format(
-                                              new Date(item.createdAt),
-                                              "dd-MMMM-yyyy"
-                                          )
-                                        : "N/A"}
+                                    {item.totalPrice} Taka
+                                </td>
+                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
+                                    {item.paymentAmount} Taka
+                                </td>
+                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
+                                    {item.paymentMethod}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
                                     <div className="w-full flex items-center justify-center">
                                         <Eye
                                             className="size-5 hover:text-yellow-500 hover:cursor-pointer"
                                             onClick={() =>
-                                                handleLocationChange(item._id)
+                                                handleLocationChange(item._id!)
                                             }
                                         />
                                     </div>
