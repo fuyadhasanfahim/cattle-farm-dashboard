@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Form,
@@ -10,53 +10,124 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
+import { IFeeding } from '@/types/feeding.interface';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
-export default function AddFood() {
-    const form = useForm({
+const AddFeeding: React.FC = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
+    const form = useForm<IFeeding>({
         defaultValues: {
-            মোট_দুধের_পরিমাণ: '',
-            দুধ_সংগ্রহের_তারিখ: new Date(),
+            খাদ্যের_ধরণ: '',
+            খাদ্যের_পরিমাণ: 0,
+            তারিখ: new Date(),
+            প্রতি_কেজির_দাম: 0,
+            মোট_দাম: 0,
+            পেমেন্টের_ধরণ: '',
         },
     });
 
-    const onSubmit = (data: {
-        মোট_দুধের_পরিমাণ: string;
-        দুধ_সংগ্রহের_তারিখ: Date;
-    }) => {
-        console.log('Submitted Data:', data);
+    const খাদ্যের_পরিমাণ = form.watch('খাদ্যের_পরিমাণ');
+    const প্রতি_কেজির_দাম = form.watch('প্রতি_কেজির_দাম');
+
+    React.useEffect(() => {
+        const মোট_দাম = খাদ্যের_পরিমাণ * প্রতি_কেজির_দাম;
+        form.setValue('মোট_দাম', মোট_দাম);
+    }, [খাদ্যের_পরিমাণ, প্রতি_কেজির_দাম, form]);
+
+    const onSubmit = async (data: IFeeding) => {
+        try {
+            setIsLoading(false);
+
+            const response = await fetch(`/api/feeding/add-feeding`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                toast.error('Failed to add feeding data');
+            } else {
+                toast.success('Successfully added the data.');
+                form.reset();
+
+                router.push('/feeding');
+            }
+        } catch (error) {
+            toast.error(
+                (error as Error).message || 'Failed to add feeding data'
+            );
+        }
     };
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Add feeding</CardTitle>
+                <CardTitle>Add Feeding</CardTitle>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="grid grid-cols-3 gap-6">
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
+                        <div className="grid grid-cols-2 items-center gap-6">
+                            <SelectOption
+                                data={[
+                                    {
+                                        label: 'দানাদার',
+                                        value: 'দানাদার',
+                                    },
+                                    {
+                                        label: 'খর',
+                                        value: 'খর',
+                                    },
+                                    {
+                                        label: 'ঘাস',
+                                        value: 'ঘাস',
+                                    },
+                                    {
+                                        label: 'সাইলেজ',
+                                        value: 'সাইলেজ',
+                                    },
+                                ]}
+                                form={form}
+                                label="খাদ্যর ধরণ"
+                                name="খাদ্যের_ধরণ"
+                                placeholder="খাদ্যের ধরণ সিলেক্ট করেন"
+                            />
+
                             <FormField
                                 control={form.control}
-                                name="মোট_দুধের_পরিমাণ"
+                                name="খাদ্যের_পরিমাণ"
                                 render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>মোট দুধের পরিমাণ</FormLabel>
+                                    <FormItem>
+                                        <FormLabel>খাদ্যের পরিমাণ</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder="মোট দুধের পরিমাণ লিখুন"
-                                                {...field}
-                                            />
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 items-center gap-6">
+                            <FormField
+                                control={form.control}
+                                name="প্রতি_কেজির_দাম"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>প্রতি কেজির দাম</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -65,70 +136,54 @@ export default function AddFood() {
 
                             <FormField
                                 control={form.control}
-                                name="দুধ_সংগ্রহের_তারিখ"
+                                name="মোট_দাম"
                                 render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>
-                                            দুধ সংগ্রহের তারিখ
-                                        </FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            'w-full pl-3 text-left font-normal',
-                                                            !field.value &&
-                                                                'text-muted-foreground'
-                                                        )}
-                                                    >
-                                                        {field.value ? (
-                                                            format(
-                                                                field.value,
-                                                                'PPP'
-                                                            )
-                                                        ) : (
-                                                            <span>
-                                                                তারিখ নির্বাচন
-                                                                করুন
-                                                            </span>
-                                                        )}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent
-                                                className="w-auto p-0"
-                                                align="start"
-                                            >
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={(date) =>
-                                                        field.onChange(date)
-                                                    }
-                                                    disabled={(date) =>
-                                                        date > new Date() ||
-                                                        date <
-                                                            new Date(
-                                                                '1900-01-01'
-                                                            )
-                                                    }
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                    <FormItem>
+                                        <FormLabel>মোট দাম</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                disabled
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="mt-4">
-                            <Button type="submit">Submit</Button>
+
+                        <div className="grid grid-cols-2 items-center gap-6">
+                            <SelectOption
+                                data={[
+                                    {
+                                        label: 'নগদ',
+                                        value: 'নগদ',
+                                    },
+                                    {
+                                        label: 'বাকি',
+                                        value: 'বাকি',
+                                    },
+                                ]}
+                                form={form}
+                                label="পেমেন্টের ধরণ"
+                                name="পেমেন্টের_ধরণ"
+                                placeholder="পেমেন্টের ধরণ সিলেক্ট করেন"
+                            />
                         </div>
+
+                        <button
+                            className="btn-primary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Submitting' : 'Submit'}
+                        </button>
                     </form>
                 </Form>
             </CardContent>
         </Card>
     );
-}
+};
+
+export default AddFeeding;

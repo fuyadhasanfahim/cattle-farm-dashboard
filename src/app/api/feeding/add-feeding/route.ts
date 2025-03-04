@@ -3,9 +3,23 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const { খাদ্যের_ধরণ, খাদ্যের_পরিমাণ, তারিখ } = await request.json();
+        const {
+            খাদ্যের_ধরণ,
+            খাদ্যের_পরিমাণ,
+            তারিখ,
+            প্রতি_কেজির_দাম,
+            মোট_দাম,
+            পেমেন্টের_ধরণ,
+        } = await request.json();
 
-        if (!খাদ্যের_ধরণ || !খাদ্যের_পরিমাণ || !তারিখ) {
+        if (
+            !খাদ্যের_ধরণ ||
+            !খাদ্যের_পরিমাণ ||
+            !তারিখ ||
+            !প্রতি_কেজির_দাম ||
+            !মোট_দাম ||
+            !পেমেন্টের_ধরণ
+        ) {
             return NextResponse.json(
                 {
                     success: false,
@@ -17,7 +31,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const data = new FeedingModel({ খাদ্যের_ধরণ, খাদ্যের_পরিমাণ, তারিখ });
+        const data = new FeedingModel({
+            খাদ্যের_ধরণ,
+            খাদ্যের_পরিমাণ,
+            তারিখ,
+            প্রতি_কেজির_দাম,
+            মোট_দাম,
+            পেমেন্টের_ধরণ,
+        });
 
         return NextResponse.json(
             {
