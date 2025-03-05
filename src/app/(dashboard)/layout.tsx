@@ -9,11 +9,11 @@ export default async function Layout({ children }: { children: ReactNode }) {
                 <Navbar />
             </header>
             <div className="flex">
-                <div className="sticky top-0 left-0 w-full max-w-[250px] h-screen">
+                <div className="fixed top-[80px] left-0 h-screen w-[250px] bg-white shadow-md">
                     <Sidebar />
                 </div>
-                <section className="w-full h-full">
-                    <div className="w-full bg-[#fbfff1] h-full min-h-[calc(100vh-80px)] p-4">
+                <section className="w-full ml-[250px]">
+                    <div className="w-full bg-[#fbfff1] min-h-[calc(100vh-80px)] p-4 overflow-hidden">
                         {children}
                     </div>
                 </section>

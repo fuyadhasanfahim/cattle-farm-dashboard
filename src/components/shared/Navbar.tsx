@@ -53,7 +53,7 @@ export default async function Navbar() {
                                 <Avatar className="h-10 w-10 border">
                                     <AvatarImage
                                         src={user?.profileImage || ''}
-                                        alt={`'s profile image`}
+                                        alt={`${user?.name}'s profile image`}
                                     />
                                     <AvatarFallback className="bg-primary/10">
                                         <Loader2 className="animate-spin" />

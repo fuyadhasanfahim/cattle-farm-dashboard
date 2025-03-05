@@ -1,4 +1,7 @@
 import { cookies } from 'next/headers';
+import toast from 'react-hot-toast';
+
+export const dynamic = 'force-dynamic';
 
 export async function getUserData() {
     try {
@@ -13,6 +16,6 @@ export async function getUserData() {
 
         return data.user;
     } catch (error) {
-        console.error('Error fetching profile:', error);
+        toast.error((error as Error).message);
     }
 }
