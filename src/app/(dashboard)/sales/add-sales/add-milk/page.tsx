@@ -75,23 +75,13 @@ export default function AddSales() {
             try {
                 setIsMilkLoading(true);
 
-                const response = await fetch(
-                    '/api/milk-production/get-all-milk-production'
-                );
+                const response = await fetch('/api/milk/get-milk-amount');
 
-                const data = await response.json();
+                const result = await response.json();
 
-                const totalSaleableMilk: number = data?.reduce(
-                    (
-                        acc: number,
-                        item: { বিক্রি_যোগ্য_দুধের_পরিমাণ: string }
-                    ) => {
-                        return acc + Number(item['বিক্রি_যোগ্য_দুধের_পরিমাণ']);
-                    },
-                    0
-                );
+                console.log(result);
 
-                setMilkAmount(totalSaleableMilk || 0);
+                setMilkAmount(result?.data?.saleMilkAmount || 0);
             } catch (error) {
                 toast.error((error as Error).message);
             } finally {

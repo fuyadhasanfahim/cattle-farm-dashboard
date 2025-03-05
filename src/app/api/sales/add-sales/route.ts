@@ -1,4 +1,5 @@
 import dbConfig from '@/lib/dbConfig';
+import MilkModel from '@/models/milk.model';
 import SalesModel from '@/models/sales.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -28,8 +29,7 @@ export async function POST(req: NextRequest) {
             !perLiterPrice ||
             !totalPrice ||
             !paymentAmount ||
-            !paymentMethod ||
-            !dueAmount
+            !paymentMethod
         ) {
             return NextResponse.json(
                 {
@@ -56,6 +56,14 @@ export async function POST(req: NextRequest) {
         });
 
         await newSale.save();
+
+        const lastMilkData = await MilkModel.findOne().sort('-createdAt');
+
+        if (lastMilkData) {
+            await MilkModel.create({
+                saleMilkAmount: lastMilkData.saleMilkAmount - milkQuantity,
+            });
+        }
 
         return NextResponse.json(
             {

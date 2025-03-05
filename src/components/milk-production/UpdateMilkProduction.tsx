@@ -21,8 +21,6 @@ import toast from 'react-hot-toast';
 import { Input } from '../ui/input';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { milkProductionValidationSchema } from '@/validator/milk.production.validation.schema';
 import { IMilkProduction } from '@/types/milk.production.interface';
 import { ICattle } from '@/types/cattle.interface';
 
@@ -53,7 +51,6 @@ export default function UpdateMilkProduction() {
     const router = useRouter();
 
     const form = useForm({
-        resolver: zodResolver(milkProductionValidationSchema),
         defaultValues: {
             দুধ_সংগ্রহের_তারিখ: new Date(),
             গবাদি_পশুর_ট্যাগ_আইডি: '',

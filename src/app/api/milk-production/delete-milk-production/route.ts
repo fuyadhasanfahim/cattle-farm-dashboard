@@ -1,3 +1,4 @@
+import MilkModel from '@/models/milk.model';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,6 +16,19 @@ export async function DELETE(req: NextRequest) {
                 { status: 400 }
             );
         }
+
+        const lastMilkAmount = await MilkModel.findOne().sort('-createdAt');
+
+        const retrieveMilkAmount = await MilkProductionModel.findById(id);
+
+        const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
+
+        const retrieveAmount =
+            Number(retrieveMilkAmount?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
+
+        const newMilkAmount = lastAmount - retrieveAmount;
+
+        await MilkModel.create({ saleMilkAmount: newMilkAmount });
 
         const result = await MilkProductionModel.findOneAndDelete({ _id: id });
 

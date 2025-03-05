@@ -22,6 +22,26 @@ export async function PUT(request: NextRequest) {
 
         await dbConfig();
 
+        const lastMilkAmount = await MilkModel.findOne().sort('-createdAt');
+        const retrieveMilkAmount = await MilkProductionModel.findById(id);
+
+        const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
+        const retrieveAmount =
+            Number(retrieveMilkAmount?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
+        const newAmount = Number(data?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
+
+        let newMilkAmount = lastAmount;
+
+        if (retrieveAmount !== newAmount) {
+            if (retrieveAmount > newAmount) {
+                newMilkAmount -= retrieveAmount - newAmount;
+            } else {
+                newMilkAmount += newAmount - retrieveAmount;
+            }
+
+            await MilkModel.create({ saleMilkAmount: newMilkAmount });
+        }
+
         const updatedMilkProduction =
             await MilkProductionModel.findByIdAndUpdate(id, data, {
                 new: true,
@@ -36,20 +56,6 @@ export async function PUT(request: NextRequest) {
                 { status: 404 }
             );
         }
-
-        const soldMilkAmount = Number(data.বিক্রি_যোগ্য_দুধের_পরিমাণ);
-        const milkForDrink = Number(data.খাওয়ার_জন্য_দুধের_পরিমাণ);
-
-        await MilkModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    বিক্রয়যোগ্য_দুধের_পরিমাণ: soldMilkAmount,
-                    খাওয়ার_দুধের_পরিমাণ: milkForDrink,
-                },
-            },
-            { new: true, upsert: true, setDefaultsOnInsert: true }
-        );
 
         return NextResponse.json(
             {

@@ -67,19 +67,18 @@ export async function POST(request: NextRequest) {
 
         await milkProduction.save();
 
-        const soldMilkAmount = Number(বিক্রি_যোগ্য_দুধের_পরিমাণ);
-        const milkForDrink = Number(খাওয়ার_জন্য_দুধের_পরিমাণ);
+        const data = await MilkProductionModel.find();
 
-        await MilkModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    বিক্রয়যোগ্য_দুধের_পরিমাণ: soldMilkAmount,
-                    খাওয়ার_দুধের_পরিমাণ: milkForDrink,
-                },
+        const totalSaleableMilk = await data?.reduce(
+            (acc: number, item: { বিক্রি_যোগ্য_দুধের_পরিমাণ: string }) => {
+                return acc + Number(item['বিক্রি_যোগ্য_দুধের_পরিমাণ']);
             },
-            { new: true, upsert: true, setDefaultsOnInsert: true }
+            0
         );
+
+        await MilkModel.create({
+            saleMilkAmount: totalSaleableMilk,
+        });
 
         return NextResponse.json(
             {

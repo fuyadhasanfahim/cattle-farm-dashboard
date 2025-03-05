@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { ISales } from '@/types/sales.interface';
+import { useRouter } from 'next/navigation';
 
 export default function DataTable() {
     const [data, setData] = useState<ISales[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,7 +29,7 @@ export default function DataTable() {
     }, []);
 
     const handleLocationChange = (id: string) => {
-        console.log('View details for ID:', id);
+        router.push(`/sales/details/${id}`);
     };
 
     return (
