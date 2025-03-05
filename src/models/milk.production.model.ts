@@ -9,11 +9,11 @@ const milkProductionSchema = new Schema<IMilkProduction>(
         },
         গবাদি_পশুর_ট্যাগ_আইডি: {
             type: String,
-            required: true,
+            required: false,
         },
         গবাদি_পশুর_ধরণ: {
             type: String,
-            required: true,
+            required: false,
         },
         মোট_দুধের_পরিমাণ: {
             type: String,

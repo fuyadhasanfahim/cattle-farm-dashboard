@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 export const milkProductionValidationSchema = z.object({
     দুধ_সংগ্রহের_তারিখ: z.date(),
-    গবাদি_পশুর_ট্যাগ_আইডি: z.string().min(1, 'ট্যাগ আইডি প্রয়োজন'),
-    গবাদি_পশুর_ধরণ: z.string().min(1, 'গবাদি পশুর ধরণ প্রয়োজন'),
+    গবাদি_পশুর_ট্যাগ_আইডি: z.string().optional(),
+    গবাদি_পশুর_ধরণ: z.string().optional(),
     মোট_দুধের_পরিমাণ: z.string().min(1, 'মোট দুধের পরিমাণ প্রয়োজন'),
     বিক্রি_যোগ্য_দুধের_পরিমাণ: z
         .string()
@@ -11,6 +11,6 @@ export const milkProductionValidationSchema = z.object({
     খাওয়ার_জন্য_দুধের_পরিমাণ: z
         .string()
         .min(1, 'খাওয়ার জন্য দুধের পরিমাণ প্রয়োজন'),
-    ফ্যাট_শতাংশ: z.string().min(1, 'ফ্যাট শতাংশ প্রয়োজন'),
+    ফ্যাট_শতাংশ: z.string().optional(),
     সময়: z.string().min(1, 'সময় প্রয়োজন'),
 });
