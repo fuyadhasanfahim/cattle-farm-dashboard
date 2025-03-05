@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { IFeeding } from '@/types/feeding.interface';
+import Link from 'next/link';
 
 export default function DataTable() {
     const [data, setData] = useState<IFeeding[]>([]);
@@ -25,10 +25,6 @@ export default function DataTable() {
 
         fetchData();
     }, []);
-
-    const handleLocationChange = (id: string) => {
-        console.log('View details for ID:', id);
-    };
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-md my-10">
@@ -100,12 +96,12 @@ export default function DataTable() {
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
                                     <div className="w-full flex items-center justify-center">
-                                        <Eye
-                                            className="size-5 hover:text-yellow-500 hover:cursor-pointer"
-                                            onClick={() =>
-                                                handleLocationChange(item._id!)
-                                            }
-                                        />
+                                        <Link
+                                            href={`/feeding/details/${item._id}`}
+                                            className="hover:underline"
+                                        >
+                                            View
+                                        </Link>
                                     </div>
                                 </td>
                             </tr>

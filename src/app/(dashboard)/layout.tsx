@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 export default async function Layout({ children }: { children: ReactNode }) {
     return (
         <main>
-            <header className="w-full">
+            <header className="w-full sticky top-0 z-50">
                 <Navbar />
             </header>
             <div className="flex">
