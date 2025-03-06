@@ -4,25 +4,28 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
     try {
         const {
-            mothersId,
-            breedType,
-            semenType,
+            selectId,
+            bullName,
+            bullNumber,
+            bullType,
             semenPercentage,
             semenCompanyName,
-            approximateBirthDate,
             semenDate,
-            status,
+            checkForSemenSuccessResult,
+            approximateBirthdate,
+            checkForSemenSuccessStatus,
         } = await request.json();
 
         if (
-            !mothersId ||
-            !breedType ||
-            !semenType ||
+            !selectId ||
+            !bullName ||
+            !bullNumber ||
+            !bullType ||
             !semenPercentage ||
             !semenCompanyName ||
-            !approximateBirthDate ||
             !semenDate ||
-            !status
+            !checkForSemenSuccessResult ||
+            !approximateBirthdate
         ) {
             return NextResponse.json(
                 {
@@ -36,14 +39,16 @@ export async function POST(request: NextRequest) {
         }
 
         const data = new BreedingModel({
-            mothersId,
-            breedType,
-            semenType,
+            selectId,
+            bullName,
+            bullNumber,
+            bullType,
             semenPercentage,
             semenCompanyName,
-            approximateBirthDate,
             semenDate,
-            status,
+            checkForSemenSuccessResult,
+            approximateBirthdate,
+            checkForSemenSuccessStatus,
         });
 
         await data.save();
@@ -59,6 +64,7 @@ export async function POST(request: NextRequest) {
             }
         );
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             {
                 success: false,

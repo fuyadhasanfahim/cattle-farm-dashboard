@@ -1,7 +1,6 @@
 'use client';
 
 import MyCalender from '@/components/shared/MyCalender';
-import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Form,
@@ -12,16 +11,26 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import IBreeding from '@/types/breeding.interface';
 import { ICattle } from '@/types/cattle.interface';
-import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-export default function AddBreeding() {
+export default function UpdateBreeding() {
+    const { id } = useParams();
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isMothersIdLoading, setMothersIdLoading] = useState<boolean>(false);
     const [mothers, setMothers] = useState<ICattle[]>([]);
     const router = useRouter();
@@ -34,21 +43,41 @@ export default function AddBreeding() {
             bullType: '',
             semenPercentage: '',
             semenCompanyName: '',
-            semenDate: new Date(),
-            checkForSemenSuccessResult: new Date(
-                new Date().setDate(new Date().getDate() + 90)
-            ),
-            approximateBirthdate: new Date(
-                new Date().setDate(new Date().getDate() + 280)
-            ),
+            semenDate: undefined,
+            checkForSemenSuccessResult: undefined,
+            approximateBirthdate: undefined,
+            checkForSemenSuccessStatus: '',
         },
     });
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchBreedingData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch(
+                    `/api/breeding/get-breeding-by-id?id=${id}`
+                );
+                const result = await response.json();
+
+                if (response.ok) {
+                    form.reset(result?.data);
+                } else {
+                    toast.error('Failed to fetch breeding data');
+                }
+            } catch (error) {
+                toast.error((error as Error).message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchBreedingData();
+    }, [id, form]);
+
+    useEffect(() => {
+        const fetchMothersData = async () => {
             try {
                 setMothersIdLoading(true);
-
                 const response = await fetch(`/api/cattle/get-mothers-id`);
                 const result = await response.json();
 
@@ -62,25 +91,27 @@ export default function AddBreeding() {
             }
         };
 
-        fetchData();
+        fetchMothersData();
     }, []);
 
     const onSubmit = async (data: IBreeding) => {
         try {
             setIsSubmitting(true);
-            const response = await fetch('/api/breeding/add-breeding', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(
+                `/api/breeding/update-breeding?id=${id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id, ...data }),
+                }
+            );
 
             if (!response.ok) {
-                toast.error('Failed to add breeding');
+                toast.error('Failed to update breeding');
             } else {
-                toast.success('Breeding added successfully. Redirecting!');
-                form.reset();
+                toast.success('Breeding updated successfully. Redirecting!');
                 router.push('/animal-breeding');
             }
         } catch (error) {
@@ -90,10 +121,18 @@ export default function AddBreeding() {
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="h-[calc(100vh-80px)] flex items-center justify-center">
+                <Loader2 className="size-10 animate-spin" />;
+            </div>
+        );
+    }
+
     return (
         <Card className="font-inter">
             <CardHeader>
-                <CardTitle className="text-3xl">Add Breeding</CardTitle>
+                <CardTitle className="text-3xl">Update Breeding</CardTitle>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -102,20 +141,47 @@ export default function AddBreeding() {
                         className="space-y-6"
                     >
                         <div className="grid grid-cols-2 items-center gap-6">
-                            <SelectOption
-                                data={mothers.map((mother) => ({
-                                    value: mother.ট্যাগ_আইডি,
-                                    label: mother.ট্যাগ_আইডি,
-                                }))}
-                                form={form}
-                                label="Select ID"
+                            <FormField
+                                control={form.control}
                                 name="selectId"
-                                placeholder={
-                                    isMothersIdLoading
-                                        ? 'Loading...'
-                                        : 'Select ID'
-                                }
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Select ID</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value.toString()}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue
+                                                        placeholder={
+                                                            isMothersIdLoading
+                                                                ? 'Loading'
+                                                                : 'Select ID'
+                                                        }
+                                                    />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {mothers.map(
+                                                    (mothers, index) => (
+                                                        <SelectItem
+                                                            key={index}
+                                                            value={
+                                                                mothers.ট্যাগ_আইডি
+                                                            }
+                                                        >
+                                                            {mothers.ট্যাগ_আইডি}
+                                                        </SelectItem>
+                                                    )
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="bullName"
@@ -228,24 +294,73 @@ export default function AddBreeding() {
                                 form={form}
                                 label="Approximate Birthdate"
                                 name="approximateBirthdate"
-                                placeholder="Select birthdate"
+                                placeholder="Select Approximate birthdate"
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="checkForSemenSuccessStatus"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Select the Semen Success Status
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value.toString()}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select the Semen Success Status" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {[
+                                                    {
+                                                        label: 'Pending for approval',
+                                                        value: 'pending for approval',
+                                                    },
+                                                    {
+                                                        label: 'Failed to Conceive',
+                                                        value: 'failed for conceive',
+                                                    },
+                                                    {
+                                                        label: 'Successfully Conceive',
+                                                        value: 'successfully conceive',
+                                                    },
+                                                ].map(
+                                                    (
+                                                        { label, value },
+                                                        index
+                                                    ) => (
+                                                        <SelectItem
+                                                            key={index}
+                                                            value={value}
+                                                        >
+                                                            {label}
+                                                        </SelectItem>
+                                                    )
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
                         </div>
 
-                        <div>
-                            <button
-                                type="submit"
-                                className={cn(
-                                    'btn-primary',
-                                    isSubmitting
-                                        ? 'bg-muted cursor-not-allowed'
-                                        : ''
-                                )}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? 'Submitting...' : 'Submit'}
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            className={cn(
+                                'btn-primary',
+                                isSubmitting
+                                    ? 'bg-muted cursor-not-allowed'
+                                    : ''
+                            )}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Updating...' : 'Update'}
+                        </button>
                     </form>
                 </Form>
             </CardContent>

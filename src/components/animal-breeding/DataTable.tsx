@@ -32,7 +32,7 @@ export default function DataTable() {
     }, [setIsLoading]);
 
     const handleViewDetails = (id: string) => {
-        router.push(`/customers/details/${id}`);
+        router.push(`/animal-breeding/details/${id}`);
     };
 
     return (
@@ -44,25 +44,31 @@ export default function DataTable() {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-green-500">
                         <tr>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed rounded-tl-lg  text-white uppercase tracking-wider">
-                                Serial No
+                            <th className="p-2 text-base font-semibold border border-dashed rounded-tl-lg  text-white">
+                                Serial
                             </th>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider">
-                                Mothers Id
+                            <th className="p-2 text-base font-semibold border border-dashed text-white">
+                                ID
                             </th>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider">
-                                Semen Date
+                            <th className="p-2 text-base font-semibold border border-dashed text-white">
+                                Date
                             </th>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                Breed Type
+                            <th className="p-2 text-base font-semibold border border-dashed  text-white text-center">
+                                Type
                             </th>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                Approximate BirthDate
+                            <th className="p-2 text-base font-semibold border border-dashed  text-white text-center">
+                                Check Status
                             </th>
-                            <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                Semen Percentage
+                            <th className="p-2 text-base font-semibold border border-dashed  text-white text-center">
+                                Birthdate
                             </th>
-                            <th className="px-6 py-3 text-center text-base font-semibold border border-dashed rounded-tr-lg text-white uppercase tracking-wider">
+                            <th className="p-2 text-base font-semibold border border-dashed  text-white text-center">
+                                Percentage
+                            </th>
+                            <th className="p-2 text-base font-semibold border border-dashed  text-white text-center">
+                                Status
+                            </th>
+                            <th className="p-2 text-center text-base font-semibold border border-dashed rounded-tr-lg text-white">
                                 Action
                             </th>
                         </tr>
@@ -70,41 +76,47 @@ export default function DataTable() {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {isLoading ? (
                             <tr>
-                                <td
-                                    colSpan={7}
-                                    className="px-6 py-3 text-center"
-                                >
+                                <td colSpan={7} className="p-2 text-center">
                                     লোড হচ্ছে...
                                 </td>
                             </tr>
                         ) : data?.length > 0 ? (
                             data.map((item, index) => (
                                 <tr key={index}>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {index + 1}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.mothersId}
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {item.selectId}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {format(
                                             item.semenDate,
                                             'MMMM dd, yyyy'
                                         )}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.breedType}
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {item.bullName}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {format(
-                                            item.approximateBirthDate,
+                                            item.checkForSemenSuccessResult,
                                             'MMMM dd, yyyy'
                                         )}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {format(
+                                            item.approximateBirthdate,
+                                            'MMMM dd, yyyy'
+                                        )}
+                                    </td>
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.semenPercentage}
                                     </td>
-                                    <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                        {item.checkForSemenSuccessStatus}
+                                    </td>
+                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         <div
                                             className="w-full flex items-center justify-center gap-2 group hover:cursor-pointer"
                                             onClick={() =>
@@ -121,10 +133,7 @@ export default function DataTable() {
                             ))
                         ) : (
                             <tr>
-                                <td
-                                    colSpan={7}
-                                    className="px-6 py-3 text-center"
-                                >
+                                <td colSpan={8} className="p-2 text-center">
                                     কোন তথ্য পাওয়া যায়নি।
                                 </td>
                             </tr>

@@ -16,6 +16,6 @@ export async function getUserData() {
 
         return data.user;
     } catch (error) {
-        toast.error((error as Error).message);
+        toast.error((error as Error).message || 'Something went wrong!');
     }
 }

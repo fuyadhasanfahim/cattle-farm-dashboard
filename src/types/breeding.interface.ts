@@ -1,19 +1,15 @@
 export default interface IBreeding {
     _id?: string;
-    mothersId: string;
-    breedType: string; // 
+    selectId: number;
     bullName: string;
-    bullNumber: string;
+    bullNumber: number;
     bullType: string;
     semenPercentage: string;
     semenCompanyName: string;
-    semenDate: Date; // breding Date
-    checkDate: Date;
-    breedingStatus: string;
-
-    semenType: string;
-    approximateBirthDate: Date;
-    status: 'pregnant' | 'calf_registered' | 'failed';
+    semenDate: Date;
+    checkForSemenSuccessResult: Date;
+    approximateBirthdate: Date;
+    checkForSemenSuccessStatus: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

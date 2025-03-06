@@ -4,16 +4,20 @@ import { models, Schema } from 'mongoose';
 
 const breedingSchema = new Schema<IBreeding>(
     {
-        mothersId: {
-            type: String,
+        selectId: {
+            type: Number,
             ref: 'Cattle',
             required: true,
         },
-        breedType: {
+        bullName: {
             type: String,
             required: true,
         },
-        semenType: {
+        bullNumber: {
+            type: Number,
+            required: true,
+        },
+        bullType: {
             type: String,
             required: true,
         },
@@ -25,18 +29,21 @@ const breedingSchema = new Schema<IBreeding>(
             type: String,
             required: true,
         },
-        approximateBirthDate: {
-            type: Date,
-            required: true,
-        },
         semenDate: {
             type: Date,
             required: true,
         },
-        status: {
-            type: String,
-            enum: ['pregnant', 'calf_registered', 'failed'],
+        checkForSemenSuccessResult: {
+            type: Date,
             required: true,
+        },
+        approximateBirthdate: {
+            type: Date,
+            required: true,
+        },
+        checkForSemenSuccessStatus: {
+            type: String,
+            default: 'pending for approval',
         },
     },
     {
