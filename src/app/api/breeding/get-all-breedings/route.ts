@@ -1,8 +1,11 @@
+import dbConfig from '@/lib/dbConfig';
 import BreedingModel from '@/models/breeding.model';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
+        await dbConfig();
+        
         const data = await BreedingModel.find();
 
         if (!data) {

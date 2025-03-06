@@ -1,8 +1,11 @@
+import dbConfig from '@/lib/dbConfig';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
     try {
+        await dbConfig();
+        
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
 

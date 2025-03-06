@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import MilkModel from '@/models/milk.model';
 import SalesModel from '@/models/sales.model';
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,6 +7,8 @@ export async function DELETE(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
+
+        await dbConfig();
 
         if (!id) {
             return NextResponse.json({

@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import FeedingModel from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -17,6 +18,8 @@ export async function DELETE(request: NextRequest) {
                 }
             );
         }
+
+        await dbConfig();
 
         const data = await FeedingModel.findByIdAndDelete(id);
 

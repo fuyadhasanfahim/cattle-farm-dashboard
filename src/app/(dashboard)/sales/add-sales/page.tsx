@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
-export default async function AddSales() {
+export const dynamic = 'force-dynamic';
+
+export default function AddSales() {
     return (
         <Card>
             <CardHeader>

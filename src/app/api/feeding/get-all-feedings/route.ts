@@ -1,8 +1,11 @@
+import dbConfig from '@/lib/dbConfig';
 import FeedingModel from '@/models/feeding.model';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
+        await dbConfig();
+        
         const data = await FeedingModel.find();
 
         if (!data) {

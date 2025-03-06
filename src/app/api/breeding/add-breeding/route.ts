@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import BreedingModel from '@/models/breeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -38,6 +39,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        await dbConfig();
+
         const data = new BreedingModel({
             selectId,
             bullName,
@@ -64,7 +67,7 @@ export async function POST(request: NextRequest) {
             }
         );
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return NextResponse.json(
             {
                 success: false,

@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import FeedingModel from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -30,6 +31,8 @@ export async function POST(request: NextRequest) {
                 }
             );
         }
+
+        await dbConfig();
 
         const data = new FeedingModel({
             খাদ্যের_ধরণ,

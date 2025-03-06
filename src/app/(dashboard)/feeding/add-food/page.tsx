@@ -46,9 +46,6 @@ const AddFeeding: React.FC = () => {
 
             const response = await fetch(`/api/feeding/add-feeding`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(data),
             });
 
@@ -61,9 +58,8 @@ const AddFeeding: React.FC = () => {
                 router.push('/feeding');
             }
         } catch (error) {
-            toast.error(
-                (error as Error).message || 'Failed to add feeding data'
-            );
+            console.log(error);
+            toast.error('Failed to add feeding data');
         }
     };
 

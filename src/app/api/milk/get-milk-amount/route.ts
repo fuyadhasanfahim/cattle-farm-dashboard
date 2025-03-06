@@ -1,8 +1,11 @@
+import dbConfig from '@/lib/dbConfig';
 import MilkModel from '@/models/milk.model';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
+        await dbConfig();
+
         const data = await MilkModel.findOne().sort('-createdAt');
 
         if (!data) {

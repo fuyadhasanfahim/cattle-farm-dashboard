@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import BreedingModel from '@/models/breeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -17,6 +18,8 @@ export async function PUT(request: NextRequest) {
                 }
             );
         }
+
+        await dbConfig();
 
         const data = await request.json();
 

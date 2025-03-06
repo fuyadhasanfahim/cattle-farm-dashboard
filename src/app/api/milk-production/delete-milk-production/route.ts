@@ -1,9 +1,12 @@
+import dbConfig from '@/lib/dbConfig';
 import MilkModel from '@/models/milk.model';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(req: NextRequest) {
     try {
+        await dbConfig();
+        
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
 

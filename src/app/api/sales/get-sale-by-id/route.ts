@@ -1,3 +1,4 @@
+import dbConfig from '@/lib/dbConfig';
 import SalesModel from '@/models/sales.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -5,6 +6,8 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.nextUrl);
         const id = searchParams.get('id');
+
+        await dbConfig();
 
         if (!id) {
             return NextResponse.json({
