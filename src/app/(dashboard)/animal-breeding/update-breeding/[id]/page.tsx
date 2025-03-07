@@ -39,7 +39,7 @@ export default function UpdateBreeding() {
         defaultValues: {
             selectId: 0,
             bullName: '',
-            bullNumber: 0,
+            bullNumber: '',
             bullType: '',
             semenPercentage: '',
             semenCompanyName: '',
