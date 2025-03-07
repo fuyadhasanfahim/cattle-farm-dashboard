@@ -14,8 +14,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { getUserData } from '@/actions/user.action';
 
-export const dynamic = 'force-dynamic';
-
 export default async function Navbar() {
     const user = await getUserData();
 

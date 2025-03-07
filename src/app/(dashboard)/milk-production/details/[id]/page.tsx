@@ -6,17 +6,6 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Edit2, Milk, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 
 export default function Details() {
     const { id } = useParams();
@@ -75,6 +64,13 @@ export default function Details() {
     }
 
     const handleDelete = async (id: string) => {
+        if (!id) return;
+
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this record?'
+        );
+        if (!confirmDelete) return;
+
         try {
             const response = await fetch(
                 `/api/milk-production/delete-milk-production?id=${id}`,
@@ -170,37 +166,13 @@ export default function Details() {
                             <Edit2 className="size-5" />
                             <span>এডিট</span>
                         </button>
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <button className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors shadow-md flex items-center space-x-2">
-                                    <Trash2 className="size-5" />
-                                    <span>ডিলিট</span>
-                                </button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                        তুমি কি পুরোপুরি নিশ্চিত?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
-                                        এটি স্থায়ীভাবে এই ডেটা মুছে ফেলবে এবং
-                                        আমাদের সার্ভার থেকে তোমার ডেটা মুছে
-                                        ফেলবে।
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                        বাতিল করুন
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                        onClick={() => handleDelete(data._id!)}
-                                    >
-                                        চালিয়ে যান
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                        <button
+                            className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors shadow-md flex items-center space-x-2"
+                            onClick={() => handleDelete(data._id!)}
+                        >
+                            <Trash2 className="size-5" />
+                            <span>ডিলিট</span>
+                        </button>
                     </div>
                 </CardContent>
             </Card>

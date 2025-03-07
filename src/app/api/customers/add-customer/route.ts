@@ -2,6 +2,8 @@ import dbConfig from '@/lib/dbConfig';
 import CustomerModel from '@/models/customer.model';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
     try {
         const {
@@ -17,12 +19,7 @@ export async function POST(req: NextRequest) {
             মন্তব্য,
         } = await req.json();
 
-        if (
-            !নাম ||
-            !মোবাইল_নম্বর ||
-            !ঠিকানা ||
-            !গ্রাহকের_ধরণ
-        ) {
+        if (!নাম || !মোবাইল_নম্বর || !ঠিকানা || !গ্রাহকের_ধরণ) {
             return NextResponse.json(
                 {
                     success: false,

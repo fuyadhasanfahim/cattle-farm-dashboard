@@ -1,7 +1,6 @@
 import AddMilkProduction from '@/components/milk-production/AddMilkProduction';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const dynamic = 'force-dynamic';
 
 export default function page() {
     return (

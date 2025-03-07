@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import MyCalender from '@/components/shared/MyCalender';
 import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,7 +58,8 @@ export default function AddBreeding() {
                     setMothers(result?.data);
                 }
             } catch (error) {
-                toast.error((error as Error).message);
+                console.log(error);
+                toast.error('Something went wrong!');
             } finally {
                 setMothersIdLoading(false);
             }

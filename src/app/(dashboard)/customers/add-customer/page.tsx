@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,8 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SelectOption from '@/components/shared/Select';
 import { useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
-
-export const dynamic = 'force-dynamic';
 
 const customerTypeOptions = [
     {
