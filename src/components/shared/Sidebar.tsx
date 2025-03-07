@@ -10,7 +10,6 @@ const {
     accounts,
     animalBreeding,
     dashboard,
-    deworming,
     fatFreshening,
     feeding,
     inventoryManagement,
@@ -22,7 +21,6 @@ const {
     sale,
     supplier,
     treatment,
-    vaccination,
 } = icons;
 
 const sidebarItems = [
@@ -51,22 +49,10 @@ const sidebarItems = [
         link: '/feeding',
     },
     {
-        id: 5,
-        icon: deworming,
-        label: 'ডিওয়ার্মিং',
-        link: '/deworming',
-    },
-    {
-        id: 6,
-        icon: vaccination,
-        label: 'টিকাদান',
-        link: '/vaccination',
-    },
-    {
         id: 7,
         icon: treatment,
         label: 'ট্রিটমেন্ট',
-        link: '/treatment',
+        link: '/treatments',
     },
     {
         id: 8,
