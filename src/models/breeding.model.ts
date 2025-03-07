@@ -14,7 +14,7 @@ const breedingSchema = new Schema<IBreeding>(
             required: true,
         },
         bullNumber: {
-            type: Number,
+            type: String,
             required: true,
         },
         bullType: {

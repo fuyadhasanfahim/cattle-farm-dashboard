@@ -2,7 +2,7 @@ export default interface IBreeding {
     _id?: string;
     selectId: number;
     bullName: string;
-    bullNumber: number;
+    bullNumber: string;
     bullType: string;
     semenPercentage: string;
     semenCompanyName: string;

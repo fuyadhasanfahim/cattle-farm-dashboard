@@ -32,7 +32,7 @@ export default function AddBreeding() {
         defaultValues: {
             selectId: 0,
             bullName: '',
-            bullNumber: 0,
+            bullNumber: '',
             bullType: '',
             semenPercentage: '',
             semenCompanyName: '',
@@ -45,6 +45,30 @@ export default function AddBreeding() {
             ),
         },
     });
+
+    const { watch, setValue } = form;
+    const semenDate = watch('semenDate');
+
+    useEffect(() => {
+        if (semenDate) {
+            setValue(
+                'checkForSemenSuccessResult',
+                new Date(
+                    new Date(semenDate).setDate(
+                        new Date(semenDate).getDate() + 90
+                    )
+                )
+            );
+            setValue(
+                'approximateBirthdate',
+                new Date(
+                    new Date(semenDate).setDate(
+                        new Date(semenDate).getDate() + 280
+                    )
+                )
+            );
+        }
+    }, [semenDate, setValue]);
 
     useEffect(() => {
         const fetchData = async () => {
