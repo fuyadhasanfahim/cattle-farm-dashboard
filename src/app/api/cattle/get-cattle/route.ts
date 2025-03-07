@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import CattleModel from '@/models/cattle.model';
 import { NextRequest, NextResponse } from 'next/server';

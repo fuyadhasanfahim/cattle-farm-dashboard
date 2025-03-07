@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import CattleModel from '@/models/cattle.model';
 import { NextResponse } from 'next/server';
@@ -5,7 +7,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         await dbConfig();
-        
+
         const mothers = await CattleModel.find({
             লিঙ্গ: 'মহিলা',
         });

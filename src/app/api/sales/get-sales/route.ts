@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import SalesModel from '@/models/sales.model';
 import { NextResponse } from 'next/server';

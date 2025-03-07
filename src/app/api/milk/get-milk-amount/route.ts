@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import MilkModel from '@/models/milk.model';
 import { NextResponse } from 'next/server';

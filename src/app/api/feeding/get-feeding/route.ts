@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import FeedingModel from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
