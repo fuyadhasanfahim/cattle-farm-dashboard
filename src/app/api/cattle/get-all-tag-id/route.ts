@@ -8,7 +8,7 @@ export async function GET() {
     try {
         await dbConfig();
 
-        const cattleTagId = await CattleModel.find().sort({ _id: 'asc' });
+        const cattleTagId = await CattleModel.find();
 
         return NextResponse.json(
             {
