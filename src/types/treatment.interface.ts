@@ -1,4 +1,5 @@
 export interface ITreatment {
+    _id?: string;
     cattleId: string;
     treatmentType: 'Deworming' | 'Vaccination' | 'General';
     medicineName: string;

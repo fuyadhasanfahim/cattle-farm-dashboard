@@ -1,116 +1,113 @@
 'use client';
 
-import icons from '@/assets/icons/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Users2 } from 'lucide-react';
-
-const {
-    accounts,
-    animalBreeding,
-    dashboard,
-    fatFreshening,
-    feeding,
-    inventoryManagement,
-    loneManagement,
-    manageCattles,
-    milkProductions,
-    party,
-    report,
-    sale,
-    supplier,
-    treatment,
-} = icons;
+import {
+    LayoutDashboard,
+    PawPrint,
+    Milk,
+    Utensils,
+    BriefcaseMedical,
+    GitPullRequest,
+    Heart,
+    ShoppingCart,
+    Users,
+    Folder,
+    Package,
+    DollarSign,
+    BarChart,
+} from 'lucide-react';
+import React from 'react';
 
 const sidebarItems = [
     {
         id: 1,
-        icon: dashboard,
+        icon: LayoutDashboard,
         label: 'ড্যাশবোর্ড',
         link: '/',
     },
     {
         id: 2,
-        icon: manageCattles,
+        icon: PawPrint,
         label: 'ম্যানেজ গবাদিপশু',
         link: '/manage-cattles',
     },
     {
         id: 3,
-        icon: milkProductions,
+        icon: Milk,
         label: 'দুধ উৎপাদন',
         link: '/milk-production',
     },
     {
         id: 4,
-        icon: feeding,
+        icon: Utensils,
         label: 'ফিডিং',
         link: '/feeding',
     },
     {
         id: 7,
-        icon: treatment,
+        icon: BriefcaseMedical,
         label: 'ট্রিটমেন্ট',
         link: '/treatments',
     },
     {
         id: 8,
-        icon: fatFreshening,
+        icon: GitPullRequest,
         label: 'মোটাতাজাকরণ',
         link: '/fattening',
     },
     {
         id: 9,
-        icon: animalBreeding,
+        icon: Heart,
         label: 'পশু প্রজনন',
         link: '/animal-breeding',
     },
     {
         id: 10,
-        icon: sale,
+        icon: ShoppingCart,
         label: 'বিক্রয়',
         link: '/sales',
     },
     {
         id: 11,
-        icon: sale,
+        icon: Users,
         label: 'কাস্টমার',
         link: '/customers',
     },
     {
         id: 12,
-        icon: party,
+        icon: Folder,
         label: 'পার্টি',
         link: '/party',
     },
     {
         id: 13,
-        icon: supplier,
+        icon: Package,
         label: 'সরবরাহকারী',
         link: '/supplier',
     },
     {
         id: 14,
-        icon: accounts,
+        icon: DollarSign,
         label: 'একাউন্টস',
         link: '/accounts',
     },
     {
         id: 15,
-        icon: inventoryManagement,
+        icon: BarChart,
         label: 'ইনভেন্টরি ম্যানেজমেন্ট',
         link: '/inventory-management',
     },
     {
         id: 16,
-        icon: loneManagement,
+        icon: DollarSign,
         label: 'লোন ম্যানেজমেন্ট',
         link: '/loan-management',
     },
     {
         id: 17,
-        icon: report,
+        icon: BarChart,
         label: 'রিপোর্ট',
         link: '/reports',
     },
@@ -132,11 +129,7 @@ export default function Sidebar() {
                                         : 'bg-transparent'
                                 }`}
                         >
-                            {label === 'কাস্টমার' ? (
-                                <Users2 className="size-4" />
-                            ) : (
-                                icon
-                            )}
+                            {React.createElement(icon, { size: 20 })}
                             <span className="font-notoSansBengali">
                                 {label}
                             </span>
