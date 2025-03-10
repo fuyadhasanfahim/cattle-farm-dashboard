@@ -7,7 +7,9 @@ import {
     Calendar,
     Loader2,
     Pill,
+    Settings2,
     Tag,
+    Trash2,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -18,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import axios from 'axios';
 
 export default function TreatmentDetailsPage() {
     const { id } = useParams();
@@ -71,13 +74,31 @@ export default function TreatmentDetailsPage() {
         return format(date, 'dd MMMM, yyyy');
     };
 
+    const handleDelete = async () => {
+        try {
+            const response = await axios.delete(
+                `/api/treatments/delete-treatment?id=${id}`
+            );
+
+            if (response.status === 200) {
+                toast.success('Treatment deleted successfully!');
+
+                router.push('/treatments');
+            } else {
+                toast.error('Failed to delete treatment!');
+            }
+        } catch (error) {
+            toast.error((error as Error).message);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="h-screen flex items-center justify-center">
                 <Loader2 size={32} className="animate-spin text-primary" />
             </div>
         );
-    } else if (isLoading && !data) {
+    } else if (!isLoading && !data) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-4">
                 <AlertCircle size={48} className="text-red-500" />
@@ -101,7 +122,7 @@ export default function TreatmentDetailsPage() {
                         onClick={() => router.back()}
                         className="w-fit"
                     >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        <ArrowLeft />
                         Back to Treatments
                     </Button>
 
@@ -300,8 +321,20 @@ export default function TreatmentDetailsPage() {
                 </div>
 
                 <div className="flex justify-end gap-3">
-                    <Button variant="outline">Edit Treatment</Button>
-                    <Button variant="destructive">Delete</Button>
+                    <Button
+                        variant="outline"
+                        onClick={() =>
+                            router.push(`/treatments/update-treatment/${id}`)
+                        }
+                        className="w-fit"
+                    >
+                        <Settings2 />
+                        Edit Treatment
+                    </Button>
+
+                    <Button variant="destructive" onClick={handleDelete}>
+                        <Trash2 /> Delete
+                    </Button>
                 </div>
             </div>
         </div>

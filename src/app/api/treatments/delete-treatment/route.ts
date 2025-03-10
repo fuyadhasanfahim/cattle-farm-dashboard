@@ -2,9 +2,7 @@ import dbConfig from '@/lib/dbConfig';
 import TreatmentModel from '@/models/treatment.model';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
@@ -23,25 +21,12 @@ export async function GET(req: NextRequest) {
 
         await dbConfig();
 
-        const data = await TreatmentModel.findById(id);
-
-        if (!data) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: 'Treatment not found.',
-                },
-                {
-                    status: 404,
-                }
-            );
-        }
+        await TreatmentModel.findByIdAndDelete(id);
 
         return NextResponse.json(
             {
                 success: true,
-                message: 'Successfully retrieved the treatment data.',
-                data,
+                message: 'Treatment deleted successfully.',
             },
             {
                 status: 200,

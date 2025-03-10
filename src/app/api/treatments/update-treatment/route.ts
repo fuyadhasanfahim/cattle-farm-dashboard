@@ -1,13 +1,12 @@
-import dbConfig from '@/lib/dbConfig';
 import TreatmentModel from '@/models/treatment.model';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(req: NextRequest) {
+export async function PUT(request: NextRequest) {
     try {
-        const { searchParams } = new URL(req.nextUrl);
+        const { searchParams } = new URL(request.nextUrl);
         const id = searchParams.get('id');
+
+        const data = await request.json();
 
         if (!id) {
             return NextResponse.json(
@@ -21,11 +20,14 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        await dbConfig();
+        const result = await TreatmentModel.findOneAndUpdate(
+            {
+                _id: id,
+            },
+            data
+        );
 
-        const data = await TreatmentModel.findById(id);
-
-        if (!data) {
+        if (!result) {
             return NextResponse.json(
                 {
                     success: false,
@@ -40,8 +42,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(
             {
                 success: true,
-                message: 'Successfully retrieved the treatment data.',
-                data,
+                message: 'Treatment updated successfully.',
             },
             {
                 status: 200,
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(
             {
                 success: false,
-                message: 'Something went wrong!',
+                message: 'An error occurred while updating treatment.',
                 error,
             },
             {
