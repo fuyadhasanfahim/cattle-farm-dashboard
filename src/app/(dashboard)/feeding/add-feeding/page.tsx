@@ -1,19 +1,19 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { IFeedPurchase } from '@/types/feeding.interface';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form } from '@/components/ui/form';
+import { toast } from 'react-hot-toast';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
+import { IFeedPurchase } from '@/types/feeding.interface';
 import MyCalender from '@/components/shared/MyCalender';
+import { Form } from '@/components/ui/form';
+import { ArrowLeft } from 'lucide-react';
 
 const feedSchema = z.object({
     feedType: z.string().min(1, 'Feed Type is required'),
@@ -24,10 +24,9 @@ const feedSchema = z.object({
     paymentType: z.string().min(1, 'Payment Type is required'),
 });
 
-export default function FeedingDetails() {
-    const { id } = useParams();
-    const [loading, setLoading] = useState(false);
+export default function AddFeed() {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(feedSchema),
@@ -41,99 +40,35 @@ export default function FeedingDetails() {
         },
     });
 
+    const quantity = form.watch('quantityPurchased');
+    const pricePerKg = form.watch('perKgPrice');
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-
-                const response = await fetch(
-                    `/api/feeding/purchases/get-purchase-by-id?id=${id}`
-                );
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-
-                const result = await response.json();
-
-                form.reset(result.feedPurchases);
-                form.reset({
-                    feedType: result.feedPurchases.feedType,
-                    purchaseDate: new Date(result.feedPurchases.purchaseDate),
-                    quantityPurchased: result.feedPurchases.quantityPurchased,
-                    perKgPrice: result.feedPurchases.perKgPrice,
-                    totalPrice: result.feedPurchases.totalPrice,
-                    paymentType: result.feedPurchases.paymentType,
-                });
-            } catch (error) {
-                toast.error((error as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [form, id]);
-
-    useEffect(() => {
-        const quantity = form.watch('quantityPurchased');
-        const price = form.watch('perKgPrice');
-        const totalPrice = quantity * price;
-        form.setValue('totalPrice', totalPrice);
-    }, [form]);
+        form.setValue('totalPrice', quantity * pricePerKg);
+    }, [quantity, pricePerKg, form]);
 
     const onSubmit = async (data: IFeedPurchase) => {
+        setLoading(true);
         try {
-            setLoading(true);
             const response = await fetch(
-                `/api/feeding/purchases/update-purchase?id=${id}`,
+                '/api/feeding/purchases/add-purchase',
                 {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
                 }
             );
 
             if (response.ok) {
-                toast.success('Purchases updated successfully');
-                router.push('/feeding');
+                toast.success('Feed added successfully!');
+
+                form.reset();
+
+                router.back();
             } else {
-                throw new Error('Failed to update data');
+                toast.error('Failed to add feed.');
             }
         } catch (error) {
-            toast.error((error as Error).message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!id) return;
-
-        const confirmDelete = window.confirm(
-            'Are you sure you want to delete this record?'
-        );
-        if (!confirmDelete) return;
-
-        try {
-            setLoading(true);
-            const response = await fetch(
-                `/api/feeding/purchases/delete-purchase?id=${id}`,
-                {
-                    method: 'DELETE',
-                }
-            );
-
-            if (response.ok) {
-                toast.success('Data deleted successfully');
-                router.push('/feeding');
-            } else {
-                toast.error('Failed to delete data.');
-            }
-        } catch (error) {
-            toast.error((error as Error).message || 'Failed to delete data.');
+            toast.error((error as Error).message || 'Something went wrong!');
         } finally {
             setLoading(false);
         }
@@ -210,9 +145,7 @@ export default function FeedingDetails() {
                             <Label htmlFor="totalPrice">Total Price</Label>
                             <Input
                                 type="number"
-                                {...form.register('totalPrice', {
-                                    valueAsNumber: true,
-                                })}
+                                {...form.register('totalPrice')}
                                 disabled
                             />
                         </div>
@@ -247,17 +180,7 @@ export default function FeedingDetails() {
                                 disabled={loading}
                                 className="w-full"
                             >
-                                {loading ? 'Updating...' : 'Update Feed'}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant={'destructive'}
-                                disabled={loading}
-                                className="w-full"
-                                onClick={() => handleDelete(id as string)}
-                            >
-                                Delete Record
+                                {loading ? 'Adding...' : 'Add Feed'}
                             </Button>
                         </div>
                     </form>

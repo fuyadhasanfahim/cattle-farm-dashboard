@@ -1,9 +1,25 @@
-export interface IFeeding {
+export interface IFeedPurchase {
     _id?: string;
-    খাদ্যের_ধরণ: string;
-    খাদ্যের_পরিমাণ: number;
-    তারিখ: Date;
-    প্রতি_কেজির_দাম: number;
-    মোট_দাম: number;
-    পেমেন্টের_ধরণ: string;
+    feedType: string;
+    purchaseDate: Date;
+    quantityPurchased: number;
+    perKgPrice: number;
+    totalPrice: number;
+    paymentType: string;
+}
+
+export interface IFeedingLog {
+    _id?: string;
+    cattleId: string;
+    feedType: string;
+    feedDate: Date;
+    feedAmount: number;
+    feedingMethod: string;
+}
+
+export interface IFeedInventory {
+    _id?: string;
+    feedType: string;
+    totalStock: number;
+    lastUpdated: Date;
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import MyCalender from '@/components/shared/MyCalender';
 import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -165,6 +166,12 @@ const AddFeeding: React.FC = () => {
                                 label="পেমেন্টের ধরণ"
                                 name="পেমেন্টের_ধরণ"
                                 placeholder="পেমেন্টের ধরণ সিলেক্ট করেন"
+                            />
+
+                            <MyCalender
+                                form={form}
+                                label="Select Date"
+                                name="তারিখ"
                             />
                         </div>
 

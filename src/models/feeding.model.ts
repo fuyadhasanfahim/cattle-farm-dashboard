@@ -1,38 +1,33 @@
-import { IFeeding } from '@/types/feeding.interface';
-import { model, models, Schema } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
-const feedingSchema = new Schema<IFeeding>(
-    {
-        খাদ্যের_ধরণ: {
-            type: String,
-            required: true,
-        },
-        খাদ্যের_পরিমাণ: {
-            type: Number,
-            required: true,
-        },
-        তারিখ: {
-            type: Date,
-            required: true,
-        },
-        প্রতি_কেজির_দাম: {
-            type: Number,
-            required: true,
-        },
-        মোট_দাম: {
-            type: Number,
-            required: true,
-        },
-        পেমেন্টের_ধরণ: {
-            type: String,
-            required: true,
-        },
-    },
-    {
-        timestamps: true,
-    }
-);
+const FeedPurchaseSchema = new Schema({
+    feedType: { type: String, required: true },
+    purchaseDate: { type: Date, default: Date.now },
+    quantityPurchased: { type: Number, required: true },
+    perKgPrice: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    paymentType: { type: String, required: true },
+});
 
-const FeedingModel = models?.Feeding || model('Feeding', feedingSchema);
+const FeedInventorySchema = new Schema({
+    feedType: { type: String, required: true, unique: true },
+    totalStock: { type: Number, required: true },
+    lastUpdated: { type: Date, default: Date.now },
+});
 
-export default FeedingModel;
+const FeedingLogSchema = new Schema({
+    cattleId: { type: Schema.Types.ObjectId, ref: 'Cattle', required: true },
+    feedType: { type: String, required: true },
+    feedDate: { type: Date, default: Date.now },
+    feedAmount: { type: Number, required: true },
+    feedingMethod: { type: String, required: true },
+});
+
+export const FeedPurchaseModel =
+    models?.FeedPurchase || model('FeedPurchase', FeedPurchaseSchema);
+
+export const FeedInventoryModel =
+    models?.FeedInventory || model('FeedInventory', FeedInventorySchema);
+
+export const FeedingLogModel =
+    models?.FeedingLog || model('FeedingLog', FeedingLogSchema);

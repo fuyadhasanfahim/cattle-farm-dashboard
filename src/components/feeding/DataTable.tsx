@@ -1,114 +1,182 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'react-hot-toast';
+import { IFeedPurchase } from '@/types/feeding.interface';
 import { format } from 'date-fns';
-import { IFeeding } from '@/types/feeding.interface';
 import Link from 'next/link';
 
 export default function DataTable() {
-    const [data, setData] = useState<IFeeding[]>([]);
+    const [feedData, setFeedData] = useState<IFeedPurchase[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        async function fetchData() {
             try {
-                const response = await fetch(`/api/feeding/get-all-feedings`);
-                const { data } = await response.json();
-
-                setData(data);
+                const res = await fetch('/api/feeding/purchases/get-purchases');
+                if (!res.ok) throw new Error('Failed to fetch data');
+                const data = await res.json();
+                setFeedData(data.feedPurchases);
             } catch (error) {
-                console.error('Error fetching milk sales data:', error);
+                toast.error(
+                    (error as Error).message || 'Error fetching feed data'
+                );
             } finally {
                 setLoading(false);
             }
-        };
-
+        }
         fetchData();
     }, []);
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-md my-10">
-            <h1 className="text-2xl font-bold mb-6">বিক্রয় ডেটা</h1>
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-green-500">
-                    <tr>
-                        <th className="px-3 py-2 text-base font-semibold border border-dashed text-white tracking-wider text-center rounded-tl-lg">
-                            Serial No.
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            খাদ্যের_ধরণ
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            খাদ্যের_পরিমাণ
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            তারিখ
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            পেমেন্টের_ধরণ
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            প্রতি_কেজির_দাম
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center">
-                            মোট_দাম
-                        </th>
-                        <th className="px-6 py-3 text-base font-semibold border border-dashed text-white tracking-wider text-center rounded-tr-lg">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+        <section>
+            <Card className="mt-6">
+                <CardHeader>
+                    <CardTitle>Feed Inventory</CardTitle>
+                </CardHeader>
+                <CardContent>
                     {loading ? (
-                        <tr>
-                            <td colSpan={6} className="px-6 py-4 text-center">
-                                Loading...
-                            </td>
-                        </tr>
+                        <p>Loading...</p>
                     ) : (
-                        data.map((item, index) => (
-                            <tr key={index}>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {index + 1}
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.খাদ্যের_ধরণ}
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.খাদ্যের_পরিমাণ} Liter
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.তারিখ
-                                        ? format(
-                                              new Date(item.তারিখ),
-                                              'MMMM dd, yyyy'
-                                          )
-                                        : 'N/A'}
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.পেমেন্টের_ধরণ}
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.প্রতি_কেজির_দাম} Taka
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    {item.মোট_দাম} Taka
-                                </td>
-                                <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed text-gray-900">
-                                    <div className="w-full flex items-center justify-center">
-                                        <Link
-                                            href={`/feeding/details/${item._id}`}
-                                            className="hover:underline"
+                        <Table>
+                            <TableCaption>
+                                List of all feed purchases
+                            </TableCaption>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="text-center">
+                                        Feed Type
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Quantity (kg)
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Price per Kg
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Total Price
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Payment Type
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Date
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Action
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {feedData.length > 0 ? (
+                                    feedData.map((feed) => (
+                                        <TableRow key={feed._id}>
+                                            <TableCell className="text-center">
+                                                {feed.feedType}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                {feed.quantityPurchased} kg
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                ${feed.perKgPrice}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                ${feed.totalPrice}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                {feed.paymentType}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                {format(
+                                                    new Date(feed.purchaseDate),
+                                                    'PPP'
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <Link
+                                                    href={`/feeding/details/${feed._id}`}
+                                                    className="text-green-500 hover:underline"
+                                                >
+                                                    View
+                                                </Link>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={7}
+                                            className="text-center"
                                         >
-                                            View
-                                        </Link>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))
+                                            No data available
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={7}
+                                        className="text-center"
+                                    >
+                                        <Pagination>
+                                            <PaginationContent>
+                                                <PaginationItem>
+                                                    <PaginationPrevious href="#" />
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <PaginationLink href="#">
+                                                        1
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <PaginationLink
+                                                        href="#"
+                                                        isActive
+                                                    >
+                                                        2
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <PaginationLink href="#">
+                                                        3
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <PaginationNext href="#" />
+                                                </PaginationItem>
+                                            </PaginationContent>
+                                        </Pagination>
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        </Table>
                     )}
-                </tbody>
-            </table>
-        </div>
+                </CardContent>
+            </Card>
+        </section>
     );
 }
