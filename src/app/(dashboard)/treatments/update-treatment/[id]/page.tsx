@@ -33,6 +33,7 @@ const formSchema = z.object({
         required_error: 'Please select a treatment type',
     }),
     medicineName: z.string().min(1, 'Medicine name is required'),
+    medicineReason: z.string().optional(),
     vaccinationInterval: z
         .union([z.literal(3), z.literal(6), z.literal(9), z.literal(12)])
         .optional(),
@@ -61,6 +62,7 @@ export default function UpdateTreatment() {
             cattleId: '',
             treatmentType: undefined,
             medicineName: '',
+            medicineReason: '',
             vaccinationInterval: undefined,
             treatmentDate: new Date(),
             dewormingCount: 0,
@@ -105,6 +107,7 @@ export default function UpdateTreatment() {
                     cattleId,
                     treatmentType,
                     medicineName,
+                    medicineReason,
                     vaccinationInterval,
                     treatmentDate,
                     dewormingCount,
@@ -117,6 +120,7 @@ export default function UpdateTreatment() {
                         cattleId: cattleId,
                         treatmentType: treatmentType,
                         medicineName: medicineName,
+                        medicineReason: medicineReason,
                         vaccinationInterval: vaccinationInterval,
                         treatmentDate: new Date(treatmentDate),
                         dewormingCount: dewormingCount,
@@ -148,6 +152,7 @@ export default function UpdateTreatment() {
                 cattleId: string;
                 treatmentType: 'Deworming' | 'Vaccination' | 'General';
                 medicineName: string;
+                medicineReason: string;
                 treatmentDate: Date;
                 vaccinationInterval?: number;
                 vaccinationCount?: number;
@@ -158,6 +163,7 @@ export default function UpdateTreatment() {
                 cattleId: values.cattleId,
                 treatmentType: values?.treatmentType,
                 medicineName: values.medicineName,
+                medicineReason: values.medicineReason as string,
                 treatmentDate: values.treatmentDate,
             };
 
@@ -409,12 +415,31 @@ export default function UpdateTreatment() {
                             />
                         )}
 
+                        {treatmentType === 'General' && (
+                            <FormField
+                                control={form.control}
+                                name="medicineReason"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Medicine Reason</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Enter reason for the medicine"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
                         <div className="flex items-center justify-between gap-6">
                             <Button
                                 onClick={() => window.history.back()}
                                 className="w-full"
                                 type="button"
-                                variant={'ghost'}
+                                variant="outline"
                             >
                                 <ArrowLeft className="size-5" />
                                 <span>Back</span>

@@ -9,6 +9,7 @@ const CattleTreatmentSchema = new Schema<ITreatment>({
         required: true,
     },
     medicineName: { type: String, required: true },
+    medicineReason: { type: String, required: false },
     treatmentDate: { type: Date, required: true },
     nextDueDate: { type: Date },
     vaccinationInterval: { type: Number, enum: [3, 6, 9, 12] },

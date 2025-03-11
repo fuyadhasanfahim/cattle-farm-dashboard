@@ -126,7 +126,7 @@ export default function DataTable() {
                     onClick={() => handlePageChange(i)}
                     className={`px-3 py-1 mx-1 rounded-md ${
                         currentPage === i
-                            ? 'bg-[#52aa46] text-white'
+                            ? 'bg-green-500 text-white'
                             : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
                     }`}
                 >
@@ -206,12 +206,12 @@ export default function DataTable() {
                     value={searchQuery}
                     onChange={handleSearchChange}
                     placeholder="Search..."
-                    className="w-full h-full pl-10 pr-3 bg-white rounded-lg focus:border-[#52aa46] placeholder:text-muted-foreground outline outline-1 outline-[#52aa46] focus:outline-2"
+                    className="w-full h-full pl-10 pr-3 bg-white rounded-lg focus:border-green-500 placeholder:text-muted-foreground outline outline-1 outline-green-500 focus:outline-2"
                 />
             </form>
 
             <div className="overflow-x-auto">
-                <table className="w-full bg-[#52aa46] rounded-t-lg">
+                <table className="w-full bg-green-500 rounded-t-lg">
                     <thead>
                         <tr>
                             {headers.map((header, index) => (

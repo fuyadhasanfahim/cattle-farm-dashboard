@@ -45,7 +45,7 @@ export default function SecondPieChart() {
 
     return (
         <div className="col-span-1 w-[350px] h-[350px] bg-white rounded-2xl shadow border p-6">
-            <div className="font-bold text-[#52aa46]">লাভের পরিমান</div>
+            <div className="font-bold text-green-500">লাভের পরিমান</div>
             <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                     <Pie
@@ -73,7 +73,7 @@ export default function SecondPieChart() {
 
                 <ul className="flex items-center gap-2">
                     <li className="flex items-center gap-3">
-                        <div className="w-4 h-4 bg-[#52aa46] rounded"></div>
+                        <div className="w-4 h-4 bg-green-500 rounded"></div>
                         <p className="text-black text-sm">
                             গবাদি পশু: ২,৫০,০০০৳
                         </p>

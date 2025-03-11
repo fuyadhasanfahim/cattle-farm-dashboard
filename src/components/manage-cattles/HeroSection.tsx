@@ -21,7 +21,7 @@ export default function HeroSection() {
             <div className="flex items-center justify-between gap-10 py-6">
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <Button className="h-10 px-6 py-2 bg-[#52aa46] hover:bg-[#4a9940] text-white rounded-lg justify-start items-center gap-1 inline-flex">
+                        <Button className="h-10 px-6 py-2 bg-green-500 hover:bg-[#4a9940] text-white rounded-lg justify-start items-center gap-1 inline-flex">
                             <PlusIcon className="h-4 w-4" />
                             <span>গবাদি পশুর নিবন্ধন</span>
                         </Button>
@@ -81,7 +81,7 @@ export default function HeroSection() {
 
             <div className="flex items-center py-6">
                 <div className="w-full h-[0px] border border-[#ececec]" />
-                <div className="text-[#52aa46] w-[700px] text-center text-2xl font-bold font-notoSansBengali px-6 whitespace-nowrap">
+                <div className="text-green-500 w-[700px] text-center text-2xl font-bold font-notoSansBengali px-6 whitespace-nowrap">
                     নিবন্ধিত গবাদি পশুর তালিকা
                 </div>
                 <div className="w-full h-[0px] border border-[#ececec]" />

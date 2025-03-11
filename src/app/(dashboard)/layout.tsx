@@ -13,7 +13,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
                     <Sidebar />
                 </div>
                 <section className="w-full ml-[250px]">
-                    <div className="w-full bg-[#fbfff1] min-h-[calc(100vh-80px)] p-4 overflow-hidden">
+                    <div className="w-full bg-green-100 min-h-[calc(100vh-80px)] p-4 overflow-hidden">
                         {children}
                     </div>
                 </section>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default async function Layout({ children }: { children: ReactNode }) {
     return (
-        <main className="bg-[#fbfff1] h-screen flex items-center justify-center w-full">
+        <main className="bg-green-100 h-screen flex items-center justify-center w-full">
             {children}
         </main>
     );

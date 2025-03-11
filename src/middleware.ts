@@ -6,7 +6,11 @@ export function middleware(req: NextRequest) {
     const token = req.cookies.get('token')?.value || '';
 
     if (token && (pathname === '/login' || pathname === '/signup')) {
-        return NextResponse.redirect(new URL('/', req.url));
+        return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+
+    if (token && pathname === '/') {
+        return NextResponse.redirect(new URL('/dashboard', req.url));
     }
 
     if (!token && !publicRoutes.includes(pathname)) {

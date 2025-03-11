@@ -6,7 +6,7 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
                             নিবন্ধিত গবাদি পশু
                         </h3>
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
@@ -32,7 +32,7 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
                             গবাদি পশুর মোট মূল্য
                         </h3>
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
@@ -58,7 +58,7 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
                             বিক্রিত গবাদি পশুর মোট মূল্য
                         </h3>
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">
@@ -84,7 +84,7 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-[#52aa46] text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
                             দুধ উৎপাদন
                         </h3>
                         <p className="text-[#313131] text-base font-bold font-notoSansBengali">

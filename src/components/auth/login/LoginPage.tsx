@@ -30,14 +30,13 @@ export default function LoginPage() {
             });
 
             if (response.status === 200) {
-                toast.success('Login successful. Please wait...');
-
                 setData({
                     email: '',
                     password: '',
                 });
 
-                router.push('/');
+                toast.success('Login successful. Please wait...');
+                router.push('/dashboard');
             }
         } catch (error) {
             toast.error((error as Error).message || 'Something went wrong.');
@@ -90,7 +89,7 @@ export default function LoginPage() {
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-[#52aa46]"
+                            className="w-full bg-green-500"
                             disabled={isLoading}
                         >
                             {isLoading ? 'লোডিং...' : 'লগইন'}

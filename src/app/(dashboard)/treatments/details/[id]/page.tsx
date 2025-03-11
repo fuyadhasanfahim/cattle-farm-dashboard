@@ -11,6 +11,17 @@ import {
     Tag,
     Trash2,
 } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -114,7 +125,7 @@ export default function TreatmentDetailsPage() {
     }
 
     return (
-        <div className="container mx-auto py-8 px-4 md:px-6 font-inter">
+        <div className="container mx-auto font-inter">
             <div className="flex flex-col space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <Button
@@ -166,6 +177,17 @@ export default function TreatmentDetailsPage() {
                                     {data?.medicineName}
                                 </p>
                             </div>
+
+                            {data?.medicineReason && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500">
+                                        Medicine Reason
+                                    </h3>
+                                    <p className="text-lg font-semibold">
+                                        {data?.medicineReason}
+                                    </p>
+                                </div>
+                            )}
 
                             <Separator />
 
@@ -332,9 +354,34 @@ export default function TreatmentDetailsPage() {
                         Edit Treatment
                     </Button>
 
-                    <Button variant="destructive" onClick={handleDelete}>
-                        <Trash2 /> Delete
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive">
+                                <Trash2 /> Delete
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete this data and remove from
+                                    our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-red-500 hover:bg-red-700"
+                                    onClick={handleDelete}
+                                >
+                                    Continue
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </div>
