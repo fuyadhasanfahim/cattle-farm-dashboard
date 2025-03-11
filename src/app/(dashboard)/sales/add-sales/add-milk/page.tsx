@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import MyCalender from '@/components/shared/MyCalender';
 import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

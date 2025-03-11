@@ -3,6 +3,8 @@ import MilkModel from '@/models/milk.model';
 import SalesModel from '@/models/sales.model';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
     await dbConfig();
 

@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
