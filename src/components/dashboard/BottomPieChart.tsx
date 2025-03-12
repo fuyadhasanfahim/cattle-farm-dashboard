@@ -24,6 +24,7 @@ export default async function BottomPieChart() {
                             alt="card image"
                             width={123}
                             height={86}
+                            priority
                         />
                     </div>
                 </div>

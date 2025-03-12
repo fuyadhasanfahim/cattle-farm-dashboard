@@ -90,8 +90,14 @@ export default function AddFeedPage() {
     }, []);
 
     const onSubmit = async (data: IFeedingLog) => {
-        console.log('Form Data Submitted:', data); // Debugging log
-        const availableStock = inventoryData[0]?.totalStock ?? 0;
+        console.log('Form Data Submitted:', data);
+
+        const availableStock = inventoryData.reduce(
+            (acc, data) => acc + data.totalStock,
+            0
+        );
+
+        console.log(availableStock);
 
         if (data.feedAmount > availableStock) {
             toast.error(
@@ -133,10 +139,7 @@ export default function AddFeedPage() {
             <CardContent>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit((data) => {
-                            console.log('Form Submitted:', data); // Debugging log
-                            onSubmit(data);
-                        })}
+                        onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
                         <MyCalender
