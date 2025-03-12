@@ -14,7 +14,6 @@ export interface IFeedingLog {
     feedType: string;
     feedDate: Date;
     feedAmount: number;
-    feedingMethod: string;
 }
 
 export interface IFeedInventory {

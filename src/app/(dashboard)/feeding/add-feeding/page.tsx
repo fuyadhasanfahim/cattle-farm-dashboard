@@ -14,6 +14,7 @@ import { IFeedPurchase } from '@/types/feeding.interface';
 import MyCalender from '@/components/shared/MyCalender';
 import { Form } from '@/components/ui/form';
 import { ArrowLeft } from 'lucide-react';
+import SelectOption from '@/components/shared/Select';
 
 const feedSchema = z.object({
     feedType: z.string().min(1, 'Feed Type is required'),
@@ -92,10 +93,22 @@ export default function AddFeed() {
                         />
 
                         <div>
-                            <Label htmlFor="feedType">Feed Type</Label>
-                            <Input
-                                {...form.register('feedType')}
-                                placeholder="Enter feed type"
+                            <SelectOption
+                                data={[
+                                    {
+                                        value: 'খর',
+                                        label: 'খর',
+                                    },
+                                    {
+                                        value: 'ঘাস',
+                                        label: 'ঘাস',
+                                    },
+                                ]}
+                                form={form}
+                                label="Feed Type"
+                                name="feedType"
+                                placeholder="Select Feed Type"
+                                required
                             />
                             {form.formState.errors.feedType && (
                                 <p className="text-red-500 text-sm">
@@ -151,14 +164,26 @@ export default function AddFeed() {
                         </div>
 
                         <div>
-                            <Label htmlFor="paymentType">Payment Type</Label>
-                            <Input
-                                {...form.register('paymentType')}
-                                placeholder="Enter payment type"
+                            <SelectOption
+                                data={[
+                                    {
+                                        value: 'নগদ',
+                                        label: 'নগদ',
+                                    },
+                                    {
+                                        value: 'বাকী',
+                                        label: 'বাকী',
+                                    },
+                                ]}
+                                form={form}
+                                label="Payment Type"
+                                name="paymentType"
+                                placeholder="Select Payment Type"
+                                required
                             />
-                            {form.formState.errors.paymentType && (
+                            {form.formState.errors.feedType && (
                                 <p className="text-red-500 text-sm">
-                                    {form.formState.errors.paymentType.message}
+                                    {form.formState.errors.feedType.message}
                                 </p>
                             )}
                         </div>

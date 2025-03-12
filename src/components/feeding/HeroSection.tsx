@@ -12,6 +12,13 @@ export default function HeroSection() {
                         <span>Add Feeding</span>
                     </Button>
                 </Link>
+
+                <Link href={'/feeding/add-feed'}>
+                    <Button>
+                        <Plus className="size-5" />
+                        <span>Add Feed</span>
+                    </Button>
+                </Link>
             </div>
         </section>
     );
