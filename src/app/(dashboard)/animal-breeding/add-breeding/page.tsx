@@ -116,7 +116,7 @@ export default function AddBreeding() {
     };
 
     return (
-        <Card className="font-inter">
+        <Card className="">
             <CardHeader>
                 <CardTitle className="text-3xl">Add Breeding</CardTitle>
             </CardHeader>

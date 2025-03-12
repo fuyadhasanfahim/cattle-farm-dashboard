@@ -6,13 +6,13 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             ফিডিং
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ১২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১২</span>
                         </div>
@@ -32,13 +32,13 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             কৃমিনাশক
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ১৫
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১৫</span>
                         </div>
@@ -58,13 +58,13 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             টিকাদান
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ৩২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>৩২</span>
                         </div>
@@ -84,13 +84,13 @@ export default async function BottomPieChart() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             চিকিৎসা
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ১২ টাইম
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>০৫</span>
                         </div>

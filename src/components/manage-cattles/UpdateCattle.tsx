@@ -194,7 +194,7 @@
 //     };
 
 //     return (
-//         <div className="space-y-4 font-notoSansBengali px-4">
+//         <div className="space-y-4  px-4">
 //             <div className="flex items-center justify-between">
 //                 <DialogHeader>
 //                     <DialogTitle>গবাদি পশুর তথ্য যোগ করুন</DialogTitle>

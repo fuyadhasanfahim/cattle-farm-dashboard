@@ -47,7 +47,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex flex-col gap-6 w-full max-w-md">
-            <Card className="font-notoSansBengali">
+            <Card className="">
                 <CardHeader>
                     <CardTitle className="text-2xl">লগইন</CardTitle>
                 </CardHeader>

@@ -130,7 +130,7 @@ export default function UpdateBreeding() {
     }
 
     return (
-        <Card className="font-inter">
+        <Card className="">
             <CardHeader>
                 <CardTitle className="text-3xl">Update Breeding</CardTitle>
             </CardHeader>

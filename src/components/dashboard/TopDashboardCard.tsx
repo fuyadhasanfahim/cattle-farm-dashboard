@@ -6,13 +6,13 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             নিবন্ধিত গবাদি পশু
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ১২
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>১২</span>
                         </div>
@@ -32,13 +32,13 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             গবাদি পশুর মোট মূল্য
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ৫৫৫০০০০ টাকা
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>মোট গবাদি পশু:</span>
                             <span>৪০</span>
                         </div>
@@ -58,13 +58,13 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             বিক্রিত গবাদি পশুর মোট মূল্য
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ২৫,৫০,০০০ টাকা
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>বিক্রিত গবাদি পশু:</span>
                             <span>০৬</span>
                         </div>
@@ -84,13 +84,13 @@ export default async function TopDashboardCard() {
             <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
                 <div className="flex justify-center items-center gap-2">
                     <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold font-notoSansBengali">
+                        <h3 className="text-green-500 text-base font-bold ">
                             দুধ উৎপাদন
                         </h3>
-                        <p className="text-[#313131] text-base font-bold font-notoSansBengali">
+                        <p className="text-[#313131] text-base font-bold ">
                             মোট: ২৫০ লিটার
                         </p>
-                        <div className="text-[#666666] text-xs font-normal font-notoSansBengali flex items-center gap-2 justify-between">
+                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
                             <span>এই বছর:</span>
                             <span>২৫০</span>
                         </div>

@@ -20,10 +20,10 @@ export default async function HeroSection() {
                         </AvatarFallback>
                     </Avatar>
                     <div>
-                        <h3 className="text-[#313131] text-base font-normal font-inter">
+                        <h3 className="text-[#313131] text-base font-normal ">
                             Hello, {user?.name}
                         </h3>
-                        <p className="text-[#666666] text-xs font-normal font-inter">
+                        <p className="text-[#666666] text-xs font-normal ">
                             Welcome to dashboard!
                         </p>
                     </div>

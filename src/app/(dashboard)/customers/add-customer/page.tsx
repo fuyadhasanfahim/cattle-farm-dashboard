@@ -82,7 +82,7 @@ export default function AddCustomer() {
     };
 
     return (
-        <section className="font-notoSansBengali">
+        <section className="">
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-semibold text-green-600">

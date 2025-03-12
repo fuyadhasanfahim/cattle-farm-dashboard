@@ -140,7 +140,7 @@ export default function AddSales() {
     };
 
     return (
-        <Card className="font-inter">
+        <Card className="">
             <CardHeader>
                 <CardTitle className="text-3xl">Add Sales</CardTitle>
             </CardHeader>

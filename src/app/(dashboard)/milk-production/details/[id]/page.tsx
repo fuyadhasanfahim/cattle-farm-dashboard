@@ -208,7 +208,7 @@ function InfoCard({
                     <p
                         className={`mt-1 ${
                             highlight
-                                ? 'text-xl font-bold text-green-600 font-notoSansBengali'
+                                ? 'text-xl font-bold text-green-600 '
                                 : 'text-gray-700'
                         }`}
                     >

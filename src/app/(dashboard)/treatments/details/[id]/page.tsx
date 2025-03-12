@@ -125,7 +125,7 @@ export default function TreatmentDetailsPage() {
     }
 
     return (
-        <div className="container mx-auto font-inter">
+        <div className="container mx-auto ">
             <div className="flex flex-col space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <Button

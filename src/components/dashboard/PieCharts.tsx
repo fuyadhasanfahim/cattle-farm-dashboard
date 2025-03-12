@@ -66,7 +66,7 @@ export default function PieCharts() {
 
     return (
         <div className="col-span-2 w-[280px] h-[350px] bg-white rounded-2xl shadow border">
-            <div className="text-green-500 text-base font-bold font-notoSansBengali py-6 px-4">
+            <div className="text-green-500 text-base font-bold  py-6 px-4">
                 গবাদি পশুর চিকিৎসা
             </div>
 
@@ -111,7 +111,7 @@ export default function PieCharts() {
                                         colors[index % colors.length],
                                 }}
                             />
-                            <p className="text-black text-sm font-normal font-notoSansBengali">
+                            <p className="text-black text-sm font-normal ">
                                 {entry.name}
                             </p>
                         </li>

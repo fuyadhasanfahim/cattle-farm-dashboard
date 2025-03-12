@@ -124,7 +124,7 @@ export default function DataTable() {
                                             }
                                         >
                                             <Eye className="size-5 group-hover:text-yellow-500" />
-                                            <span className="font-inter group-hover:underline">
+                                            <span className=" group-hover:underline">
                                                 View Details
                                             </span>
                                         </div>

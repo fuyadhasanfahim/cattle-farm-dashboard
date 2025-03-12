@@ -142,7 +142,7 @@ export default function TreatmentTable() {
     };
 
     return (
-        <section className="font-inter my-10 space-y-6">
+        <section className=" my-10 space-y-6">
             <div className="flex items-center justify-end gap-4">
                 <Select value={sort} onValueChange={(value) => setSort(value)}>
                     <SelectTrigger className="w-[160px] bg-white">

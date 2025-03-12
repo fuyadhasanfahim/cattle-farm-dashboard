@@ -12,7 +12,6 @@ const config: Config = {
         extend: {
             fontFamily: {
                 inter: 'var(--font-inter)',
-                notoSansBengali: 'var(--font-noto-sans-bengali)',
             },
             colors: {
                 background: 'hsl(var(--background))',

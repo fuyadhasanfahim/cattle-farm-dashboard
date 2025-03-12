@@ -67,7 +67,7 @@ export default function SecondPieChart() {
                 </PieChart>
             </ResponsiveContainer>
             <div className="mt-6 space-y-4">
-                <div className="text-[#313131] text-center text-lg font-bold font-notoSansBengali">
+                <div className="text-[#313131] text-center text-lg font-bold ">
                     মোট: 3,00,000 ৳
                 </div>
 

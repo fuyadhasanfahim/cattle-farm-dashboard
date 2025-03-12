@@ -31,7 +31,7 @@ export default function BarCharts() {
     return (
         <div className="col-span-3 w-[584px] h-[350px] bg-white rounded-2xl shadow border border-[#e0e0e0] p-4">
             <div className="flex items-center justify-between">
-                <div className="text-green-500 text-lg font-bold font-notoSansBengali">
+                <div className="text-green-500 text-lg font-bold ">
                     গবাদি পশু
                 </div>
                 <DatePicker />

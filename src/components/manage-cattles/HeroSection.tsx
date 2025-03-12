@@ -42,7 +42,7 @@ export default function HeroSection() {
                         className="px-4 py-2 rounded-lg border border-[#666666] justify-start items-center gap-1 flex"
                     >
                         <Files className="w-4 h-4 px-px justify-center items-center flex overflow-hidden" />
-                        <div className="text-[#666666] text-xs font-normal font-inter">
+                        <div className="text-[#666666] text-xs font-normal ">
                             Copy
                         </div>
                     </Button>
@@ -52,7 +52,7 @@ export default function HeroSection() {
                         className="px-4 py-2 rounded-lg border border-[#666666] justify-start items-center gap-1 flex"
                     >
                         <Files className="w-4 h-4 px-px justify-center items-center flex overflow-hidden" />
-                        <div className="text-[#666666] text-xs font-normal font-inter">
+                        <div className="text-[#666666] text-xs font-normal ">
                             Excel
                         </div>
                     </Button>
@@ -62,7 +62,7 @@ export default function HeroSection() {
                         className="px-4 py-2 rounded-lg border border-[#666666] justify-start items-center gap-1 flex"
                     >
                         <Files className="w-4 h-4 px-px justify-center items-center flex overflow-hidden" />
-                        <div className="text-[#666666] text-xs font-normal font-inter">
+                        <div className="text-[#666666] text-xs font-normal ">
                             CSV
                         </div>
                     </Button>
@@ -72,7 +72,7 @@ export default function HeroSection() {
                         className="px-4 py-2 rounded-lg border border-[#666666] justify-start items-center gap-1 flex"
                     >
                         <Files className="w-4 h-4 px-px justify-center items-center flex overflow-hidden" />
-                        <div className="text-[#666666] text-xs font-normal font-inter">
+                        <div className="text-[#666666] text-xs font-normal ">
                             PDF
                         </div>
                     </Button>
@@ -81,7 +81,7 @@ export default function HeroSection() {
 
             <div className="flex items-center py-6">
                 <div className="w-full h-[0px] border border-[#ececec]" />
-                <div className="text-green-500 w-[700px] text-center text-2xl font-bold font-notoSansBengali px-6 whitespace-nowrap">
+                <div className="text-green-500 w-[700px] text-center text-2xl font-bold  px-6 whitespace-nowrap">
                     নিবন্ধিত গবাদি পশুর তালিকা
                 </div>
                 <div className="w-full h-[0px] border border-[#ececec]" />

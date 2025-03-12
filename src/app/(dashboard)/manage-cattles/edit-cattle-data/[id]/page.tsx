@@ -199,11 +199,9 @@ export default function EditCattleData() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="font-inter">
-                    Editing cattle Data: {id}
-                </CardTitle>
+                <CardTitle className="">Editing cattle Data: {id}</CardTitle>
             </CardHeader>
-            <CardContent className="font-notoSansBengali">
+            <CardContent className="">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}

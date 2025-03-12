@@ -41,10 +41,10 @@ body {
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-inter;
     }
 }
 
 .btn-primary {
-    @apply h-10 px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg items-center gap-2 inline-flex justify-center font-notoSansBengali;
+    @apply h-10 px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg items-center gap-2 inline-flex justify-center;
 }

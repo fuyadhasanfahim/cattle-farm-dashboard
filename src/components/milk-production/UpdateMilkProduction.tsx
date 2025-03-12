@@ -186,7 +186,7 @@ export default function UpdateMilkProduction() {
 
     if (fetchingData) {
         return (
-            <Card className="font-notoSansBengali">
+            <Card className="">
                 <CardHeader>
                     <CardTitle>দুধ উৎপাদন তথ্য আপডেট</CardTitle>
                 </CardHeader>
@@ -199,7 +199,7 @@ export default function UpdateMilkProduction() {
     }
 
     return (
-        <Card className="font-notoSansBengali">
+        <Card className="">
             <CardHeader>
                 <CardTitle>দুধ উৎপাদন তথ্য আপডেট</CardTitle>
             </CardHeader>
