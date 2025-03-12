@@ -2,6 +2,8 @@ import dbConfig from '@/lib/dbConfig';
 import CattleModel from '@/models/cattle.model';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
     try {
         await dbConfig();
