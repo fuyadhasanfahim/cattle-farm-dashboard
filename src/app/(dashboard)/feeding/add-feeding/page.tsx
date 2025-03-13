@@ -96,12 +96,16 @@ export default function AddFeed() {
                             <SelectOption
                                 data={[
                                     {
-                                        value: 'খর',
-                                        label: 'খর',
+                                        value: 'Dung',
+                                        label: 'Dung',
                                     },
                                     {
-                                        value: 'ঘাস',
-                                        label: 'ঘাস',
+                                        value: 'Grass',
+                                        label: 'Grass',
+                                    },
+                                    {
+                                        value: 'Feed',
+                                        label: 'Feed',
                                     },
                                 ]}
                                 form={form}

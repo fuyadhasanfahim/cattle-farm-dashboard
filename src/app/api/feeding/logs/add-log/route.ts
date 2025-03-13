@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConfig from '@/lib/dbConfig';
 import { FeedingLogModel, FeedInventoryModel } from '@/models/feeding.model';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
     try {
         await dbConfig();

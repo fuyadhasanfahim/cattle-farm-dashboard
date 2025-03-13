@@ -18,7 +18,7 @@ import SelectOption from '@/components/shared/Select';
 import { ICattle } from '@/types/cattle.interface';
 
 const feedSchema = z.object({
-    cattleId: z.string().min(1, 'Cattle ID is required'),
+    cattleId: z.string().optional(),
     feedType: z.string().min(1, 'Feed type is required'),
     feedDate: z.date(),
     feedAmount: z.number().min(1, 'Feed amount must be at least 1'),
@@ -135,7 +135,7 @@ export default function AddFeedLogForm() {
                     >
                         <MyCalender
                             form={form}
-                            label="Select Feed Date"
+                            label="Select Feed Date *"
                             name="feedDate"
                         />
 
@@ -148,7 +148,7 @@ export default function AddFeedLogForm() {
                                 }))
                             }
                             form={form}
-                            label="Select ID"
+                            label="Select ID (Optional)"
                             name="cattleId"
                             placeholder={
                                 isCattleIdLoading
@@ -161,16 +161,20 @@ export default function AddFeedLogForm() {
                         <SelectOption
                             data={[
                                 {
-                                    value: 'খর',
-                                    label: 'খর',
+                                    value: 'Dung',
+                                    label: 'Dung',
                                 },
                                 {
-                                    value: 'ঘাস',
-                                    label: 'ঘাস',
+                                    value: 'Grass',
+                                    label: 'Grass',
+                                },
+                                {
+                                    value: 'Feed',
+                                    label: 'Feed',
                                 },
                             ]}
                             form={form}
-                            label="Feed Type"
+                            label="Feed Type *"
                             name="feedType"
                             placeholder="Select Feed Type"
                             required
@@ -179,7 +183,7 @@ export default function AddFeedLogForm() {
                         <div className="space-y-2">
                             <Label htmlFor="quantityPurchased">
                                 <span className="block text-sm font-medium text-gray-700">
-                                    Quantity (kg)
+                                    Quantity (kg) *
                                 </span>
                                 <span className="block text-xs text-gray-500">
                                     Available Stock:{' '}

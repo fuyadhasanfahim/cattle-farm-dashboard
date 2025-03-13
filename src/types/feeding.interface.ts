@@ -10,7 +10,7 @@ export interface IFeedPurchase {
 
 export interface IFeedingLog {
     _id?: string;
-    cattleId: string;
+    cattleId?: string;
     feedType: string;
     feedDate: Date;
     feedAmount: number;

@@ -16,7 +16,7 @@ const FeedInventorySchema = new Schema({
 });
 
 const FeedingLogSchema = new Schema({
-    cattleId: { type: String, ref: 'Cattle', required: true },
+    cattleId: { type: String, ref: 'Cattle', required: false },
     feedType: { type: String, required: true },
     feedDate: { type: Date, default: Date.now },
     feedAmount: { type: Number, required: true },
