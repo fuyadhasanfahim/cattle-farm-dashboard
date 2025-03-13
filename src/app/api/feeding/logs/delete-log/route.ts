@@ -2,6 +2,8 @@ import dbConfig from '@/lib/dbConfig';
 import { FeedingLogModel, FeedInventoryModel } from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function DELETE(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.nextUrl);
