@@ -104,8 +104,8 @@ export default function AddFeed() {
                                         label: 'Grass',
                                     },
                                     {
-                                        value: 'Feed',
-                                        label: 'Feed',
+                                        value: 'Grain Feed',
+                                        label: 'Grain Feed',
                                     },
                                 ]}
                                 form={form}
@@ -171,12 +171,12 @@ export default function AddFeed() {
                             <SelectOption
                                 data={[
                                     {
-                                        value: 'নগদ',
-                                        label: 'নগদ',
+                                        value: 'Payed',
+                                        label: 'Payed',
                                     },
                                     {
-                                        value: 'বাকী',
-                                        label: 'বাকী',
+                                        value: 'Pending',
+                                        label: 'Pending',
                                     },
                                 ]}
                                 form={form}

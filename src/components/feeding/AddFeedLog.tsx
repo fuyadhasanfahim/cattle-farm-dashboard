@@ -171,8 +171,8 @@ export default function AddFeedLogForm() {
                                     label: 'Grass',
                                 },
                                 {
-                                    value: 'Feed',
-                                    label: 'Feed',
+                                    value: 'Grain Feed',
+                                    label: 'Grain Feed',
                                 },
                             ]}
                             form={form}

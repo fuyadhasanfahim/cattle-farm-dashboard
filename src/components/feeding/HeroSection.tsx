@@ -52,17 +52,31 @@ export default function HeroSection() {
                 </Link>
             </div>
 
-            <div>
-                <Button variant={'outline'} disabled>
+            <div className="flex flex-col items-start gap-2 p-4 border rounded-md bg-white shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800">
+                    Current Stock:
+                </h3>
+                <div className="flex flex-wrap gap-2">
                     {loading ? (
-                        <Loader2 className="animate-spin" />
+                        <div className="flex items-center gap-2 text-gray-600">
+                            <Loader2 className="animate-spin" size={16} />
+                            Loading...
+                        </div>
+                    ) : data && data.length > 0 ? (
+                        data.map(({ feedType, totalStock }, index) => (
+                            <span
+                                key={index}
+                                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                            >
+                                {feedType}: {totalStock} KG
+                            </span>
+                        ))
                     ) : (
-                        `${data.reduce(
-                            (total, item) => total + item.totalStock,
-                            0
-                        )} KG`
+                        <span className="text-gray-500">
+                            No stock data available.
+                        </span>
                     )}
-                </Button>
+                </div>
             </div>
         </section>
     );

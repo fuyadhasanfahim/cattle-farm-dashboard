@@ -28,9 +28,9 @@ const sidebarItems = [
     { icon: GitPullRequest, label: 'Fattening', link: '/fattening' },
     { icon: Heart, label: 'Animal Breeding', link: '/animal-breeding' },
     { icon: ShoppingCart, label: 'Sales', link: '/sales' },
-    { icon: Users, label: 'কাস্টমার', link: '/customers' },
+    { icon: Users, label: 'Customer', link: '/customers' },
     { icon: Folder, label: 'Party', link: '/party' },
-    { icon: Warehouse, label: 'Inventory', link: '/inventory-management' },
+    { icon: Warehouse, label: 'Inventory', link: '/inventory' },
     { icon: ClipboardCheck, label: 'Reports', link: '/reports' },
 ];
 
