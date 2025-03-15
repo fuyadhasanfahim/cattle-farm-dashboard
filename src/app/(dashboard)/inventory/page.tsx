@@ -1,3 +1,3 @@
-export default function Page() {
-    return <div>Nothgbsjdfbkjsdfvbj</div>;
+export default function InventoryPage() {
+    return <div>This is inventory page</div>;
 }
