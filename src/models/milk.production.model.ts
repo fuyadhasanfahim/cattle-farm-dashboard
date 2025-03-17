@@ -3,35 +3,31 @@ import { model, models, Schema } from 'mongoose';
 
 const milkProductionSchema = new Schema<IMilkProduction>(
     {
-        দুধ_সংগ্রহের_তারিখ: {
+        milkCollectionDate: {
             type: Date,
             required: true,
         },
-        গবাদি_পশুর_ট্যাগ_আইডি: {
+        cattleTagId: {
             type: String,
             required: false,
         },
-        গবাদি_পশুর_ধরণ: {
+        totalMilkQuantity: {
+            type: String,
+            required: true,
+        },
+        saleableMilkQuantity: {
+            type: String,
+            required: true,
+        },
+        milkForConsumption: {
+            type: String,
+            required: true,
+        },
+        fatPercentage: {
             type: String,
             required: false,
         },
-        মোট_দুধের_পরিমাণ: {
-            type: String,
-            required: true,
-        },
-        বিক্রি_যোগ্য_দুধের_পরিমাণ: {
-            type: String,
-            required: true,
-        },
-        খাওয়ার_জন্য_দুধের_পরিমাণ: {
-            type: String,
-            required: true,
-        },
-        ফ্যাট_শতাংশ: {
-            type: String,
-            required: false,
-        },
-        সময়: {
+        time: {
             type: String,
             required: true,
         },

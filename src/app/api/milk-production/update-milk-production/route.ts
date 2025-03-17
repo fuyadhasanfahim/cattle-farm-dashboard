@@ -27,8 +27,8 @@ export async function PUT(request: NextRequest) {
 
         const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
         const retrieveAmount =
-            Number(retrieveMilkAmount?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
-        const newAmount = Number(data?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
+            Number(retrieveMilkAmount?.saleableMilkQuantity) || 0;
+        const newAmount = Number(data?.saleableMilkQuantity) || 0;
 
         let newMilkAmount = lastAmount;
 

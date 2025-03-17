@@ -144,9 +144,9 @@ export default function AddFeedLogForm() {
                         <SelectOption
                             data={
                                 cattleId &&
-                                cattleId.map(({ ট্যাগ_আইডি }) => ({
-                                    value: ট্যাগ_আইডি,
-                                    label: ট্যাগ_আইডি,
+                                cattleId.map(({ tagId }) => ({
+                                    value: tagId,
+                                    label: tagId,
                                 }))
                             }
                             form={form}

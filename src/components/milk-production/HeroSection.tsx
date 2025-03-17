@@ -20,7 +20,7 @@ export default function HeroSection() {
                 className="btn-primary"
             >
                 <Plus className="size-5" />
-                <span>দুধ সংগ্রহ</span>
+                <span>Milk Collection</span>
             </Link>
 
             <form onSubmit={handleSearch}>

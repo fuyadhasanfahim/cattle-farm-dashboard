@@ -192,12 +192,12 @@ export default function FeedLogDetails() {
                                         </FormControl>
                                         <SelectContent>
                                             {cattleId.map(
-                                                ({ ট্যাগ_আইডি }, index) => (
+                                                ({ tagId }, index) => (
                                                     <SelectItem
                                                         key={index}
-                                                        value={ট্যাগ_আইডি}
+                                                        value={tagId}
                                                     >
-                                                        {ট্যাগ_আইডি}
+                                                        {tagId}
                                                     </SelectItem>
                                                 )
                                             )}

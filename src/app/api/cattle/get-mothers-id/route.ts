@@ -9,7 +9,7 @@ export async function GET() {
         await dbConfig();
 
         const mothers = await CattleModel.find({
-            লিঙ্গ: 'মহিলা',
+            gender: 'Female',
         });
 
         return NextResponse.json(

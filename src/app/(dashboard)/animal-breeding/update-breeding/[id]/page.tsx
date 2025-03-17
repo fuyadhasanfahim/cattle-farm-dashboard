@@ -168,10 +168,10 @@ export default function UpdateBreeding() {
                                                         <SelectItem
                                                             key={index}
                                                             value={
-                                                                mothers.ট্যাগ_আইডি
+                                                                mothers.tagId
                                                             }
                                                         >
-                                                            {mothers.ট্যাগ_আইডি}
+                                                            {mothers.tagId}
                                                         </SelectItem>
                                                     )
                                                 )}

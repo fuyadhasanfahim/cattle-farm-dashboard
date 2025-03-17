@@ -37,35 +37,35 @@ export default function DataTable() {
     return (
         <section className="min-h-screen my-10">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">
-                দুধ উৎপাদন ডেটা
+                Milk Production Data
             </h1>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-green-500">
                         <tr>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed rounded-tl-lg  text-white uppercase tracking-wider">
-                                ক্রমিক নং
+                                Serial No
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider">
-                                মোট পরিমাণ
+                                Total Quantity
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                ট্যাগ আইডি
+                                Tag ID
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                বিক্রি পরিমাণ
+                                Saleable Quantity
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                তারিখ
+                                Date
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                ফ্যাট
+                                Fat
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                সময়
+                                Time
                             </th>
                             <th className="px-6 py-3 text-center text-base font-semibold border border-dashed rounded-tr-lg text-white uppercase tracking-wider">
-                                অ্যাকশন
+                                Action
                             </th>
                         </tr>
                     </thead>
@@ -76,7 +76,7 @@ export default function DataTable() {
                                     colSpan={7}
                                     className="px-6 py-3 text-center"
                                 >
-                                    লোড হচ্ছে...
+                                    Loading...
                                 </td>
                             </tr>
                         ) : data?.length > 0 ? (
@@ -86,29 +86,29 @@ export default function DataTable() {
                                         {index + 1}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.মোট_দুধের_পরিমাণ} লিটার
+                                        {item.totalMilkQuantity} liters
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.গবাদি_পশুর_ট্যাগ_আইডি}
+                                        {item.cattleTagId}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.বিক্রি_যোগ্য_দুধের_পরিমাণ} লিটার
+                                        {item.saleableMilkQuantity} liters
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.দুধ_সংগ্রহের_তারিখ
+                                        {item.milkCollectionDate
                                             ? format(
                                                   new Date(
-                                                      item.দুধ_সংগ্রহের_তারিখ
+                                                      item.milkCollectionDate
                                                   ),
                                                   'MMMM dd, yyyy'
                                               )
                                             : 'N/A'}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.ফ্যাট_শতাংশ}
+                                        {item.fatPercentage}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.সময়}
+                                        {item.time}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         <div
@@ -131,7 +131,7 @@ export default function DataTable() {
                                     colSpan={7}
                                     className="px-6 py-3 text-center"
                                 >
-                                    কোন তথ্য পাওয়া যায়নি।
+                                    No data found.
                                 </td>
                             </tr>
                         )}

@@ -7,19 +7,19 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
     try {
         const {
-            নাম,
-            মোবাইল_নম্বর,
-            ঠিকানা,
-            মোট_বিক্রয়,
-            মোট_পরিশোধ,
-            মোট_বকেয়া,
-            বিক্রয়_তালিকা,
-            পরিশোধ_তালিকা,
-            গ্রাহকের_ধরণ,
-            মন্তব্য,
+            name,
+            mobileNumber,
+            address,
+            totalSales,
+            totalPayments,
+            totalDue,
+            salesList,
+            paymentList,
+            customerType,
+            comments,
         } = await req.json();
 
-        if (!নাম || !মোবাইল_নম্বর || !ঠিকানা || !গ্রাহকের_ধরণ) {
+        if (!name || !mobileNumber || !address || !customerType) {
             return NextResponse.json(
                 {
                     success: false,
@@ -34,16 +34,16 @@ export async function POST(req: NextRequest) {
         await dbConfig();
 
         const result = new CustomerModel({
-            নাম,
-            মোবাইল_নম্বর,
-            ঠিকানা,
-            মোট_বিক্রয়,
-            মোট_পরিশোধ,
-            মোট_বকেয়া,
-            বিক্রয়_তালিকা,
-            পরিশোধ_তালিকা,
-            গ্রাহকের_ধরণ,
-            মন্তব্য,
+            name,
+            mobileNumber,
+            address,
+            totalSales,
+            totalPayments,
+            totalDue,
+            salesList,
+            paymentList,
+            customerType,
+            comments,
         });
 
         await result.save();

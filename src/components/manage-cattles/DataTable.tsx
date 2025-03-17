@@ -24,17 +24,17 @@ export default function DataTable() {
     const router = useRouter();
 
     const headers = [
-        'ট্যাগ আইডি',
-        'রেজিষ্ট্রেশনের তারিখ',
-        'স্টল নম্বর',
-        'বয়স',
-        'ওজন',
-        'পার্সেন্টেজ',
-        'ওজন',
-        'লিঙ্গ',
-        'মোটাতাজা করন স্ট্যাটাস',
-        'অবস্থান',
-        'অ্যাকশন',
+        'Tag ID',
+        'Registration Date',
+        'Stall Number',
+        'Age',
+        'Weight',
+        'Percentage',
+        'Weight',
+        'Gender',
+        'Fattening Status',
+        'Location',
+        'Actions',
     ];
 
     useEffect(() => {
@@ -247,43 +247,43 @@ export default function DataTable() {
                             tableData.map((row, rowIndex) => (
                                 <tr key={rowIndex} className="bg-white">
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.ট্যাগ_আইডি}
+                                        {row.tagId}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.রেজিষ্ট্রেশনের_তারিখ
+                                        {row.registrationDate
                                             ? format(
                                                   new Date(
-                                                      row.রেজিষ্ট্রেশনের_তারিখ
+                                                      row.registrationDate
                                                   ),
                                                   'dd-MM-yy'
                                               )
                                             : null}
                                     </td>
                                     <td className="p-2 border border-dashed text-center">
-                                        {row.স্টল_নম্বর}
+                                        {row.stallNumber}
                                     </td>
                                     <td className="p-2 border border-dashed text-center">
-                                        {row.বয়স}
+                                        {row.age}
                                     </td>
                                     <td className="p-2 border border-dashed text-center">
-                                        {row.ওজন}
+                                        {row.weight}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.পার্সেন্টেজ
-                                            ? row.পার্সেন্টেজ
+                                        {row.percentage
+                                            ? row.percentage
                                             : 'N/A'}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.ওজন}
+                                        {row.weight}
                                     </td>
                                     <td className="p-2 border border-dashed">
-                                        {row.লিঙ্গ}
+                                        {row.gender}
                                     </td>
                                     <td className="p-2 text-center border border-dashed">
-                                        {row.মোটাতাজা_করন_স্ট্যাটাস}
+                                        {row.fatteningStatus}
                                     </td>
                                     <td className="p-2 border border-dashed">
-                                        {row.অবস্থান}
+                                        {row.location}
                                     </td>
                                     <td className="p-2 border border-dashed">
                                         <div className="flex items-center justify-between gap-2 mx-auto">

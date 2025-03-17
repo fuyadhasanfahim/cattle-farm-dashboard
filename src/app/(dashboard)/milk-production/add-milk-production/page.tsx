@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function page() {
     return (
-        <Card className="">
+        <Card className="w-full max-w-4xl mx-auto">
             <CardHeader>
-                <CardTitle>দুধ সংগ্রহের ফর্ম</CardTitle>
+                <CardTitle>Milk Collection Form</CardTitle>
             </CardHeader>
             <CardContent>
                 <AddMilkProduction />

@@ -17,7 +17,7 @@ export default function HeroSection() {
         <section className="flex items-center justify-between">
             <Link href={'/sales/add-sales'} className="btn-primary">
                 <Plus className="size-5" />
-                <span>বিক্রয় যোগ করুন</span>
+                <span>Add Sales</span>
             </Link>
 
             <form onSubmit={handleSearch}>

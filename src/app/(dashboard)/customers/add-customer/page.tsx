@@ -19,25 +19,25 @@ import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SelectOption from '@/components/shared/Select';
 import { useState } from 'react';
-import { Loader2, Save } from 'lucide-react';
+import { ArrowLeft, Loader2, Save } from 'lucide-react';
 
 const customerTypeOptions = [
     {
-        value: 'খুচরা',
-        label: 'খুচরা',
+        value: 'Retail',
+        label: 'Retail',
     },
     {
-        value: 'পাইকারি',
-        label: 'পাইকারি',
+        value: 'Wholesale',
+        label: 'Wholesale',
     },
 ];
 
 const customerFormSchema = z.object({
-    নাম: z.string().min(1, 'নাম প্রয়োজন'),
-    মোবাইল_নম্বর: z.string().min(1, 'মোবাইল নম্বর প্রয়োজন'),
-    ঠিকানা: z.string().min(1, 'ঠিকানা প্রয়োজন'),
-    গ্রাহকের_ধরণ: z.string().min(1, 'গ্রাহকের ধরণ প্রয়োজন'),
-    মন্তব্য: z.string().optional(),
+    name: z.string().min(1, 'Name is required'),
+    mobileNumber: z.string().min(1, 'Mobile number is required'),
+    address: z.string().min(1, 'Address is required'),
+    customerType: z.string().min(1, 'Customer type is required'),
+    comments: z.string().optional(),
 });
 
 type CustomerFormValues = z.infer<typeof customerFormSchema>;
@@ -48,11 +48,11 @@ export default function AddCustomer() {
     const form = useForm<CustomerFormValues>({
         resolver: zodResolver(customerFormSchema),
         defaultValues: {
-            নাম: '',
-            মোবাইল_নম্বর: '',
-            ঠিকানা: '',
-            গ্রাহকের_ধরণ: '',
-            মন্তব্য: '',
+            name: '',
+            mobileNumber: '',
+            address: '',
+            customerType: '',
+            comments: '',
         },
     });
 
@@ -66,16 +66,16 @@ export default function AddCustomer() {
             });
 
             if (response.ok) {
-                toast.success('গ্রাহক সফলভাবে যোগ করা হয়েছে!');
+                toast.success('Customer added successfully!');
 
                 form.reset();
 
                 router.push('/customers');
             } else {
-                toast.error('গ্রাহক যোগ করতে ব্যর্থ হয়েছে।');
+                toast.error('Failed to add customer.');
             }
         } catch (error) {
-            toast.error((error as Error).message || 'কিছু ভুল হয়েছে!');
+            toast.error((error as Error).message || 'Something went wrong!');
         } finally {
             setIsLoading(false);
         }
@@ -86,7 +86,7 @@ export default function AddCustomer() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-semibold text-green-600">
-                        নতুন গ্রাহক যোগ করুন
+                        Add New Customer
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -98,13 +98,13 @@ export default function AddCustomer() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormField
                                     control={form.control}
-                                    name="নাম"
+                                    name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>নাম</FormLabel>
+                                            <FormLabel>Name *</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="গ্রাহকের নাম লিখুন"
+                                                    placeholder="Enter customer name"
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -115,13 +115,15 @@ export default function AddCustomer() {
 
                                 <FormField
                                     control={form.control}
-                                    name="মোবাইল_নম্বর"
+                                    name="mobileNumber"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>মোবাইল নম্বর</FormLabel>
+                                            <FormLabel>
+                                                Mobile Number *
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="মোবাইল নম্বর লিখুন"
+                                                    placeholder="Enter mobile number"
                                                     type="tel"
                                                     maxLength={11}
                                                     onInput={(e) => {
@@ -159,13 +161,13 @@ export default function AddCustomer() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormField
                                     control={form.control}
-                                    name="ঠিকানা"
+                                    name="address"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>ঠিকানা</FormLabel>
+                                            <FormLabel>Address *</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="ঠিকানা লিখুন"
+                                                    placeholder="Enter address"
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -177,22 +179,23 @@ export default function AddCustomer() {
                                 <SelectOption
                                     data={customerTypeOptions}
                                     form={form}
-                                    label="গ্রাহকের ধরণ"
-                                    name="গ্রাহকের_ধরণ"
-                                    placeholder="গ্রাহকের ধরণ লিখুন"
+                                    label="Customer Type"
+                                    name="customerType"
+                                    placeholder="Select customer type"
                                 />
                             </div>
 
-                            {/* মন্তব্য Field */}
                             <FormField
                                 control={form.control}
-                                name="মন্তব্য"
+                                name="comments"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>মন্তব্য</FormLabel>
+                                        <FormLabel>
+                                            Comments (Optional)
+                                        </FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="মন্তব্য লিখুন"
+                                                placeholder="Enter comments"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -202,19 +205,28 @@ export default function AddCustomer() {
                             />
 
                             <div className="flex justify-end">
-                                <Button type="submit" className="btn-primary">
-                                    {isLoading ? (
-                                        <Loader2 size={20} />
-                                    ) : (
-                                        <Save size={20} />
-                                    )}
+                                <div className="flex items-center gap-6">
+                                    <Button
+                                        onClick={() => router.back()}
+                                        type="button"
+                                        variant={'outline'}
+                                    >
+                                        <ArrowLeft className="size-5" />
+                                        <span>Back</span>
+                                    </Button>
 
-                                    <span>
-                                        {isLoading
-                                            ? 'সংরক্ষণ করা হচ্ছে...'
-                                            : 'সংরক্ষণ করুন'}
-                                    </span>
-                                </Button>
+                                    <Button type="submit" disabled={isLoading}>
+                                        {isLoading ? (
+                                            <Loader2 size={20} />
+                                        ) : (
+                                            <Save size={20} />
+                                        )}
+
+                                        <span>
+                                            {isLoading ? 'Saving...' : 'Save'}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
                         </form>
                     </Form>

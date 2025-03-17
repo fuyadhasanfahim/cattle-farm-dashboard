@@ -2,14 +2,14 @@ import dbConfig from '@/lib/dbConfig';
 import CattleModel from '@/models/cattle.model';
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
         await dbConfig();
 
         const data = await CattleModel.find({
-            মোটাতাজা_করন_স্ট্যাটাস: 'এক্টিভ',
+            fatteningStatus: 'Active',
         }).sort('-createdAt');
 
         if (!data) {

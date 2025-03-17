@@ -6,38 +6,39 @@ export async function PUT(req: NextRequest) {
     await dbConfig();
 
     try {
-        const { দুধের_পরিমাণ } = await req.json();
+        const { milkQuantity } = await req.json();
 
-        if (!দুধের_পরিমাণ) {
+        if (!milkQuantity) {
             return NextResponse.json({
-                error: 'দুধের পরিমাণ প্রদান করা হয়নি।',
+                error: 'Milk quantity not provided.',
             });
         }
 
-        const soldMilkAmount = Number(দুধের_পরিমাণ);
+        const soldMilkAmount = Number(milkQuantity);
 
         if (isNaN(soldMilkAmount) || soldMilkAmount <= 0) {
             return NextResponse.json({
-                error: 'সঠিক দুধের পরিমাণ প্রদান করুন।',
+                error: 'Please provide a valid milk quantity.',
             });
         }
 
-        // Find the latest milk production record
         const latestMilkProduction = await MilkProductionModel.findOne().sort({
             createdAt: -1,
         });
 
         if (!latestMilkProduction) {
             return NextResponse.json({
-                error: 'কোনো দুধ উৎপাদন ডাটা পাওয়া যায়নি।',
+                error: 'No milk production data found.',
             });
         }
 
-        const currentMilkAmount = Number(latestMilkProduction.মোট_দুধের_পরিমাণ);
+        const currentMilkAmount = Number(
+            latestMilkProduction.totalMilkQuantity
+        );
 
         if (isNaN(currentMilkAmount)) {
             return NextResponse.json({
-                error: 'ডাটাবেজে মোট দুধের পরিমাণ সঠিকভাবে সংরক্ষিত নেই।',
+                error: 'Total milk quantity not correctly stored in the database.',
             });
         }
 
@@ -45,29 +46,28 @@ export async function PUT(req: NextRequest) {
 
         if (updatedMilkAmount < 0) {
             return NextResponse.json({
-                error: `পর্যাপ্ত দুধ নেই। বর্তমানে মোট দুধের পরিমাণ ${currentMilkAmount} লিটার।`,
+                error: `Insufficient milk. Currently, total milk quantity is ${currentMilkAmount} liters.`,
             });
         }
 
-        // ✅ Use findOneAndUpdate to update the latest document
         const updatedDoc = await MilkProductionModel.findOneAndUpdate(
             { _id: latestMilkProduction._id },
-            { $set: { মোট_দুধের_পরিমাণ: updatedMilkAmount } },
-            { new: true } // This returns the updated document
+            { $set: { totalMilkQuantity: updatedMilkAmount } },
+            { new: true }
         );
 
         if (!updatedDoc) {
             return NextResponse.json({
-                error: 'দুধের পরিমাণ আপডেট করা যায়নি।',
+                error: 'Failed to update milk quantity.',
             });
         }
 
         return NextResponse.json({
-            message: 'মোট দুধের পরিমাণ সফলভাবে আপডেট হয়েছে।',
-            updatedMilkAmount: updatedDoc.মোট_দুধের_পরিমাণ,
+            message: 'Total milk quantity updated successfully.',
+            updatedMilkAmount: updatedDoc.totalMilkQuantity,
         });
     } catch (error) {
         console.error('Milk update error:', error);
-        return NextResponse.json({ error: 'অভ্যন্তরীণ সার্ভার সমস্যা।' });
+        return NextResponse.json({ error: 'Internal server error.' });
     }
 }

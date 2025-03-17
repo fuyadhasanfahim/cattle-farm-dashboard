@@ -3,79 +3,79 @@ import mongoose from 'mongoose';
 
 const cattleSchema = new mongoose.Schema<ICattle>(
     {
-        ট্যাগ_আইডি: {
+        tagId: {
             type: String,
             required: true,
         },
-        রেজিষ্ট্রেশনের_তারিখ: {
+        registrationDate: {
             type: Date,
             required: true,
         },
-        জন্ম_তারিখ: {
+        dateOfBirth: {
             type: Date,
             required: true,
         },
-        বয়স: {
+        age: {
             type: String,
             required: true,
         },
-        স্টল_নম্বর: {
+        stallNumber: {
             type: String,
             required: true,
         },
-        জাত: {
+        breed: {
             type: String,
             required: false,
         },
-        বাবার_নাম: {
+        fatherName: {
             type: String,
             required: false,
         },
-        বাবার_আইডি: {
+        fatherId: {
             type: String,
             required: false,
         },
-        মায়ের_নাম: {
+        motherName: {
             type: String,
             required: false,
         },
-        মায়ের_আইডি: {
+        motherId: {
             type: String,
             required: false,
         },
-        পার্সেন্টেজ: {
+        percentage: {
             type: String,
             required: false,
         },
-        ওজন: {
+        weight: {
             type: String,
-            required: [true, 'Weight is required'],
+            required: true,
         },
-        লিঙ্গ: {
+        gender: {
             type: String,
-            required: [true, 'Gender is required'],
+            required: true,
         },
-        মোটাতাজা_করন_স্ট্যাটাস: {
+        fatteningStatus: {
             type: String,
-            required: [true, 'Fattening status is required'],
+            required: true,
         },
-        গবাদিপশুর_ধরন: {
+        cattleType: {
             type: String,
-            required: [true, 'Cattle type is required'],
+            required: true,
         },
-        গবাদিপশুর_ক্যাটাগরি: {
+        cattleCategory: {
             type: String,
-            required: [true, 'Category is required'],
+            required: true,
         },
-        অবস্থান: {
+        location: {
             type: String,
-            required: [true, 'Transfer status is required'],
+            required: true,
         },
-        অবস্থা: {
+        status: {
             type: String,
-            required: [true, 'Death status is required'],
+            required: true,
         },
-        বিবরন: {
+        description: {
             type: String,
             required: false,
         },

@@ -7,9 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.nextUrl);
-        const মোবাইল_নম্বর = searchParams.get('mobile_number');
+        const mobileNumber = searchParams.get('mobile_number');
 
-        if (!মোবাইল_নম্বর) {
+        if (!mobileNumber) {
             return NextResponse.json({
                 success: false,
                 message: 'Mobile number not found',
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
         await dbConfig();
 
-        const customer = await CustomerModel.findOne({ মোবাইল_নম্বর });
+        const customer = await CustomerModel.findOne({ mobileNumber });
 
         if (!customer) {
             return NextResponse.json({

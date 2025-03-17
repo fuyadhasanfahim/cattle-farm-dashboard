@@ -101,15 +101,15 @@ export default function FatteningPage() {
                             {data.map(
                                 (
                                     {
-                                        ট্যাগ_আইডি,
-                                        গবাদিপশুর_ক্যাটাগরি,
-                                        গবাদিপশুর_ধরন,
-                                        জন্ম_তারিখ,
-                                        মোটাতাজা_করন_স্ট্যাটাস,
-                                        স্টল_নম্বর,
-                                        রেজিষ্ট্রেশনের_তারিখ,
-                                        জাত,
-                                        লিঙ্গ,
+                                        tagId,
+                                        cattleCategory,
+                                        cattleType,
+                                        dateOfBirth,
+                                        fatteningStatus,
+                                        stallNumber,
+                                        registrationDate,
+                                        breed,
+                                        gender,
                                     },
                                     index
                                 ) => (
@@ -121,36 +121,33 @@ export default function FatteningPage() {
                                             {index + 1}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {ট্যাগ_আইডি}
+                                            {tagId}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {গবাদিপশুর_ক্যাটাগরি}
+                                            {cattleCategory}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {গবাদিপশুর_ধরন}
+                                            {cattleType}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {জন্ম_তারিখ &&
-                                                format(জন্ম_তারিখ, 'PPP')}
+                                            {dateOfBirth &&
+                                                format(dateOfBirth, 'PPP')}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {রেজিষ্ট্রেশনের_তারিখ &&
-                                                format(
-                                                    রেজিষ্ট্রেশনের_তারিখ,
-                                                    'PPP'
-                                                )}
+                                            {registrationDate &&
+                                                format(registrationDate, 'PPP')}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {মোটাতাজা_করন_স্ট্যাটাস}
+                                            {fatteningStatus}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {স্টল_নম্বর}
+                                            {stallNumber}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {জাত ? জাত : 'N/A'}
+                                            {breed ? breed : 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-center p-3">
-                                            {লিঙ্গ}
+                                            {gender}
                                         </TableCell>
                                     </TableRow>
                                 )

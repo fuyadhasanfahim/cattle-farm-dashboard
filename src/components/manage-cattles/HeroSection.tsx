@@ -23,7 +23,7 @@ export default function HeroSection() {
                     <DialogTrigger asChild>
                         <Button className="h-10 px-6 py-2 bg-green-500 hover:bg-[#4a9940] text-white rounded-lg justify-start items-center gap-1 inline-flex">
                             <PlusIcon className="h-4 w-4" />
-                            <span>গবাদি পশুর নিবন্ধন</span>
+                            <span>Add a Cattle</span>
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl">

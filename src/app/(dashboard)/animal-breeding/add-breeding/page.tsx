@@ -129,8 +129,8 @@ export default function AddBreeding() {
                         <div className="grid grid-cols-2 items-center gap-6">
                             <SelectOption
                                 data={mothers.map((mother) => ({
-                                    value: mother.ট্যাগ_আইডি,
-                                    label: mother.ট্যাগ_আইডি,
+                                    value: mother.tagId,
+                                    label: mother.tagId,
                                 }))}
                                 form={form}
                                 label="Select ID"

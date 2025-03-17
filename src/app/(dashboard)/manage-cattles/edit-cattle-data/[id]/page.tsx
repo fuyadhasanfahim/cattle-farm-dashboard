@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ICattle } from '@/types/cattle.interface';
-import { CalendarIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, CalendarIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,64 +29,63 @@ import {
 import { useForm } from 'react-hook-form';
 
 const genderOptions = [
-    { value: 'পুরুষ', label: 'পুরুষ' },
-    { value: 'মহিলা', label: 'মহিলা' },
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
 ];
 
 const cattleTypeOptions = [
-    { value: 'গরু', label: 'গরু' },
-    { value: 'মহিষ', label: 'মহিষ' },
-    { value: 'ছাগল', label: 'ছাগল' },
+    { value: 'Cow', label: 'Cow' },
+    { value: 'Buffalo', label: 'Buffalo' },
+    { value: 'Goat', label: 'Goat' },
 ];
 
 const categoryOptions = [
-    { value: 'দুগ্ধ', label: 'দুগ্ধ' },
-    { value: 'মাংস', label: 'মাংস' },
-    { value: 'দুগ্ধ ও মাংস', label: 'দুগ্ধ ও মাংস' },
+    { value: 'Milk', label: 'Milk' },
+    { value: 'Meat', label: 'Meat' },
+    { value: 'Milk & Meat', label: 'Milk & Meat' },
 ];
 
 const deathStatusOptions = [
-    { value: 'জীবিত', label: 'জীবিত' },
-    { value: 'মৃত', label: 'মৃত' },
+    { value: 'Alive', label: 'Alive' },
+    { value: 'Dead', label: 'Dead' },
 ];
 
 const fatteningStatusOptions = [
-    { value: 'এক্টিভ', label: 'এক্টিভ' },
-    { value: 'ইনএক্টিভ', label: 'ইনএক্টিভ' },
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' },
 ];
 
 const transferStatusOptions = [
-    { value: 'খামারে অবস্থিত', label: 'খামারে অবস্থিত' },
-    { value: 'বিক্রি হয়েছে', label: 'বিক্রি হয়েছে' },
+    { value: 'In farm', label: 'In farm' },
+    { value: 'Sold', label: 'Sold' },
 ];
 
 export default function EditCattleData() {
     const { id } = useParams();
-    const [cattleData, setCattleData] = useState<ICattle | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     const form = useForm<ICattle>({
         defaultValues: {
-            ট্যাগ_আইডি: cattleData?.ট্যাগ_আইডি,
-            রেজিষ্ট্রেশনের_তারিখ: cattleData?.রেজিষ্ট্রেশনের_তারিখ,
-            জন্ম_তারিখ: cattleData?.জন্ম_তারিখ,
-            বয়স: cattleData?.বয়স,
-            স্টল_নম্বর: cattleData?.স্টল_নম্বর,
-            জাত: cattleData?.জাত,
-            বাবার_নাম: cattleData?.বাবার_নাম,
-            বাবার_আইডি: cattleData?.বাবার_আইডি,
-            মায়ের_নাম: cattleData?.মায়ের_নাম,
-            মায়ের_আইডি: cattleData?.মায়ের_আইডি,
-            পার্সেন্টেজ: cattleData?.পার্সেন্টেজ,
-            ওজন: cattleData?.ওজন,
-            লিঙ্গ: cattleData?.লিঙ্গ,
-            মোটাতাজা_করন_স্ট্যাটাস: cattleData?.মোটাতাজা_করন_স্ট্যাটাস,
-            গবাদিপশুর_ধরন: cattleData?.গবাদিপশুর_ধরন,
-            গবাদিপশুর_ক্যাটাগরি: cattleData?.গবাদিপশুর_ক্যাটাগরি,
-            অবস্থান: cattleData?.অবস্থান,
-            অবস্থা: cattleData?.অবস্থা,
-            বিবরন: cattleData?.বিবরন,
+            tagId: '',
+            registrationDate: new Date(),
+            dateOfBirth: undefined,
+            age: '',
+            stallNumber: '',
+            breed: '',
+            fatherName: '',
+            fatherId: '',
+            motherName: '',
+            motherId: '',
+            percentage: '',
+            weight: '',
+            gender: '',
+            fatteningStatus: '',
+            cattleType: '',
+            cattleCategory: '',
+            location: '',
+            status: '',
+            description: '',
         },
     });
 
@@ -115,8 +114,8 @@ export default function EditCattleData() {
     };
 
     const handleBirthDateChange = (date: Date) => {
-        form.setValue('জন্ম_তারিখ', date);
-        form.setValue('বয়স', calculateAge(date));
+        form.setValue('dateOfBirth', date);
+        form.setValue('age', calculateAge(date));
     };
 
     useEffect(() => {
@@ -135,8 +134,6 @@ export default function EditCattleData() {
                     throw new Error('Could not find the specified Data.');
                 }
 
-                setCattleData(data?.cattle);
-
                 form.reset(data?.cattle);
             } catch (error) {
                 toast.error(
@@ -151,14 +148,6 @@ export default function EditCattleData() {
             fetchData();
         }
     }, [id, form]);
-
-    if (!cattleData) {
-        return (
-            <div className="w-full flex h-[calc(100vh-80px)] items-center justify-center">
-                <h3 className="text-lg">No data found</h3>
-            </div>
-        );
-    }
 
     const onSubmit = async (data: ICattle) => {
         try {
@@ -210,13 +199,13 @@ export default function EditCattleData() {
                         <div className="flex items-center gap-6">
                             <FormField
                                 control={form.control}
-                                name="ট্যাগ_আইডি"
+                                name="tagId"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>ট্যাগ আইডি</FormLabel>
+                                        <FormLabel>Tag ID *</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="পশুর ট্যাগ আইডি লিখুন"
+                                                placeholder="Cattle tag ID"
                                                 type="number"
                                                 {...field}
                                             />
@@ -227,10 +216,12 @@ export default function EditCattleData() {
                             />
                             <FormField
                                 control={form.control}
-                                name="রেজিষ্ট্রেশনের_তারিখ"
+                                name="registrationDate"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>রেজিষ্ট্রেশন তাং</FormLabel>
+                                        <FormLabel>
+                                            Registrations Date *
+                                        </FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -249,8 +240,7 @@ export default function EditCattleData() {
                                                             )
                                                         ) : (
                                                             <span>
-                                                                তারিখ নির্বাচন
-                                                                করুন
+                                                                Select the Date
                                                             </span>
                                                         )}
                                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -291,10 +281,12 @@ export default function EditCattleData() {
                         <div className="flex items-center gap-6">
                             <FormField
                                 control={form.control}
-                                name="জন্ম_তারিখ"
+                                name="dateOfBirth"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>জন্ম তারিখ</FormLabel>
+                                        <FormLabel>
+                                            Select Birthdate *
+                                        </FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -313,8 +305,7 @@ export default function EditCattleData() {
                                                             )
                                                         ) : (
                                                             <span>
-                                                                তারিখ নির্বাচন
-                                                                করুন
+                                                                Select the date
                                                             </span>
                                                         )}
                                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -353,13 +344,13 @@ export default function EditCattleData() {
 
                             <FormField
                                 control={form.control}
-                                name="বয়স"
+                                name="age"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>বয়স/মাস</FormLabel>
+                                        <FormLabel>Age *</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="পশুর বয়স/মাস লিখুন"
+                                                placeholder="Select birthdate for this"
                                                 type="text"
                                                 {...field}
                                                 readOnly
@@ -374,13 +365,13 @@ export default function EditCattleData() {
                         <div className="flex items-center gap-6">
                             <FormField
                                 control={form.control}
-                                name="স্টল_নম্বর"
+                                name="stallNumber"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>স্টল নাং</FormLabel>
+                                        <FormLabel>Stall Number *</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="স্টল নাং লিখুন"
+                                                placeholder="eg: 25"
                                                 type="number"
                                                 {...field}
                                             />
@@ -392,13 +383,13 @@ export default function EditCattleData() {
 
                             <FormField
                                 control={form.control}
-                                name="ওজন"
+                                name="weight"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>ওজন/কেজি</FormLabel>
+                                        <FormLabel>Weight (KG) *</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="পশুর ওজন/কেজি লিখুন"
+                                                placeholder="eg: 650"
                                                 type="number"
                                                 {...field}
                                             />
@@ -413,30 +404,30 @@ export default function EditCattleData() {
                             <SelectOption
                                 data={genderOptions}
                                 form={form}
-                                label="গবাদিপশুর লিঙ্গ"
-                                name="লিঙ্গ"
-                                placeholder="গবাদিপশুর লিঙ্গ নির্বাচন করুন"
+                                label="Select Gender *"
+                                name="gender"
+                                placeholder="eg: Male"
                             />
 
                             <SelectOption
                                 data={fatteningStatusOptions}
                                 form={form}
-                                name="মোটাতাজা_করন_স্ট্যাটাস"
-                                label="মোটাতাজা করন স্ট্যাটাস"
-                                placeholder="মোটাতাজা করন স্ট্যাটাস নির্বাচন করুন"
+                                name="fatteningStatus"
+                                label="Select Fattening Status *"
+                                placeholder="eg: Inactive"
                             />
                         </div>
 
                         <div className="flex items-center gap-6">
                             <FormField
                                 control={form.control}
-                                name="জাত"
+                                name="breed"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>জাত (Optional)</FormLabel>
+                                        <FormLabel>Breed (Optional)</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="জাত লিখুন"
+                                                placeholder="eg: Holstein Friesian"
                                                 type="text"
                                                 {...field}
                                             />
@@ -448,57 +439,15 @@ export default function EditCattleData() {
 
                             <FormField
                                 control={form.control}
-                                name="বাবার_নাম"
+                                name="fatherName"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
                                         <FormLabel>
-                                            বাবার নাম (Optional)
+                                            {`Father's Name (Optional)`}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="বাবার নাম লিখুন"
-                                                type="text"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-6">
-                            <FormField
-                                control={form.control}
-                                name="বাবার_আইডি"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>
-                                            বাবার আইডি (Optional)
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="বাবার আইডি লিখুন"
-                                                type="text"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="মায়ের_নাম"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>
-                                            মার নাম (Optional)
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="মার নাম লিখুন"
+                                                placeholder="eg: xyz"
                                                 type="text"
                                                 {...field}
                                             />
@@ -512,15 +461,13 @@ export default function EditCattleData() {
                         <div className="flex items-center gap-6">
                             <FormField
                                 control={form.control}
-                                name="মায়ের_আইডি"
+                                name="fatherId"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>
-                                            মার আইডি (Optional)
-                                        </FormLabel>
+                                        <FormLabel>{`Fathers ID (Optional)`}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="মার আইডি লিখুন"
+                                                placeholder="eg: 1200"
                                                 type="text"
                                                 {...field}
                                             />
@@ -532,15 +479,53 @@ export default function EditCattleData() {
 
                             <FormField
                                 control={form.control}
-                                name="পার্সেন্টেজ"
+                                name="motherName"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>{`Mothers Name (Optional)`}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="eg: zyx"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-6">
+                            <FormField
+                                control={form.control}
+                                name="motherId"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>{`Mothers ID (Optional)`}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="eg: 1300"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="percentage"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
                                         <FormLabel>
-                                            পার্সেন্টেজে (Optional)
+                                            Percentage (Optional)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="পার্সেন্টেজে লিখুন লিখুন"
+                                                placeholder="eg: 50% holstein & 50% friesian"
                                                 type="text"
                                                 {...field}
                                             />
@@ -555,17 +540,17 @@ export default function EditCattleData() {
                             <SelectOption
                                 data={cattleTypeOptions}
                                 form={form}
-                                name="গবাদিপশুর_ধরন"
-                                label="গবাদিপশুর ধরন"
-                                placeholder="গবাদিপশুর ধরন নির্বাচন করুন"
+                                name="cattleType"
+                                label="Cattle Type *"
+                                placeholder="eg: Cow"
                             />
 
                             <SelectOption
                                 data={categoryOptions}
                                 form={form}
-                                name="গবাদিপশুর_ক্যাটাগরি"
-                                label="গবাদিপশুর ক্যাটাগরি"
-                                placeholder="গবাদিপশুর ক্যাটাগরি নির্বাচন করুন"
+                                name="cattleCategory"
+                                label="Cattle Category *"
+                                placeholder="eg: Milk"
                             />
                         </div>
 
@@ -573,30 +558,32 @@ export default function EditCattleData() {
                             <SelectOption
                                 data={deathStatusOptions}
                                 form={form}
-                                name="অবস্থা"
-                                label="মৃত অবস্থা"
-                                placeholder="মৃত অবস্থা নির্বাচন করুন"
+                                name="status"
+                                label="Status *"
+                                placeholder="eg: Dead"
                             />
 
                             <SelectOption
                                 data={transferStatusOptions}
                                 form={form}
-                                name="অবস্থান"
-                                label="স্থানান্তর/বিক্রয়"
-                                placeholder="স্থানান্তর/বিক্রয় নির্বাচন করুন"
+                                name="location"
+                                label="Location *"
+                                placeholder="eg: Sold"
                             />
                         </div>
 
                         <div>
                             <FormField
                                 control={form.control}
-                                name="বিবরন"
+                                name="description"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>বিবরন</FormLabel>
+                                        <FormLabel>
+                                            Description (Optional)
+                                        </FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="পশুর বিবরন লিখুন"
+                                                placeholder="eg: Lorem ipsum dolor sit amet."
                                                 {...field}
                                             />
                                         </FormControl>
@@ -607,16 +594,24 @@ export default function EditCattleData() {
                         </div>
 
                         <div className="flex justify-end items-center gap-2">
-                            <Button
-                                type="submit"
-                                className="btn-primary"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                ) : null}
-                                সংরক্ষণ করুন
-                            </Button>
+                            <div className="flex items-center gap-6">
+                                <Button
+                                    onClick={() => router.back()}
+                                    className="w-full"
+                                    type="button"
+                                    variant={'outline'}
+                                >
+                                    <ArrowLeft className="size-5" />
+                                    <span>Back</span>
+                                </Button>
+
+                                <Button type="submit" disabled={isLoading}>
+                                    {isLoading ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : null}
+                                    Update
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </Form>

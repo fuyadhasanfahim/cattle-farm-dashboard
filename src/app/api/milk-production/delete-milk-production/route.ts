@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function DELETE(req: NextRequest) {
     try {
         await dbConfig();
-        
+
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
 
@@ -27,7 +27,7 @@ export async function DELETE(req: NextRequest) {
         const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
 
         const retrieveAmount =
-            Number(retrieveMilkAmount?.বিক্রি_যোগ্য_দুধের_পরিমাণ) || 0;
+            Number(retrieveMilkAmount?.saleableMilkQuantity) || 0;
 
         const newMilkAmount = lastAmount - retrieveAmount;
 

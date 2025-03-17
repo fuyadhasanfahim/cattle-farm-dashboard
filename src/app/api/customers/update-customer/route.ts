@@ -16,10 +16,10 @@ export async function PATCH(req: NextRequest) {
             );
         }
 
-        const { নাম, মোবাইল_নম্বর, ঠিকানা, গ্রাহকের_ধরণ, মন্তব্য } =
+        const { name, mobileNumber, address, customerType, comments } =
             await req.json();
 
-        if (!নাম || !মোবাইল_নম্বর || !ঠিকানা || !গ্রাহকের_ধরণ) {
+        if (!name || !mobileNumber || !address || !customerType) {
             return NextResponse.json(
                 { success: false, message: 'Request body cannot be empty' },
                 { status: 400 }
@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest) {
         const updatedCustomer = await CustomerModel.findByIdAndUpdate(
             id,
             {
-                $set: { নাম, মোবাইল_নম্বর, ঠিকানা, গ্রাহকের_ধরণ, মন্তব্য },
+                $set: { name, mobileNumber, address, customerType, comments },
             },
             {
                 new: true,

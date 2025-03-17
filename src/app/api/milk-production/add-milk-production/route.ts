@@ -9,22 +9,22 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
     try {
         const {
-            দুধ_সংগ্রহের_তারিখ,
-            গবাদি_পশুর_ট্যাগ_আইডি,
-            গবাদি_পশুর_ধরণ,
-            মোট_দুধের_পরিমাণ,
-            বিক্রি_যোগ্য_দুধের_পরিমাণ,
-            খাওয়ার_জন্য_দুধের_পরিমাণ,
-            ফ্যাট_শতাংশ,
-            সময়,
+            milkCollectionDate,
+            cattleTagId,
+            cattleType,
+            totalMilkQuantity,
+            saleableMilkQuantity,
+            milkForConsumption,
+            fatPercentage,
+            time,
         } = await request.json();
 
         if (
-            !দুধ_সংগ্রহের_তারিখ ||
-            !মোট_দুধের_পরিমাণ ||
-            !বিক্রি_যোগ্য_দুধের_পরিমাণ ||
-            !খাওয়ার_জন্য_দুধের_পরিমাণ ||
-            !সময়
+            !milkCollectionDate ||
+            !totalMilkQuantity ||
+            !saleableMilkQuantity ||
+            !milkForConsumption ||
+            !time
         ) {
             return NextResponse.json(
                 { success: false, message: 'All fields are required!' },
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
         await dbConfig();
 
         const normalizedDate = format(
-            new Date(দুধ_সংগ্রহের_তারিখ),
+            new Date(milkCollectionDate),
             'yyyy-MM-dd'
         );
 
         const isDuplicate = await MilkProductionModel.findOne({
-            দুধ_সংগ্রহের_তারিখ: normalizedDate,
-            গবাদি_পশুর_ট্যাগ_আইডি,
-            সময়,
+            milkCollectionDate: normalizedDate,
+            cattleTagId,
+            time,
         });
 
         if (isDuplicate) {
@@ -57,14 +57,14 @@ export async function POST(request: NextRequest) {
         }
 
         const milkProduction = new MilkProductionModel({
-            দুধ_সংগ্রহের_তারিখ,
-            গবাদি_পশুর_ট্যাগ_আইডি,
-            গবাদি_পশুর_ধরণ,
-            মোট_দুধের_পরিমাণ: String(মোট_দুধের_পরিমাণ),
-            বিক্রি_যোগ্য_দুধের_পরিমাণ: String(বিক্রি_যোগ্য_দুধের_পরিমাণ),
-            খাওয়ার_জন্য_দুধের_পরিমাণ: String(খাওয়ার_জন্য_দুধের_পরিমাণ),
-            ফ্যাট_শতাংশ: ফ্যাট_শতাংশ ? String(ফ্যাট_শতাংশ) : undefined,
-            সময়,
+            milkCollectionDate,
+            cattleTagId,
+            cattleType,
+            totalMilkQuantity: String(totalMilkQuantity),
+            saleableMilkQuantity: String(saleableMilkQuantity),
+            milkForConsumption: String(milkForConsumption),
+            fatPercentage: fatPercentage ? String(fatPercentage) : undefined,
+            time,
         });
 
         await milkProduction.save();
@@ -72,8 +72,8 @@ export async function POST(request: NextRequest) {
         const data = await MilkProductionModel.find();
 
         const totalSaleableMilk = await data?.reduce(
-            (acc: number, item: { বিক্রি_যোগ্য_দুধের_পরিমাণ: string }) => {
-                return acc + Number(item['বিক্রি_যোগ্য_দুধের_পরিমাণ']);
+            (acc: number, item: { saleableMilkQuantity: string }) => {
+                return acc + Number(item['saleableMilkQuantity']);
             },
             0
         );

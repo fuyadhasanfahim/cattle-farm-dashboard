@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, CalendarIcon, Loader2, Save } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import SelectOption from '../shared/Select';
 import toast from 'react-hot-toast';
@@ -29,20 +29,20 @@ import { IMilkProduction } from '@/types/milk.production.interface';
 
 const milkingOptions = [
     {
-        value: 'সকাল',
-        label: 'সকাল',
+        value: 'Morning',
+        label: 'Morning',
     },
     {
-        value: 'দুপুর',
-        label: 'দুপুর',
+        value: 'Afternoon',
+        label: 'Afternoon',
     },
     {
-        value: 'বিকেল',
-        label: 'বিকেল',
+        value: 'Evening',
+        label: 'Evening',
     },
     {
-        value: 'সন্ধ্যা',
-        label: 'সন্ধ্যা',
+        value: 'Night',
+        label: 'Night',
     },
 ];
 
@@ -54,20 +54,18 @@ export default function AddMilkProduction() {
     const form = useForm({
         resolver: zodResolver(milkProductionValidationSchema),
         defaultValues: {
-            দুধ_সংগ্রহের_তারিখ: new Date(),
-            গবাদি_পশুর_ট্যাগ_আইডি: '',
-            গবাদি_পশুর_ধরণ: '',
-            মোট_দুধের_পরিমাণ: '',
-            বিক্রি_যোগ্য_দুধের_পরিমাণ: '',
-            খাওয়ার_জন্য_দুধের_পরিমাণ: '',
-            ফ্যাট_শতাংশ: '',
-            সময়: '',
+            milkCollectionDate: new Date(),
+            cattleTagId: '',
+            totalMilkQuantity: '',
+            saleableMilkQuantity: '',
+            milkForConsumption: '',
+            fatPercentage: '',
+            time: '',
         },
     });
 
-    const totalMilkAmount = form.watch('মোট_দুধের_পরিমাণ');
-    const saleableMilkAmount = form.watch('বিক্রি_যোগ্য_দুধের_পরিমাণ');
-    const cattleTagId = form.watch('গবাদি_পশুর_ট্যাগ_আইডি');
+    const totalMilkAmount = form.watch('totalMilkQuantity');
+    const saleableMilkAmount = form.watch('saleableMilkQuantity');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,8 +79,7 @@ export default function AddMilkProduction() {
                 setCattles(data);
             } catch (error) {
                 toast.error(
-                    (error as Error).message ||
-                        'গবাদি পশুর তথ্য আনতে ব্যর্থ হয়েছে'
+                    (error as Error).message || 'Failed to fetch cattle data'
                 );
             } finally {
                 setIsLoading(false);
@@ -97,22 +94,8 @@ export default function AddMilkProduction() {
         const saleableMilk = Number(saleableMilkAmount) || 0;
         const milkForHome = totalMilk - saleableMilk;
 
-        form.setValue('খাওয়ার_জন্য_দুধের_পরিমাণ', milkForHome.toString());
+        form.setValue('milkForConsumption', milkForHome.toString());
     }, [totalMilkAmount, saleableMilkAmount, form]);
-
-    useEffect(() => {
-        if (!cattleTagId || cattles.length === 0) return;
-
-        const selectedCattle = cattles.find(
-            (cattle) =>
-                cattle.ট্যাগ_আইডি === String(cattleTagId) ||
-                parseFloat(cattle.ট্যাগ_আইডি) === Number(cattleTagId)
-        );
-
-        if (selectedCattle) {
-            form.setValue('গবাদি_পশুর_ধরণ', selectedCattle.গবাদিপশুর_ধরন || '');
-        }
-    }, [cattleTagId, cattles, form]);
 
     const onSubmit = async (data: IMilkProduction) => {
         setIsLoading(true);
@@ -132,13 +115,12 @@ export default function AddMilkProduction() {
             const result = await response.json();
 
             if (response.ok) {
-                toast.success('দুধ উৎপাদন তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।');
+                toast.success('Milk production data saved successfully.');
                 form.reset();
                 router.push('/milk-production');
             } else {
                 toast.error(
-                    result.message ||
-                        'দুধ উৎপাদন তথ্য সংরক্ষণ করতে ব্যর্থ হয়েছে।'
+                    result.message || 'Failed to save milk production data.'
                 );
             }
         } catch (error) {
@@ -151,13 +133,13 @@ export default function AddMilkProduction() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="flex items-center gap-6">
+                <div className="grid grid-cols-2 gap-6 items-center">
                     <FormField
                         control={form.control}
-                        name="দুধ_সংগ্রহের_তারিখ"
+                        name="milkCollectionDate"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>দুধ সংগ্রহের তারিখ</FormLabel>
+                                <FormLabel>Milk Collection Date *</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -172,9 +154,7 @@ export default function AddMilkProduction() {
                                                 {field.value ? (
                                                     format(field.value, 'PPP')
                                                 ) : (
-                                                    <span>
-                                                        তারিখ নির্বাচন করুন
-                                                    </span>
+                                                    <span>Select Date</span>
                                                 )}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
@@ -209,60 +189,41 @@ export default function AddMilkProduction() {
                     <SelectOption
                         data={milkingOptions}
                         form={form}
-                        name="সময়"
-                        label="দুধ দোহনের সময়"
-                        placeholder="দুধ দোহনের সময় নির্বাচন করুন"
+                        name="time"
+                        label="Select Time *"
+                        placeholder="eg: Morning"
                         required
                     />
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="grid grid-cols-2 gap-6 items-center">
                     <SelectOption
                         data={
                             cattles.length > 0
                                 ? cattles.map((c) => ({
-                                      value: c.ট্যাগ_আইডি,
-                                      label: c.ট্যাগ_আইডি,
+                                      value: c.tagId,
+                                      label: c.tagId,
                                   }))
                                 : [{ value: 'N/A', label: 'N/A' }]
                         }
                         form={form}
-                        name="গবাদি_পশুর_ট্যাগ_আইডি"
-                        label="গবাদি পশুর ট্যাগ আইডি"
-                        placeholder="গবাদি পশুর ট্যাগ আইডি নির্বাচন করুন"
+                        name="cattleTagId"
+                        label="Cattle tag ID *"
+                        placeholder="eg: 1200"
                         required
                     />
 
                     <FormField
                         control={form.control}
-                        name="গবাদি_পশুর_ধরণ"
+                        name="totalMilkQuantity"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>গবাদি পশুর ধরণ</FormLabel>
+                                <FormLabel>
+                                    Total Milk Quantity (Liter) *
+                                </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="গবাদি পশুর ধরণ"
-                                        type="text"
-                                        readOnly
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <div className="flex items-center gap-6">
-                    <FormField
-                        control={form.control}
-                        name="মোট_দুধের_পরিমাণ"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>মোট দুধের পরিমাণ</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="মোট দুধের পরিমাণ লিখুন"
+                                        placeholder="eg: 200"
                                         onChange={(e) => {
                                             const value = e.target.value || 0;
                                             field.onChange(value);
@@ -274,16 +235,20 @@ export default function AddMilkProduction() {
                             </FormItem>
                         )}
                     />
+                </div>
 
+                <div className="grid grid-cols-2 gap-6 items-center">
                     <FormField
                         control={form.control}
-                        name="বিক্রি_যোগ্য_দুধের_পরিমাণ"
+                        name="saleableMilkQuantity"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>বিক্রি যোগ্য দুধের পরিমাণ</FormLabel>
+                                <FormLabel>
+                                    saleable Milk Quantity (Liter) *
+                                </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="বিক্রি যোগ্য দুধের পরিমাণ লিখুন"
+                                        placeholder="eg: 180"
                                         max={totalMilkAmount || 0}
                                         onChange={(e) => {
                                             const value = e.target.value || 0;
@@ -296,18 +261,18 @@ export default function AddMilkProduction() {
                             </FormItem>
                         )}
                     />
-                </div>
 
-                <div className="flex items-center gap-6">
                     <FormField
                         control={form.control}
-                        name="খাওয়ার_জন্য_দুধের_পরিমাণ"
+                        name="milkForConsumption"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>খাওয়ার জন্য দুধের পরিমাণ</FormLabel>
+                                <FormLabel>
+                                    Milk For Consumption (Liter) *
+                                </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="খাওয়ার জন্য দুধের পরিমাণ"
+                                        placeholder="eg: 20"
                                         readOnly
                                         className="bg-gray-50"
                                         value={field.value}
@@ -317,16 +282,18 @@ export default function AddMilkProduction() {
                             </FormItem>
                         )}
                     />
+                </div>
 
+                <div className="grid grid-cols-2 gap-6 items-center">
                     <FormField
                         control={form.control}
-                        name="ফ্যাট_শতাংশ"
+                        name="fatPercentage"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>ফ্যাট শতাংশ (Optional)</FormLabel>
+                                <FormLabel>Fat Percentage (Optional)</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="ফ্যাট শতাংশ লিখুন"
+                                        placeholder="eg: 50"
                                         min="0"
                                         max="100"
                                         step="0.1"
@@ -343,21 +310,28 @@ export default function AddMilkProduction() {
                             </FormItem>
                         )}
                     />
+
+                    <div></div>
                 </div>
 
-                <div className="flex items-center justify-center">
-                    <button
-                        type="submit"
-                        className="btn-primary"
-                        disabled={isLoading}
+                <div className="flex items-center justify-center gap-6">
+                    <Button
+                        onClick={() => router.back()}
+                        type="button"
+                        variant={'outline'}
                     >
+                        <ArrowLeft className="size-5" />
+                        <span>Back</span>
+                    </Button>
+
+                    <Button type="submit" disabled={isLoading}>
                         {isLoading ? (
                             <Loader2 className="size-5 animate-spin" />
                         ) : (
                             <Save className="size-5" />
                         )}
-                        <span>সংরক্ষন করুন</span>
-                    </button>
+                        <span>Save</span>
+                    </Button>
                 </div>
             </form>
         </Form>

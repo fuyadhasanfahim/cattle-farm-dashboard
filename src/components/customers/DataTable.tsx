@@ -39,29 +39,29 @@ export default function DataTable() {
     return (
         <section className="min-h-screen my-10">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">
-                দুধ উৎপাদন ডেটা
+                Milk Production Data
             </h1>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-green-500">
                         <tr>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed rounded-tl-lg  text-white uppercase tracking-wider">
-                                ক্রমিক নং
+                                Serial No
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed text-white uppercase tracking-wider">
-                                নাম
+                                Name
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                মোবাইল নম্বর
+                                Mobile Number
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                ঠিকানা
+                                Address
                             </th>
                             <th className="px-6 py-3 text-base font-semibold border border-dashed  text-white uppercase tracking-wider text-center">
-                                গ্রাহকের ধরণ
+                                Customer Type
                             </th>
                             <th className="px-6 py-3 text-center text-base font-semibold border border-dashed rounded-tr-lg text-white uppercase tracking-wider">
-                                অ্যাকশন
+                                Action
                             </th>
                         </tr>
                     </thead>
@@ -72,7 +72,7 @@ export default function DataTable() {
                                     colSpan={7}
                                     className="px-6 py-3 text-center"
                                 >
-                                    লোড হচ্ছে...
+                                    Loading...
                                 </td>
                             </tr>
                         ) : data?.length > 0 ? (
@@ -82,16 +82,16 @@ export default function DataTable() {
                                         {index + 1}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.নাম}
+                                        {item.name}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.মোবাইল_নম্বর}
+                                        {item.mobileNumber}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.ঠিকানা}
+                                        {item.address}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
-                                        {item.গ্রাহকের_ধরণ}
+                                        {item.customerType}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         <div
@@ -114,7 +114,7 @@ export default function DataTable() {
                                     colSpan={7}
                                     className="px-6 py-3 text-center"
                                 >
-                                    কোন তথ্য পাওয়া যায়নি।
+                                    No data found.
                                 </td>
                             </tr>
                         )}

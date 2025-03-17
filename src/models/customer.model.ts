@@ -3,19 +3,19 @@ import { model, models, Schema } from 'mongoose';
 
 const saleSchema = new Schema<ISale>(
     {
-        তারিখ: {
+        date: {
             type: Date,
             required: true,
         },
-        পণ্য_নাম: {
+        productName: {
             type: String,
             required: true,
         },
-        পরিমাণ: {
+        quantity: {
             type: Number,
             required: true,
         },
-        মূল্য: {
+        price: {
             type: Number,
             required: true,
         },
@@ -27,15 +27,15 @@ const saleSchema = new Schema<ISale>(
 
 const paymentSchema = new Schema<IPayment>(
     {
-        তারিখ: {
+        date: {
             type: Date,
             required: true,
         },
-        পরিমাণ: {
+        amount: {
             type: Number,
             required: true,
         },
-        পদ্ধতি: {
+        method: {
             type: String,
             required: true,
         },
@@ -47,43 +47,43 @@ const paymentSchema = new Schema<IPayment>(
 
 const customerSchema = new Schema<ICustomer>(
     {
-        নাম: {
+        name: {
             type: String,
             required: true,
         },
-        মোবাইল_নম্বর: {
+        mobileNumber: {
             type: String,
             required: true,
         },
-        ঠিকানা: {
+        address: {
             type: String,
             required: true,
         },
-        মোট_বিক্রয়: {
+        totalSales: {
             type: Number,
             default: 0,
         },
-        মোট_পরিশোধ: {
+        totalPayments: {
             type: Number,
             default: 0,
         },
-        মোট_বকেয়া: {
+        totalDue: {
             type: Number,
             default: 0,
         },
-        বিক্রয়_তালিকা: {
+        salesList: {
             type: [saleSchema],
             default: [],
         },
-        পরিশোধ_তালিকা: {
+        paymentList: {
             type: [paymentSchema],
             default: [],
         },
-        গ্রাহকের_ধরণ: {
+        customerType: {
             type: String,
             required: false,
         },
-        মন্তব্য: {
+        comments: {
             type: String,
             required: false,
         },

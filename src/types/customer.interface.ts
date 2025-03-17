@@ -1,28 +1,28 @@
 export interface ISale {
-    তারিখ: Date;
-    পণ্য_নাম: string;
-    পরিমাণ: number;
-    মূল্য: number;
+    date: Date;
+    productName: string;
+    quantity: number;
+    price: number;
 }
 
 export interface IPayment {
-    তারিখ: Date;
-    পরিমাণ: number;
-    পদ্ধতি: string;
+    date: Date;
+    amount: number;
+    method: string;
 }
 
 export interface ICustomer {
     _id: string;
-    নাম: string;
-    মোবাইল_নম্বর: string;
-    ঠিকানা: string;
-    মোট_বিক্রয়: number;
-    মোট_পরিশোধ: number;
-    মোট_বকেয়া: number;
-    বিক্রয়_তালিকা: ISale[];
-    পরিশোধ_তালিকা: IPayment[];
-    গ্রাহকের_ধরণ: string;
-    মন্তব্য?: string;
+    name: string;
+    mobileNumber: string;
+    address: string;
+    totalSales: number;
+    totalPayments: number;
+    totalDue: number;
+    salesList: ISale[];
+    paymentList: IPayment[];
+    customerType: string;
+    comments?: string;
     createdAt: Date;
     updatedAt: Date;
 }

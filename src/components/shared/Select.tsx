@@ -52,7 +52,7 @@ export default function SelectOption<T extends FieldValues>({
                             field.onChange(value);
                             onChange?.(value);
                         }}
-                        defaultValue={field.value}
+                        value={field.value}
                         disabled={disabled}
                         required={required}
                     >
