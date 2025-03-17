@@ -46,7 +46,6 @@ export default function AddSales() {
         },
     });
 
-    // fetching customers data
     const handlePhoneSearch = async (phoneNumber: string) => {
         if (phoneNumber.length >= 11) {
             setIsSearching(true);
@@ -59,7 +58,7 @@ export default function AddSales() {
                 const result = await response.json();
 
                 if (result && result.success === true) {
-                    form.setValue('buyersName', result.data.নাম);
+                    form.setValue('buyersName', result.data.name);
                 }
             } catch (error) {
                 toast.error((error as Error).message);
@@ -69,7 +68,6 @@ export default function AddSales() {
         }
     };
 
-    // fetching milk data
     useEffect(() => {
         const fetchMilkData = async () => {
             try {
@@ -92,7 +90,6 @@ export default function AddSales() {
         fetchMilkData();
     }, []);
 
-    // updating the amounts
     useEffect(() => {
         const milkQuantity = form.getValues('milkQuantity') || 0;
         const perLiterPrice = form.getValues('perLiterPrice') || 0;
