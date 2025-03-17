@@ -9,30 +9,9 @@ export async function POST(req: NextRequest) {
     await dbConfig();
 
     try {
-        const {
-            salesType,
-            salesDate,
-            buyersPhoneNumber,
-            buyersName,
-            milkQuantity,
-            perLiterPrice,
-            totalPrice,
-            paymentAmount,
-            paymentMethod,
-            dueAmount,
-        } = await req.json();
+        const data = await req.json();
 
-        if (
-            !salesType ||
-            !salesDate ||
-            !buyersPhoneNumber ||
-            !buyersName ||
-            !milkQuantity ||
-            !perLiterPrice ||
-            !totalPrice ||
-            !paymentAmount ||
-            !paymentMethod
-        ) {
+        if (!data) {
             return NextResponse.json(
                 {
                     success: false,
@@ -44,18 +23,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const newSale = new SalesModel({
-            salesType,
-            salesDate,
-            buyersPhoneNumber,
-            buyersName,
-            milkQuantity,
-            perLiterPrice,
-            totalPrice,
-            paymentAmount,
-            paymentMethod,
-            dueAmount,
-        });
+        const newSale = new SalesModel(data);
 
         await newSale.save();
 
@@ -63,7 +31,7 @@ export async function POST(req: NextRequest) {
 
         if (lastMilkData) {
             await MilkModel.create({
-                saleMilkAmount: lastMilkData.saleMilkAmount - milkQuantity,
+                saleMilkAmount: lastMilkData.saleMilkAmount - data.milkQuantity,
             });
         }
 

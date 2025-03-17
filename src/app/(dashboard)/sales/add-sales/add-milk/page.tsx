@@ -261,6 +261,7 @@ export default function AddSales() {
                                             <Input
                                                 placeholder="Set the quantity"
                                                 {...field}
+                                                type="number"
                                                 onChange={(e) => {
                                                     const value = Number(
                                                         e.target.value
@@ -331,9 +332,8 @@ export default function AddSales() {
                                 form={form}
                                 label="Select Payment Method"
                                 data={[
-                                    { value: 'cash', label: 'Cash' },
-                                    { value: 'card', label: 'Card' },
-                                    { value: 'cheque', label: 'Cheque' },
+                                    { value: 'Cash', label: 'Cash' },
+                                    { value: 'Pending', label: 'Pending' },
                                 ]}
                                 name="paymentMethod"
                                 placeholder="Select payment method"
