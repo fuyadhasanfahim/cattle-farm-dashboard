@@ -4,13 +4,15 @@ import { IMilkProduction } from '@/types/milk.production.interface';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Edit2, Milk, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Edit, Milk, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Details() {
     const { id } = useParams();
     const [data, setData] = useState<IMilkProduction | null>(null);
     const [loading, setLoading] = useState(true);
+    const [deleting, setDeleting] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -23,6 +25,7 @@ export default function Details() {
                 setData(result);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                toast.error('Failed to load data');
             } finally {
                 setLoading(false);
             }
@@ -31,40 +34,8 @@ export default function Details() {
         fetchData();
     }, [id]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="p-8 rounded-lg bg-white shadow-md flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mb-4"></div>
-                    <div className="text-green-600 text-lg font-medium">
-                        Loading...
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (!data) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-green-100">
-                <div className="p-8 rounded-lg bg-white shadow-md text-center">
-                    <div className="text-red-500 text-4xl mb-4">⚠️</div>
-                    <div className="text-red-500 text-lg font-medium">
-                        Data not found.
-                    </div>
-                    <button
-                        onClick={() => window.history.back()}
-                        className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-                    >
-                        Go back
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    const handleDelete = async (id: string) => {
-        if (!id) return;
+    const handleDelete = async () => {
+        if (!data?._id) return;
 
         const confirmDelete = window.confirm(
             'Are you sure you want to delete this record?'
@@ -72,153 +43,141 @@ export default function Details() {
         if (!confirmDelete) return;
 
         try {
+            setDeleting(true);
             const response = await fetch(
-                `/api/milk-production/delete-milk-production?id=${id}`,
-                {
-                    method: 'DELETE',
-                }
+                `/api/milk-production/delete-milk-production?id=${data._id}`,
+                { method: 'DELETE' }
             );
 
             if (response.ok) {
-                toast.success('Data deleted successfully');
+                toast.success('Record deleted successfully');
                 router.push('/milk-production');
             } else {
-                toast.error('There was a problem deleting the data.');
+                toast.error('Failed to delete record');
             }
         } catch (error) {
-            toast.error(
-                (error as Error).message ||
-                    'There was a problem deleting the data.'
-            );
+            toast.error((error as Error).message || 'Error deleting record');
+        } finally {
+            setDeleting(false);
         }
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    if (!data) {
+        return (
+            <div className="text-center p-8">
+                <h2 className="text-xl font-medium mb-4">Record not found</h2>
+                <Button onClick={() => router.push('/milk-production')}>
+                    Back to List
+                </Button>
+            </div>
+        );
+    }
+
     return (
-        <section className="min-h-screen">
-            <Card className="max-w-4xl mx-auto">
-                <CardHeader className="bg-green-50 border-b border-green-100 rounded-t-xl">
-                    <div className="flex items-center space-x-3">
-                        <div className="p-3 bg-green-500 text-white rounded-full">
-                            <Milk size={28} />
+        <div className="max-w-3xl mx-auto p-4">
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                    <div className="bg-white p-2 rounded-full text-green-500">
+                        <Milk className="h-6 w-6" />
+                    </div>
+                    Milk Production Details
+                </h1>
+            </div>
+
+            <Card className="mb-6">
+                <CardHeader className="bg-green-500 rounded-t-lg">
+                    <CardTitle className="text-lg text-white">
+                        Total Milk: {data.totalMilkQuantity} liters
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <p className="text-sm text-gray-500">
+                                Cattle Tag ID
+                            </p>
+                            <p className="font-medium">{data.cattleTagId}</p>
                         </div>
-                        <div>
-                            <CardTitle className="text-3xl font-bold text-green-700">
-                                Milk Production Details
-                            </CardTitle>
-                            <p className="text-green-600 mt-1">
-                                Total Milk Quantity: {data.totalMilkQuantity}{' '}
-                                liters
+
+                        <div className="space-y-1">
+                            <p className="text-sm text-gray-500">
+                                Saleable Quantity
+                            </p>
+                            <p className="font-medium">
+                                {data.saleableMilkQuantity} liters
                             </p>
                         </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoCard
-                        title="Cattle Tag ID"
-                        value={`Tag ID: ${data.cattleTagId}`}
-                        icon="🐄"
-                    />
 
-                    <InfoCard
-                        title="Total Milk Quantity"
-                        value={`${data.totalMilkQuantity} liters`}
-                        icon="🥛"
-                        highlight={true}
-                    />
+                        <div className="space-y-1">
+                            <p className="text-sm text-gray-500">
+                                Consumption Quantity
+                            </p>
+                            <p className="font-medium">
+                                {data.milkForConsumption} liters
+                            </p>
+                        </div>
 
-                    <InfoCard
-                        title="Saleable Milk Quantity"
-                        value={`${data.saleableMilkQuantity} liters`}
-                        icon="🥛"
-                        highlight={true}
-                    />
+                        <div className="space-y-1">
+                            <p className="text-sm text-gray-500">
+                                Fat Percentage
+                            </p>
+                            <p className="font-medium">
+                                {data.fatPercentage
+                                    ? `${data.fatPercentage}%`
+                                    : 'N/A'}
+                            </p>
+                        </div>
 
-                    <InfoCard
-                        title="Milk for Consumption"
-                        value={`${data.milkForConsumption} liters`}
-                        icon="🥛"
-                        highlight={true}
-                    />
-
-                    <InfoCard
-                        title="Fat Percentage"
-                        value={
-                            data.fatPercentage
-                                ? `${data.fatPercentage}%`
-                                : 'N/A'
-                        }
-                        icon="🗓️"
-                    />
-
-                    <InfoCard title="Time" value={data.time} icon="⏰" />
-
-                    <div className="md:col-span-2 flex justify-center gap-5 mt-4">
-                        <button
-                            onClick={() => window.history.back()}
-                            className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors shadow-md flex items-center space-x-2"
-                        >
-                            <ArrowLeft className="size-5" />
-                            <span>Go back</span>
-                        </button>
-                        <button
-                            onClick={() =>
-                                router.push(
-                                    `/milk-production/update-milk-production/${data._id}`
-                                )
-                            }
-                            className="px-6 py-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors shadow-md flex items-center space-x-2"
-                        >
-                            <Edit2 className="size-5" />
-                            <span>Edit</span>
-                        </button>
-                        <button
-                            className="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors shadow-md flex items-center space-x-2"
-                            onClick={() => handleDelete(data._id!)}
-                        >
-                            <Trash2 className="size-5" />
-                            <span>Delete</span>
-                        </button>
+                        <div className="space-y-1">
+                            <p className="text-sm text-gray-500">
+                                Collection Time
+                            </p>
+                            <p className="font-medium">{data.time}</p>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
-        </section>
-    );
-}
 
-function InfoCard({
-    title,
-    value,
-    icon,
-    highlight = false,
-    className = '',
-}: {
-    title: string;
-    value: string | number;
-    icon: string;
-    highlight?: boolean;
-    className?: string;
-}) {
-    return (
-        <div
-            className={`rounded-lg overflow-hidden shadow-md border border-green-100 transition-all hover:shadow-lg ${
-                highlight ? 'ring-2 ring-green-400' : ''
-            } ${className}`}
-        >
-            <div className="flex items-center p-4 bg-white">
-                <div className="flex-shrink-0 text-2xl mr-3">{icon}</div>
-                <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-green-700">
-                        {title}
-                    </h3>
-                    <p
-                        className={`mt-1 ${
-                            highlight
-                                ? 'text-xl font-bold text-green-600 '
-                                : 'text-gray-700'
-                        }`}
+            <div className="flex justify-between">
+                <Button
+                    variant="outline"
+                    onClick={() => router.push('/milk-production')}
+                    className="flex items-center gap-2"
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                </Button>
+
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() =>
+                            router.push(
+                                `/milk-production/update-milk-production/${data._id}`
+                            )
+                        }
+                        className="flex items-center gap-2"
                     >
-                        {value}
-                    </p>
+                        <Edit className="h-4 w-4" />
+                        Edit
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="flex items-center gap-2"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        {deleting ? 'Deleting...' : 'Delete'}
+                    </Button>
                 </div>
             </div>
         </div>
