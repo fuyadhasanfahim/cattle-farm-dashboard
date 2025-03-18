@@ -2,40 +2,37 @@
 
 import { ICattle } from '@/types/cattle.interface';
 import { format } from 'date-fns';
-import {
-    ChevronLeft,
-    ChevronRight,
-    Edit2,
-    Eye,
-    Search,
-    Trash2,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
+import {
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Select,
+} from '../ui/select';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '../ui/table';
+import Link from 'next/link';
+import CustomPagination from '../shared/CustomPagination';
 
 export default function DataTable() {
-    const [tableData, setTableData] = useState<ICattle[]>([]);
+    const [data, setData] = useState<ICattle[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const itemsPerPage = 10;
-    const router = useRouter();
-
-    const headers = [
-        'Tag ID',
-        'Registration Date',
-        'Stall Number',
-        'Age',
-        'Weight',
-        'Percentage',
-        'Weight',
-        'Gender',
-        'Fattening Status',
-        'Location',
-        'Actions',
-    ];
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,271 +48,212 @@ export default function DataTable() {
                 }
 
                 const result = await response.json();
-                setTableData(result.data || []);
+                setData(result.data || []);
 
                 setTotalItems(result.pagination?.totalItems);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                toast.error('Failed to load data');
+                toast.error((error as Error).message || 'Failed to load data');
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchData();
-    }, [currentPage, searchQuery]);
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-        setCurrentPage(1);
-    };
+    }, [currentPage, itemsPerPage, searchQuery]);
 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
 
-    const handleEditClick = (id: string) => {
-        router.push(`/manage-cattles/edit-cattle-data/${id}`);
-    };
-
-    const handleDeleteCattle = async (id: string) => {
-        if (!id) return;
-
-        const confirmDelete = window.confirm(
-            'Are you sure you want to delete this record?'
-        );
-        if (!confirmDelete) return;
-
-        try {
-            const response = await fetch(`/api/cattle/delete-cattle?id=${id}`, {
-                method: 'DELETE',
-            });
-
-            if (response.ok) {
-                toast.success('Cattle record deleted successfully');
-
-                setTableData((prev) =>
-                    prev.filter((cattle) => cattle._id !== id)
-                );
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) {
-            console.error('Error deleting cattle:', error);
-            toast.error('Error! Failed to delete cattle record');
-        }
-    };
-
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    const Pagination = () => {
-        if (totalPages <= 1 || tableData.length === 0) return null;
-
-        const pages = [];
-        let startPage = Math.max(1, currentPage - 2);
-        const endPage = Math.min(totalPages, startPage + 4);
-
-        if (endPage - startPage < 4) {
-            startPage = Math.max(1, endPage - 4);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
-                <button
-                    key={i}
-                    onClick={() => handlePageChange(i)}
-                    className={`px-3 py-1 mx-1 rounded-md ${
-                        currentPage === i
-                            ? 'bg-green-500 text-white'
-                            : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
-                    }`}
-                >
-                    {i}
-                </button>
-            );
-        }
-
-        return (
-            <div className="flex items-center justify-center mt-4">
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
-                        currentPage === 1
-                            ? 'opacity-50 cursor-not-allowed'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    <span>Previous</span>
-                </button>
-
-                {startPage > 1 && (
-                    <>
-                        <button
-                            onClick={() => handlePageChange(1)}
-                            className="px-3 py-1 mx-1 rounded-md border border-gray-300 hover:bg-gray-100"
-                        >
-                            1
-                        </button>
-                        {startPage > 2 && <span className="mx-1">...</span>}
-                    </>
-                )}
-
-                {pages}
-
-                {endPage < totalPages && (
-                    <>
-                        {endPage < totalPages - 1 && (
-                            <span className="mx-1">...</span>
-                        )}
-                        <button
-                            onClick={() => handlePageChange(totalPages)}
-                            className="px-3 py-1 mx-1 rounded-md border border-gray-300 hover:bg-gray-100"
-                        >
-                            {totalPages}
-                        </button>
-                    </>
-                )}
-
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`flex items-center px-3 py-1 mx-1 rounded-md border border-gray-300 ${
-                        currentPage === totalPages
-                            ? 'opacity-50 cursor-not-allowed'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    <span>Next</span>
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                </button>
-            </div>
-        );
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+        setCurrentPage(1);
     };
 
     return (
-        <section className="space-y-6">
-            <form
-                className="relative w-[433px] h-[45px]"
-                onSubmit={(e) => e.preventDefault()}
-            >
-                <Search className="absolute top-1/2 left-4 transform -translate-y-1/2 text-muted-foreground size-4" />
-                <input
-                    type="search"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    placeholder="Search..."
-                    className="w-full h-full pl-10 pr-3 bg-white rounded-lg focus:border-green-500 placeholder:text-muted-foreground outline outline-1 outline-green-500 focus:outline-2"
-                />
-            </form>
+        <Card className="shadow-xl border border-gray-100 rounded-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-green-700 text-white">
+                <CardTitle className="text-xl flex items-center justify-between">
+                    <div>Cattle List</div>
+                    <div className="flex items-center gap-4">
+                        <div className="relative flex items-center">
+                            <Search className="absolute left-3 top-[9.5px] h-4 w-4 text-gray-400" />
+                            <Input
+                                placeholder="Search..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-10 font-medium text-black bg-gray-50 border-gray-200 rounded-md"
+                            />
+                        </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full bg-green-500 rounded-t-lg">
-                    <thead>
-                        <tr>
-                            {headers.map((header, index) => (
-                                <th
-                                    key={index}
-                                    className="text-white border border-dashed p-2 py-3"
-                                >
-                                    {header}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {isLoading ? (
-                            <tr className="bg-white">
-                                <td
-                                    colSpan={headers.length}
-                                    className="text-center p-4"
-                                >
-                                    Loading...
-                                </td>
-                            </tr>
-                        ) : tableData.length === 0 ? (
-                            <tr className="bg-white">
-                                <td
-                                    colSpan={headers.length}
-                                    className="text-center p-4"
-                                >
-                                    No data found
-                                </td>
-                            </tr>
-                        ) : (
-                            tableData.map((row, rowIndex) => (
-                                <tr key={rowIndex} className="bg-white">
-                                    <td className="p-2 text-center border border-dashed">
-                                        {row.tagId}
-                                    </td>
-                                    <td className="p-2 text-center border border-dashed">
-                                        {row.registrationDate
-                                            ? format(
-                                                  new Date(
-                                                      row.registrationDate
-                                                  ),
-                                                  'dd-MM-yy'
-                                              )
-                                            : null}
-                                    </td>
-                                    <td className="p-2 border border-dashed text-center">
-                                        {row.stallNumber}
-                                    </td>
-                                    <td className="p-2 border border-dashed text-center">
-                                        {row.age}
-                                    </td>
-                                    <td className="p-2 border border-dashed text-center">
-                                        {row.weight}
-                                    </td>
-                                    <td className="p-2 text-center border border-dashed">
-                                        {row.percentage
-                                            ? row.percentage
-                                            : 'N/A'}
-                                    </td>
-                                    <td className="p-2 text-center border border-dashed">
-                                        {row.weight}
-                                    </td>
-                                    <td className="p-2 border border-dashed">
-                                        {row.gender}
-                                    </td>
-                                    <td className="p-2 text-center border border-dashed">
-                                        {row.fatteningStatus}
-                                    </td>
-                                    <td className="p-2 border border-dashed">
-                                        {row.location}
-                                    </td>
-                                    <td className="p-2 border border-dashed">
-                                        <div className="flex items-center justify-between gap-2 mx-auto">
-                                            <Eye className="size-5 cursor-pointer hover:text-green-600 transition-all" />
-                                            <Edit2
-                                                className="size-5 cursor-pointer hover:text-yellow-600 transition-all"
-                                                onClick={() =>
-                                                    handleEditClick(row._id)
-                                                }
-                                            />
-                                            <Trash2
-                                                onClick={() =>
-                                                    handleDeleteCattle(row._id)
-                                                }
-                                                className="size-5 cursor-pointer hover:text-red-600 transition-all"
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                        <Select
+                            onValueChange={handleItemsPerPageChange}
+                            value={String(itemsPerPage)}
+                        >
+                            <SelectTrigger className="w-24 bg-white border-gray-200 rounded-md font-medium text-black">
+                                <SelectValue placeholder="Items" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="20">20</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                                <SelectItem value="100">100</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+                {isLoading ? (
+                    <div className="flex justify-center items-center py-16">
+                        <DotLottieReact
+                            src="https://lottie.host/ad01aa9b-938c-4751-be55-0c462e02e598/Y41Vr71hNi.lottie"
+                            style={{
+                                width: '100px',
+                                height: '100px',
+                            }}
+                            loop
+                            autoplay
+                        />
+                    </div>
+                ) : data.length === 0 ? (
+                    <div className="text-center py-16 bg-gray-50 rounded-lg">
+                        <p className="text-gray-500 font-medium">
+                            No data available.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="border-r text-center">
+                                        Tag ID
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Registration Date
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Breed
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Gender
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Weight
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Cattle Type
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Cattle Category
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Location
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Status
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Fattening
+                                    </TableHead>
+                                    <TableHead className="text-center">
+                                        Actions
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {data.map(
+                                    (
+                                        {
+                                            _id,
+                                            tagId,
+                                            registrationDate,
+                                            status,
+                                            location,
+                                            cattleCategory,
+                                            cattleType,
+                                            weight,
+                                            gender,
+                                            breed,
+                                            fatteningStatus,
+                                        },
+                                        index
+                                    ) => (
+                                        <TableRow
+                                            key={index}
+                                            className={`hover:bg-green-50 transition-colors duration-150 ${
+                                                index % 2 === 0
+                                                    ? 'bg-white'
+                                                    : 'bg-gray-50'
+                                            }`}
+                                        >
+                                            <TableCell className="border-r text-center">
+                                                {tagId}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {registrationDate
+                                                    ? format(
+                                                          new Date(
+                                                              registrationDate
+                                                          ),
+                                                          'PPP'
+                                                      )
+                                                    : 'N/A'}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {breed}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {gender}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {weight} KG
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {cattleType}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {cattleCategory}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {location}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {status}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {fatteningStatus}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <Link
+                                                    href={`/manage-cattles/details/${_id}`}
+                                                >
+                                                    <span className="hover:text-green-500 hover:underline">
+                                                        View
+                                                    </span>
+                                                </Link>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )}
 
-            <Pagination />
-
-            {!isLoading && tableData.length > 0 && (
-                <div className="text-center text-sm text-gray-600 mt-2">
-                    Total {totalItems} items, Page {currentPage} / {totalPages}
-                </div>
-            )}
-        </section>
+                {!isLoading && totalPages > 0 && (
+                    <div className="mt-6 flex justify-center">
+                        <CustomPagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                )}
+            </CardContent>
+        </Card>
     );
 }
