@@ -28,7 +28,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
 interface CattleTag {
-    ট্যাগ_আইডি: string;
+    tagId: string;
 }
 
 const formSchema = z.object({
@@ -180,12 +180,12 @@ export default function AddTreatment() {
                                         </FormControl>
                                         <SelectContent>
                                             {cattleId?.map(
-                                                ({ ট্যাগ_আইডি }, index) => (
+                                                ({ tagId }, index) => (
                                                     <SelectItem
                                                         key={index}
-                                                        value={ট্যাগ_আইডি}
+                                                        value={tagId}
                                                     >
-                                                        {ট্যাগ_আইডি}
+                                                        {tagId}
                                                     </SelectItem>
                                                 )
                                             )}

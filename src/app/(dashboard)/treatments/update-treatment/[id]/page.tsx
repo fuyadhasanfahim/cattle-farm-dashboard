@@ -44,7 +44,7 @@ const formSchema = z.object({
 });
 
 interface CattleTag {
-    ট্যাগ_আইডি: string;
+    tagId: string;
 }
 
 export default function UpdateTreatment() {
@@ -262,12 +262,12 @@ export default function UpdateTreatment() {
                                         </FormControl>
                                         <SelectContent>
                                             {cattleId?.map(
-                                                ({ ট্যাগ_আইডি }, index) => (
+                                                ({ tagId }, index) => (
                                                     <SelectItem
                                                         key={index}
-                                                        value={ট্যাগ_আইডি}
+                                                        value={tagId}
                                                     >
-                                                        {ট্যাগ_আইডি}
+                                                        {tagId}
                                                     </SelectItem>
                                                 )
                                             )}
