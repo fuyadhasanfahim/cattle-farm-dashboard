@@ -2,8 +2,6 @@ import dbConfig from '@/lib/dbConfig';
 import CustomerModel from '@/models/customer.model';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
 export async function POST(req: NextRequest) {
     try {
         const {

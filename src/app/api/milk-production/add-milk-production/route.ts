@@ -4,8 +4,6 @@ import MilkProductionModel from '@/models/milk.production.model';
 import { format } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
 export async function POST(request: NextRequest) {
     try {
         const {
