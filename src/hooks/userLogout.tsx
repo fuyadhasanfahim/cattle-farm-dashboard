@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function LogoutButton() {
     const router = useRouter();
@@ -14,7 +15,7 @@ export default function LogoutButton() {
 
             router.refresh();
         } catch (error) {
-            console.log(error);
+            toast.error((error as Error).message);
         }
     };
 

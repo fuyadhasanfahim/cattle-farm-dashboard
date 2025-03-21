@@ -54,16 +54,11 @@ export default function AddMilkProduction() {
         defaultValues: {
             milkCollectionDate: new Date(),
             cattleTagId: '',
-            totalMilkQuantity: '',
-            saleableMilkQuantity: '',
-            milkForConsumption: '',
+            milkQuantity: '',
             fatPercentage: '',
             time: '',
         },
     });
-
-    const totalMilkAmount = form.watch('totalMilkQuantity');
-    const saleableMilkAmount = form.watch('saleableMilkQuantity');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -86,14 +81,6 @@ export default function AddMilkProduction() {
 
         fetchData();
     }, []);
-
-    useEffect(() => {
-        const totalMilk = Number(totalMilkAmount) || 0;
-        const saleableMilk = Number(saleableMilkAmount) || 0;
-        const milkForHome = totalMilk - saleableMilk;
-
-        form.setValue('milkForConsumption', milkForHome.toString());
-    }, [totalMilkAmount, saleableMilkAmount, form]);
 
     const onSubmit = async (data: IMilkProduction) => {
         setIsLoading(true);
@@ -213,7 +200,7 @@ export default function AddMilkProduction() {
 
                     <FormField
                         control={form.control}
-                        name="totalMilkQuantity"
+                        name="milkQuantity"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel>
@@ -226,53 +213,6 @@ export default function AddMilkProduction() {
                                             const value = e.target.value || 0;
                                             field.onChange(value);
                                         }}
-                                        value={field.value}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6 items-center">
-                    <FormField
-                        control={form.control}
-                        name="saleableMilkQuantity"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>
-                                    saleable Milk Quantity (Liter) *
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="eg: 180"
-                                        max={totalMilkAmount || 0}
-                                        onChange={(e) => {
-                                            const value = e.target.value || 0;
-                                            field.onChange(value);
-                                        }}
-                                        value={field.value}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="milkForConsumption"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>
-                                    Milk For Consumption (Liter) *
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="eg: 20"
-                                        readOnly
-                                        className="bg-gray-50"
                                         value={field.value}
                                     />
                                 </FormControl>

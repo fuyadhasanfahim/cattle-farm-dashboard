@@ -108,8 +108,6 @@ export default function AddFeedLogForm() {
                 body: JSON.stringify(data),
             });
 
-            console.log(response);
-
             if (response.ok) {
                 toast.success('Feed added successfully!');
                 form.reset();

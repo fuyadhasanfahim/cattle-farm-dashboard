@@ -26,9 +26,8 @@ export async function PUT(request: NextRequest) {
         const retrieveMilkAmount = await MilkProductionModel.findById(id);
 
         const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
-        const retrieveAmount =
-            Number(retrieveMilkAmount?.saleableMilkQuantity) || 0;
-        const newAmount = Number(data?.saleableMilkQuantity) || 0;
+        const retrieveAmount = Number(retrieveMilkAmount?.milkQuantity) || 0;
+        const newAmount = Number(data?.milkQuantity) || 0;
 
         let newMilkAmount = lastAmount;
 

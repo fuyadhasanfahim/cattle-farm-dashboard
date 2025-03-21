@@ -1,17 +1,33 @@
 'use client';
 
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { Input } from '../ui/input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function HeroSection() {
-    const [query, setQuery] = useState('');
+    const [isMilkLoading, setIsMilkLoading] = useState(false);
+    const [milkInStock, setMilkInStock] = useState(0);
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Searching for:', query);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsMilkLoading(true);
+
+                const response = await fetch('/api/milk/get-milk-amount');
+
+                const result = await response.json();
+
+                setMilkInStock(result?.data?.saleMilkAmount || 0);
+            } catch (error) {
+                toast.error((error as Error).message);
+            } finally {
+                setIsMilkLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <section className="flex items-center justify-between">
@@ -23,18 +39,13 @@ export default function HeroSection() {
                 <span>Milk Collection</span>
             </Link>
 
-            <form onSubmit={handleSearch}>
-                <div className="w-full max-w-lg flex items-center px-4 bg-white rounded-md border border-gray-200 shadow group group-focus-visible:ring-1">
-                    <Search className="size-5 text-gray-500" />
-                    <Input
-                        type="text"
-                        placeholder="Search Now"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        className="outline-none ring-0 border-none h-10 w-full shadow-none focus-visible:ring-0"
-                    />
-                </div>
-            </form>
+            <div>
+                <h2 className="text-xl font-semibold">Milk in Stock</h2>
+                <p className="text-3xl font-bold">
+                    {isMilkLoading ? 'Loading...' : milkInStock.toFixed(2)}{' '}
+                    Liter
+                </p>
+            </div>
         </section>
     );
 }

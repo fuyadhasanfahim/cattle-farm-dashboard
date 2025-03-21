@@ -11,15 +11,7 @@ const milkProductionSchema = new Schema<IMilkProduction>(
             type: String,
             required: false,
         },
-        totalMilkQuantity: {
-            type: String,
-            required: true,
-        },
-        saleableMilkQuantity: {
-            type: String,
-            required: true,
-        },
-        milkForConsumption: {
+        milkQuantity: {
             type: String,
             required: true,
         },

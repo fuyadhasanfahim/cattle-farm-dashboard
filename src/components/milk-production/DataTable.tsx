@@ -152,7 +152,7 @@ export default function DataTable() {
                                     (
                                         {
                                             _id,
-                                            totalMilkQuantity,
+                                            milkQuantity,
                                             milkCollectionDate,
                                             fatPercentage,
                                             time,
@@ -185,7 +185,7 @@ export default function DataTable() {
                                                     : 'N/A'}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
-                                                {totalMilkQuantity} Liter
+                                                {milkQuantity} Liter
                                             </TableCell>
                                             <TableCell className="border-r text-center">
                                                 {fatPercentage

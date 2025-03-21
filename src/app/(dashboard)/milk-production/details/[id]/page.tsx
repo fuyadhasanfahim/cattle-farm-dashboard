@@ -44,16 +44,58 @@ export default function Details() {
 
         try {
             setDeleting(true);
+
             const response = await fetch(
                 `/api/milk-production/delete-milk-production?id=${data._id}`,
                 { method: 'DELETE' }
             );
 
             if (response.ok) {
-                toast.success('Record deleted successfully');
+                toast.success('Milk production data processed successfully.');
+
                 router.push('/milk-production');
             } else {
-                toast.error('Failed to delete record');
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.message) {
+                        if (errorData.message.includes('negative')) {
+                            toast.error(
+                                'The resulting milk amount would be negative. Please adjust the quantities.'
+                            );
+                        } else if (errorData.message.includes('not found')) {
+                            toast.error(
+                                'Milk production entry not found. Please verify the ID.'
+                            );
+                        } else if (errorData.message.includes('permission')) {
+                            toast.error(
+                                'You do not have permission to perform this action.'
+                            );
+                        } else {
+                            toast.error(errorData.message);
+                        }
+                    } else {
+                        if (response.status === 400) {
+                            toast.error(
+                                'Bad request. Please check your input data.'
+                            );
+                        } else if (response.status === 404) {
+                            toast.error('Resource not found.');
+                        } else if (response.status === 500) {
+                            toast.error(
+                                'Internal server error. Please try again later.'
+                            );
+                        } else {
+                            toast.error(
+                                response.statusText ||
+                                    'An unexpected error occurred.'
+                            );
+                        }
+                    }
+                } catch {
+                    toast.error(
+                        'Failed to process the request. Please check your network connection or try again.'
+                    );
+                }
             }
         } catch (error) {
             toast.error((error as Error).message || 'Error deleting record');
@@ -95,7 +137,7 @@ export default function Details() {
             <Card className="mb-6">
                 <CardHeader className="bg-green-500 rounded-t-lg">
                     <CardTitle className="text-lg text-white">
-                        Total Milk: {data.totalMilkQuantity} liters
+                        Total Milk: {data.milkQuantity} liters
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
@@ -112,16 +154,7 @@ export default function Details() {
                                 Saleable Quantity
                             </p>
                             <p className="font-medium">
-                                {data.saleableMilkQuantity} liters
-                            </p>
-                        </div>
-
-                        <div className="space-y-1">
-                            <p className="text-sm text-gray-500">
-                                Consumption Quantity
-                            </p>
-                            <p className="font-medium">
-                                {data.milkForConsumption} liters
+                                {data.milkQuantity} liters
                             </p>
                         </div>
 

@@ -9,21 +9,12 @@ export async function POST(request: NextRequest) {
         const {
             milkCollectionDate,
             cattleTagId,
-            cattleType,
-            totalMilkQuantity,
-            saleableMilkQuantity,
-            milkForConsumption,
+            milkQuantity,
             fatPercentage,
             time,
         } = await request.json();
 
-        if (
-            !milkCollectionDate ||
-            !totalMilkQuantity ||
-            !saleableMilkQuantity ||
-            !milkForConsumption ||
-            !time
-        ) {
+        if (!milkCollectionDate || !milkQuantity || !time) {
             return NextResponse.json(
                 { success: false, message: 'All fields are required!' },
                 { status: 400 }
@@ -57,28 +48,27 @@ export async function POST(request: NextRequest) {
         const milkProduction = new MilkProductionModel({
             milkCollectionDate,
             cattleTagId,
-            cattleType,
-            totalMilkQuantity: String(totalMilkQuantity),
-            saleableMilkQuantity: String(saleableMilkQuantity),
-            milkForConsumption: String(milkForConsumption),
-            fatPercentage: fatPercentage ? String(fatPercentage) : undefined,
+            milkQuantity,
+            fatPercentage,
             time,
         });
 
+        const lastMilkEntry = await MilkModel.findOne().sort({ _id: -1 });
+
+        if (lastMilkEntry) {
+            const newSaleMilkAmount =
+                parseFloat(lastMilkEntry.saleMilkAmount) +
+                parseFloat(milkQuantity);
+            lastMilkEntry.saleMilkAmount = newSaleMilkAmount.toFixed(2);
+
+            await lastMilkEntry.save();
+        } else {
+            await MilkModel.create({
+                saleMilkAmount: parseFloat(milkQuantity).toFixed(2),
+            });
+        }
+
         await milkProduction.save();
-
-        const data = await MilkProductionModel.find();
-
-        const totalSaleableMilk = await data?.reduce(
-            (acc: number, item: { saleableMilkQuantity: string }) => {
-                return acc + Number(item['saleableMilkQuantity']);
-            },
-            0
-        );
-
-        await MilkModel.create({
-            saleMilkAmount: totalSaleableMilk,
-        });
 
         return NextResponse.json(
             {
@@ -89,13 +79,12 @@ export async function POST(request: NextRequest) {
             { status: 201 }
         );
     } catch (error) {
+        console.log((error as Error).message);
         return NextResponse.json(
             {
                 success: false,
-                message:
-                    error instanceof Error
-                        ? error.message
-                        : 'An unexpected error occurred.',
+                message: 'An unexpected error occurred.',
+                error,
             },
             { status: 500 }
         );

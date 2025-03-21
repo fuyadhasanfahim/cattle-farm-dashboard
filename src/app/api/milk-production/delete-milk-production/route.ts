@@ -20,18 +20,34 @@ export async function DELETE(req: NextRequest) {
             );
         }
 
-        const lastMilkAmount = await MilkModel.findOne().sort('-createdAt');
-
+        const lastMilkAmountDoc = await MilkModel.findOne().sort('-createdAt');
         const retrieveMilkAmount = await MilkProductionModel.findById(id);
 
-        const lastAmount = Number(lastMilkAmount?.saleMilkAmount) || 0;
-
-        const retrieveAmount =
-            Number(retrieveMilkAmount?.saleableMilkQuantity) || 0;
+        const lastAmount = Number(lastMilkAmountDoc?.saleMilkAmount) || 0;
+        const retrieveAmount = Number(retrieveMilkAmount?.milkQuantity) || 0;
 
         const newMilkAmount = lastAmount - retrieveAmount;
 
-        await MilkModel.create({ saleMilkAmount: newMilkAmount });
+        if (newMilkAmount < 0) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message:
+                        'Cannot delete. Resulting milk amount would be negative.',
+                },
+                { status: 400 }
+            );
+        }
+
+        if (lastMilkAmountDoc) {
+            lastMilkAmountDoc.saleMilkAmount = newMilkAmount.toFixed(2);
+            await lastMilkAmountDoc.save();
+        } else {
+            return NextResponse.json(
+                { success: false, message: 'Milk model not found' },
+                { status: 404 }
+            );
+        }
 
         const result = await MilkProductionModel.findOneAndDelete({ _id: id });
 

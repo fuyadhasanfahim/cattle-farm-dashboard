@@ -80,8 +80,9 @@ export default function AddBreeding() {
                     setMothers(result?.data);
                 }
             } catch (error) {
-                console.log(error);
-                toast.error('Something went wrong!');
+                toast.error(
+                    (error as Error).message || 'Something went wrong!'
+                );
             } finally {
                 setMothersIdLoading(false);
             }

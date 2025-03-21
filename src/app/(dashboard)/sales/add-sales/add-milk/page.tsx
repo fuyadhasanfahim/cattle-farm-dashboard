@@ -77,8 +77,6 @@ export default function AddSales() {
 
                 const result = await response.json();
 
-                console.log(result);
-
                 setMilkAmount(result?.data?.saleMilkAmount || 0);
             } catch (error) {
                 toast.error((error as Error).message);
@@ -252,7 +250,9 @@ export default function AddSales() {
                                                 <span className="text-sm text-muted-foreground">
                                                     Available:{' '}
                                                     {milkAmount !== null
-                                                        ? `${milkAmount} Liter`
+                                                        ? `${milkAmount.toFixed(
+                                                              2
+                                                          )} Liter`
                                                         : 'Unknown'}
                                                 </span>
                                             )}
