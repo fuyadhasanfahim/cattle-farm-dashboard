@@ -1,7 +1,6 @@
 'use client';
 
 import MyCalender from '@/components/shared/MyCalender';
-import SelectOption from '@/components/shared/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Form,
@@ -11,6 +10,13 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import IBreeding from '@/types/breeding.interface';
@@ -22,7 +28,6 @@ import toast from 'react-hot-toast';
 
 export default function AddBreeding() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [isMothersIdLoading, setMothersIdLoading] = useState<boolean>(false);
     const [mothers, setMothers] = useState<ICattle[]>([]);
     const router = useRouter();
 
@@ -71,10 +76,10 @@ export default function AddBreeding() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setMothersIdLoading(true);
-
                 const response = await fetch(`/api/cattle/get-mothers-id`);
                 const result = await response.json();
+
+                console.log(result);
 
                 if (response.ok) {
                     setMothers(result?.data);
@@ -83,8 +88,6 @@ export default function AddBreeding() {
                 toast.error(
                     (error as Error).message || 'Something went wrong!'
                 );
-            } finally {
-                setMothersIdLoading(false);
             }
         };
 
@@ -128,20 +131,37 @@ export default function AddBreeding() {
                         className="space-y-6"
                     >
                         <div className="grid grid-cols-2 items-center gap-6">
-                            <SelectOption
-                                data={mothers.map((mother) => ({
-                                    value: mother.tagId,
-                                    label: mother.tagId,
-                                }))}
-                                form={form}
-                                label="Select ID"
+                            <FormField
+                                control={form.control}
                                 name="selectId"
-                                placeholder={
-                                    isMothersIdLoading
-                                        ? 'Loading...'
-                                        : 'Select ID'
-                                }
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Cattle ID</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value.toString()}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select ID" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {mothers.map(
+                                                    (mother, index) => (
+                                                        <SelectItem
+                                                            key={index}
+                                                            value={mother.tagId}
+                                                        >
+                                                            {mother.tagId}
+                                                        </SelectItem>
+                                                    )
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="bullName"

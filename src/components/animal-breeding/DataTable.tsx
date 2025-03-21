@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import IBreeding from '@/types/breeding.interface';
 import { format } from 'date-fns';
 import { Eye } from 'lucide-react';
@@ -113,7 +114,18 @@ export default function DataTable() {
                                     <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
                                         {item.semenPercentage}
                                     </td>
-                                    <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">
+                                    <td
+                                        className={cn(
+                                            'p-2 whitespace-nowrap text-sm text-center border border-dashed text-white',
+                                            item.checkForSemenSuccessStatus ===
+                                                'pending for approval'
+                                                ? 'bg-yellow-500'
+                                                : item.checkForSemenSuccessStatus ===
+                                                  'failed for conceive'
+                                                ? 'bg-red-500'
+                                                : 'bg-green-500'
+                                        )}
+                                    >
                                         {item.checkForSemenSuccessStatus}
                                     </td>
                                     <td className="p-2 whitespace-nowrap text-sm text-center border border-dashed  text-gray-900">

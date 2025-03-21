@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function FatteningPage() {
     const [data, setData] = useState<ICattle[] | []>([]);
@@ -137,7 +138,14 @@ export default function FatteningPage() {
                                             {registrationDate &&
                                                 format(registrationDate, 'PPP')}
                                         </TableCell>
-                                        <TableCell className="text-center p-3">
+                                        <TableCell
+                                            className={cn(
+                                                'border-r text-center text-white',
+                                                fatteningStatus === 'Active'
+                                                    ? 'bg-green-500'
+                                                    : 'bg-yellow-500'
+                                            )}
+                                        >
                                             {fatteningStatus}
                                         </TableCell>
                                         <TableCell className="text-center p-3">

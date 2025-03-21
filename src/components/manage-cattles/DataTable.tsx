@@ -25,6 +25,7 @@ import {
 } from '../ui/table';
 import Link from 'next/link';
 import CustomPagination from '../shared/CustomPagination';
+import { cn } from '@/lib/utils';
 
 export default function DataTable() {
     const [data, setData] = useState<ICattle[]>([]);
@@ -130,10 +131,10 @@ export default function DataTable() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="border-r text-center">
-                                        Tag ID
+                                        Registration Date
                                     </TableHead>
                                     <TableHead className="border-r text-center">
-                                        Registration Date
+                                        Tag ID
                                     </TableHead>
                                     <TableHead className="border-r text-center">
                                         Breed
@@ -142,13 +143,22 @@ export default function DataTable() {
                                         Gender
                                     </TableHead>
                                     <TableHead className="border-r text-center">
+                                        {`Father's ID`}
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        {`Father's Name`}
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        {`Mother's Name`}
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
                                         Weight
                                     </TableHead>
                                     <TableHead className="border-r text-center">
-                                        Cattle Type
+                                        Type
                                     </TableHead>
                                     <TableHead className="border-r text-center">
-                                        Cattle Category
+                                        Category
                                     </TableHead>
                                     <TableHead className="border-r text-center">
                                         Location
@@ -179,6 +189,9 @@ export default function DataTable() {
                                             gender,
                                             breed,
                                             fatteningStatus,
+                                            fatherId,
+                                            fatherName,
+                                            motherId,
                                         },
                                         index
                                     ) => (
@@ -191,9 +204,6 @@ export default function DataTable() {
                                             }`}
                                         >
                                             <TableCell className="border-r text-center">
-                                                {tagId}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
                                                 {registrationDate
                                                     ? format(
                                                           new Date(
@@ -204,10 +214,22 @@ export default function DataTable() {
                                                     : 'N/A'}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
+                                                {tagId}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
                                                 {breed}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
                                                 {gender}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {fatherId}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {fatherName}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {motherId}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
                                                 {weight} KG
@@ -224,7 +246,14 @@ export default function DataTable() {
                                             <TableCell className="border-r text-center">
                                                 {status}
                                             </TableCell>
-                                            <TableCell className="border-r text-center">
+                                            <TableCell
+                                                className={cn(
+                                                    'border-r text-center text-white',
+                                                    fatteningStatus === 'Active'
+                                                        ? 'bg-green-500'
+                                                        : 'bg-yellow-500'
+                                                )}
+                                            >
                                                 {fatteningStatus}
                                             </TableCell>
                                             <TableCell className="text-center">
