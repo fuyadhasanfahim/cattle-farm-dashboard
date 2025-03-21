@@ -12,11 +12,16 @@ export default function Details() {
     const { id } = useParams();
     const [data, setData] = useState<ICustomer | null>(null);
     const [loading, setLoading] = useState(true);
+    const [customerSalesData, setCustomersData] = useState<
+        { totalPrice: number; dueAmount: number }[]
+    >([]);
     const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
+
                 const response = await fetch(
                     `/api/customers/get-customer-by-id?id=${id}`
                 );
@@ -32,6 +37,25 @@ export default function Details() {
 
         fetchData();
     }, [id]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `/api/sales/get-sales-by-phone-number?phoneNumber=${data?.mobileNumber}`
+                );
+                const result = await response.json();
+
+                setCustomersData(result?.data);
+            } catch (error) {
+                toast.error((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [data, id]);
 
     if (loading) {
         return (
@@ -95,6 +119,15 @@ export default function Details() {
         }
     };
 
+    const totalSalesAmount = customerSalesData?.reduce(
+        (sum, sale) => sum + sale.totalPrice,
+        0
+    );
+    const totalDueAmount = customerSalesData?.reduce(
+        (sum, sale) => sum + sale.dueAmount,
+        0
+    );
+
     return (
         <section className="min-h-screen">
             <Card className="max-w-4xl mx-auto">
@@ -133,6 +166,19 @@ export default function Details() {
                         title="Comments"
                         value={data.comments as string}
                         icon="✅"
+                    />
+
+                    <InfoCard
+                        title="Total Sales Amount"
+                        value={`$${totalSalesAmount ? totalSalesAmount : 0}`}
+                        icon="💰"
+                        highlight={true}
+                    />
+                    <InfoCard
+                        title="Total Due Amount"
+                        value={`$${totalDueAmount ? totalDueAmount : 0}`}
+                        icon="📉"
+                        highlight={true}
                     />
 
                     <InfoCard

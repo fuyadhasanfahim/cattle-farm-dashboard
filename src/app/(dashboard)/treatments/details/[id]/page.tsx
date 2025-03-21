@@ -203,6 +203,15 @@ export default function TreatmentDetailsPage() {
 
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500">
+                                        Medicine Amount
+                                    </h3>
+                                    <p className="text-lg font-semibold">
+                                        {data?.medicineAmount}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500">
                                         Vaccination Count
                                     </h3>
                                     <p className="text-lg font-semibold">

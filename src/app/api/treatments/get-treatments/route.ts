@@ -14,15 +14,40 @@ export async function GET(req: NextRequest) {
         const skip = (page - 1) * limit;
 
         const sort = searchParams.get('sort') || 'createdAt';
-        const sortOrder: SortOrder = 'desc';
+        const sortOrder: SortOrder =
+            (searchParams.get('sortOrder') as SortOrder) || 'desc';
+
         const sortQuery: { [key: string]: SortOrder } = {
             [sort]: sortOrder,
         };
 
         const search = searchParams.get('search');
-        const searchQuery = search
-            ? { medicineName: { $regex: search, $options: 'i' } }
-            : {};
+        let searchQuery = {};
+
+        if (search) {
+            searchQuery = {
+                $or: [
+                    {
+                        treatmentType: {
+                            $regex: search,
+                            $options: 'i',
+                        },
+                    },
+                    { medicineName: { $regex: search, $options: 'i' } },
+                    { medicineAmount: { $regex: search, $options: 'i' } },
+                    { medicineReason: { $regex: search, $options: 'i' } },
+                    {
+                        vaccinationInterval: {
+                            $regex: search,
+                            $options: 'i',
+                        },
+                    },
+                    { dewormingCount: { $regex: search, $options: 'i' } },
+                    { vaccinationCount: { $regex: search, $options: 'i' } },
+                    { generalCount: { $regex: search, $options: 'i' } },
+                ],
+            };
+        }
 
         await dbConfig();
 
@@ -37,10 +62,8 @@ export async function GET(req: NextRequest) {
             success: true,
             message: 'Data retrieved successfully',
             data,
-            totalPages: Math.ceil(totalRecords / limit),
-            currentPage: page,
             totalRecords,
-            limit,
+            totalPages: Math.ceil(totalRecords / limit),
         });
     } catch (error) {
         return NextResponse.json(

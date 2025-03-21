@@ -3,6 +3,7 @@ export interface ITreatment {
     cattleId: string;
     treatmentType: 'Deworming' | 'Vaccination' | 'General';
     medicineName: string;
+    medicineAmount?: string;
     medicineReason?: string;
     treatmentDate: Date;
     nextDueDate?: Date;

@@ -37,6 +37,7 @@ const formSchema = z.object({
         required_error: 'Please select a treatment type',
     }),
     medicineName: z.string().min(1, 'Medicine name is required'),
+    medicineAmount: z.string().optional(),
     medicineReason: z.string().optional(),
     vaccinationInterval: z
         .union([z.literal(3), z.literal(6), z.literal(9), z.literal(12)])
@@ -57,6 +58,7 @@ export default function AddTreatment() {
         defaultValues: {
             cattleId: '',
             treatmentType: undefined,
+            medicineAmount: '',
             medicineName: '',
             medicineReason: '',
             vaccinationInterval: undefined,
@@ -183,9 +185,13 @@ export default function AddTreatment() {
                                                 ({ tagId }, index) => (
                                                     <SelectItem
                                                         key={index}
-                                                        value={tagId}
+                                                        value={
+                                                            tagId
+                                                                ? tagId
+                                                                : 'N/A'
+                                                        }
                                                     >
-                                                        {tagId}
+                                                        {tagId ? tagId : 'N/A'}
                                                     </SelectItem>
                                                 )
                                             )}
@@ -247,6 +253,27 @@ export default function AddTreatment() {
                                 </FormItem>
                             )}
                         />
+
+                        {treatmentType === 'Deworming' && (
+                            <FormField
+                                control={form.control}
+                                name="medicineAmount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Medicine/Vaccine Amount
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Enter medicine or vaccine amount"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
                         {treatmentType === 'Vaccination' && (
                             <FormField

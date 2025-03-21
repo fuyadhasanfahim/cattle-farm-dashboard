@@ -1,37 +1,74 @@
 'use client';
 
-import { Plus, Search } from 'lucide-react';
+import { ISales } from '@/types/sales.interface';
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { Input } from '../ui/input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Button } from '../ui/button';
 
 export default function HeroSection() {
-    const [query, setQuery] = useState('');
+    const [data, setData] = useState<ISales[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Searching for:', query);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`/api/sales/get-sales`);
+                const result = await response.json();
+
+                if (result.success) {
+                    setData(result.data);
+                } else {
+                    toast.error(result.message || 'Failed to fetch sales data');
+                }
+            } catch (error) {
+                toast.error(
+                    (error as Error).message || 'An unexpected error occurred'
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const totalSalesAmount = data?.reduce(
+        (sum, sale) => sum + sale.totalPrice,
+        0
+    );
+    const totalDueAmount = data?.reduce((sum, sale) => sum + sale.dueAmount, 0);
 
     return (
         <section className="flex items-center justify-between">
-            <Link href={'/sales/add-sales'} className="btn-primary">
-                <Plus className="size-5" />
-                <span>Add Sales</span>
-            </Link>
+            <Button>
+                <Link
+                    href={'/sales/add-sales'}
+                    className="flex items-center gap-2"
+                >
+                    <Plus className="size-5" />
+                    <span className="font-medium">Add Sales</span>
+                </Link>
+            </Button>
 
-            <form onSubmit={handleSearch}>
-                <div className="w-full max-w-lg flex items-center px-4 bg-white rounded-md border border-gray-200 shadow group group-focus-visible:ring-1">
-                    <Search className="size-5 text-gray-500" />
-                    <Input
-                        type="text"
-                        placeholder="Search Now"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        className="outline-none ring-0 border-none h-10 w-full shadow-none focus-visible:ring-0"
-                    />
-                </div>
-            </form>
+            <div className="mt-4 md:mt-0">
+                <h2 className="text-lg font-semibold text-gray-700">
+                    Total Sales Amount:{' '}
+                    <span className="text-green-600">
+                        {loading
+                            ? 'Loading...'
+                            : `${totalSalesAmount || 0} Taka`}
+                    </span>
+                </h2>
+                <h2 className="text-lg font-semibold text-gray-700 mt-1">
+                    Total Due Amount:{' '}
+                    <span className="text-red-500">
+                        {loading ? 'Loading...' : `${totalDueAmount || 0} Taka`}
+                    </span>
+                </h2>
+            </div>
         </section>
     );
 }

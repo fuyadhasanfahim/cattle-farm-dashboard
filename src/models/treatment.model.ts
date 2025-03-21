@@ -9,6 +9,7 @@ const CattleTreatmentSchema = new Schema<ITreatment>({
         required: true,
     },
     medicineName: { type: String, required: true },
+    medicineAmount: { type: String, required: false },
     medicineReason: { type: String, required: false },
     treatmentDate: { type: Date, required: true },
     nextDueDate: { type: Date },
