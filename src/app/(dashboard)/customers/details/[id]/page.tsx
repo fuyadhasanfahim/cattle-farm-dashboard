@@ -170,13 +170,15 @@ export default function Details() {
 
                     <InfoCard
                         title="Total Sales Amount"
-                        value={`$${totalSalesAmount ? totalSalesAmount : 0}`}
+                        value={`${
+                            totalSalesAmount ? totalSalesAmount : 0
+                        } Taka`}
                         icon="💰"
                         highlight={true}
                     />
                     <InfoCard
                         title="Total Due Amount"
-                        value={`$${totalDueAmount ? totalDueAmount : 0}`}
+                        value={`${totalDueAmount ? totalDueAmount : 0} Taka`}
                         icon="📉"
                         highlight={true}
                     />
