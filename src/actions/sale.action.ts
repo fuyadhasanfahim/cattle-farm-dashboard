@@ -9,6 +9,7 @@ export async function getAllSales() {
 
         return data;
     } catch (error) {
-        throw new Error((error as Error).message || 'Something went wrong!');
+        console.error(error);
+        return [];
     }
 }

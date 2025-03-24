@@ -10,6 +10,7 @@ export async function getAllBreedings() {
 
         return data;
     } catch (error) {
-        throw new Error((error as Error).message || 'Something went wrong!');
+        console.error(error);
+        return [];
     }
 }
