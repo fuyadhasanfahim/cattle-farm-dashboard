@@ -3,7 +3,7 @@ import LineChartComponent from '@/components/dashboard/LineChart';
 import { PieChartComponent } from '@/components/dashboard/PieChart';
 import TopDashboardCard from '@/components/dashboard/TopDashboardCard';
 
-export default async function dashboard() {
+export default function dashboard() {
     return (
         <div className="space-y-6">
             <HeroSection />
