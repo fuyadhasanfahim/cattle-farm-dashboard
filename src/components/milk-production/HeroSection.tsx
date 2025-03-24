@@ -36,7 +36,10 @@ export default function HeroSection() {
     };
 
     const fetchTodaysStock = async () => {
-        const response = await fetch('/api/milk/get-milk-amount-by-date');
+        const todayDate = new Date().toISOString();
+        const response = await fetch(
+            `/api/milk/get-milk-amount-by-date?date=${todayDate}`
+        );
         const result = await response.json();
         setToDaysInStock(result?.data || 0);
     };

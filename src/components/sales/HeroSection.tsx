@@ -34,7 +34,7 @@ export default function MilkDashboardHero() {
     }, []);
 
     const fetchSalesData = async () => {
-        const response = await fetch('/api/sales/get-sales');
+        const response = await fetch(`/api/sales/get-sales`);
         const result = await response.json();
 
         if (result.success) {
@@ -57,8 +57,16 @@ export default function MilkDashboardHero() {
     const fetchTodaysMilk = async () => {
         setMilkLoading(true);
         try {
-            const response = await fetch('/api/milk/get-milk-amount-by-date');
+            const todayDate = new Date().toISOString();
+            const response = await fetch(
+                `/api/milk/get-milk-amount-by-date?date=${todayDate}`
+            );
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const result = await response.json();
+            console.log(result);
+
             setTodaysMilk(result?.data || 0);
         } catch (error) {
             toast.error((error as Error).message);

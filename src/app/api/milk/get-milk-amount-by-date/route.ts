@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import MilkProductionModel from '@/models/milk.production.model';
 import { NextRequest, NextResponse } from 'next/server';
@@ -9,17 +11,43 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const dateParam = searchParams.get('date');
 
-        const date = dateParam ? new Date(dateParam) : new Date();
+        if (!dateParam) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: 'Date parameter is required',
+                },
+                { status: 400 }
+            );
+        }
 
-        const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+        const date = new Date(dateParam);
+
+        date.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(date);
+        endDate.setHours(23, 59, 59, 999);
 
         const data = await MilkProductionModel.find({
-            date: { $gte: startOfDay, $lte: endOfDay },
+            milkCollectionDate: {
+                $gte: date,
+                $lte: endDate,
+            },
         });
 
+        if (data.length === 0) {
+            return NextResponse.json(
+                {
+                    success: true,
+                    data: 0,
+                    message: 'No data found for this date',
+                },
+                { status: 200 }
+            );
+        }
+
         const todaysMilkAmount = data.reduce(
-            (acc, curr) => acc + (curr.saleMilkAmount || 0),
+            (acc, curr) => acc + parseInt(curr.milkQuantity, 10),
             0
         );
 
@@ -36,7 +64,7 @@ export async function GET(req: NextRequest) {
             {
                 success: false,
                 message: 'An error occurred while fetching data',
-                error,
+                error: error,
             },
             { status: 500 }
         );

@@ -1,3 +1,5 @@
+'use server';
+
 import axiosInstance from '@/lib/axiosInstance';
 
 export async function getAllMilkProductions() {

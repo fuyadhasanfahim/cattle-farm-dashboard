@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import dbConfig from '@/lib/dbConfig';
 import BreedingModel from '@/models/breeding.model';
 import { NextResponse } from 'next/server';
