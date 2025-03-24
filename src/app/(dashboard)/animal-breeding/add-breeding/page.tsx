@@ -110,7 +110,8 @@ export default function AddBreeding() {
             } else {
                 toast.success('Breeding added successfully. Redirecting!');
                 form.reset();
-                router.push('/animal-breeding');
+
+                router.back();
             }
         } catch (error) {
             toast.error((error as Error).message);

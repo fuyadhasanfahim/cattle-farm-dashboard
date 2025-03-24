@@ -77,8 +77,8 @@ export default function DataTable() {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {isLoading ? (
                             <tr>
-                                <td colSpan={7} className="p-2 text-center">
-                                    লোড হচ্ছে...
+                                <td colSpan={9} className="p-2 text-center">
+                                    Loading...
                                 </td>
                             </tr>
                         ) : data?.length > 0 ? (
@@ -118,10 +118,10 @@ export default function DataTable() {
                                         className={cn(
                                             'p-2 whitespace-nowrap text-sm text-center border border-dashed text-white',
                                             item.checkForSemenSuccessStatus ===
-                                                'pending for approval'
+                                                'Pending'
                                                 ? 'bg-yellow-500'
                                                 : item.checkForSemenSuccessStatus ===
-                                                  'failed for conceive'
+                                                  'Failed'
                                                 ? 'bg-red-500'
                                                 : 'bg-green-500'
                                         )}
@@ -145,8 +145,8 @@ export default function DataTable() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={8} className="p-2 text-center">
-                                    কোন তথ্য পাওয়া যায়নি।
+                                <td colSpan={9} className="p-2 text-center">
+                                    No data found!
                                 </td>
                             </tr>
                         )}

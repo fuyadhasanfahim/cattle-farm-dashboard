@@ -52,7 +52,10 @@ export async function GET(req: NextRequest) {
             }
         }
 
-        const sales = await SalesModel.find(query).skip(skip).limit(limit);
+        const sales = await SalesModel.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
         const total = await SalesModel.countDocuments(query);
 
         return NextResponse.json(

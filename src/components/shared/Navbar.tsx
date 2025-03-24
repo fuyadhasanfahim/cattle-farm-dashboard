@@ -13,7 +13,9 @@ export default async function Navbar() {
         <nav className="px-4 md:px-6 lg:px-10 border-b h-20 backdrop-blur w-full flex items-center">
             <div className="w-full flex items-center justify-between">
                 <Image
-                    src={'/logo/logo.png'}
+                    src={
+                        'https://res.cloudinary.com/dny7zfbg9/image/upload/mivlaitetix6paxle3yw.png'
+                    }
                     alt="logo"
                     width={60}
                     height={60}

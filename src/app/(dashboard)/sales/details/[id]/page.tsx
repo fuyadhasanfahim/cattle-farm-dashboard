@@ -159,9 +159,7 @@ export default function Details() {
                         </button>
                         <button
                             onClick={() =>
-                                router.push(
-                                    `/milk-production/update-milk-production/${data._id}`
-                                )
+                                router.push(`sales/update-milk-sales/${data._id}`)
                             }
                             className="px-6 py-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors shadow-md flex items-center space-x-2"
                         >

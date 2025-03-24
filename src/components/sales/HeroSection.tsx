@@ -74,7 +74,7 @@ export default function MilkDashboardHero() {
                     Milk Dashboard
                 </h1>
                 <Button asChild>
-                    <Link href="/milk-production/add-milk-production">
+                    <Link href="/sales/add-sales">
                         <Plus className="mr-2 h-4 w-4" />
                         Milk Collection
                     </Link>

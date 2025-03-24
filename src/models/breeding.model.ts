@@ -43,7 +43,7 @@ const breedingSchema = new Schema<IBreeding>(
         },
         checkForSemenSuccessStatus: {
             type: String,
-            default: 'pending for approval',
+            default: 'Pending',
         },
     },
     {

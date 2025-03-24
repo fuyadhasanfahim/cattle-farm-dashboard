@@ -1,111 +1,283 @@
 import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowUp, ArrowDown, Circle } from 'lucide-react';
+import { getAllCattails } from '@/actions/cattle.action';
+import { ICattle } from '@/types/cattle.interface';
+import { getAllBreedings } from '@/actions/breeding.action';
+import IBreeding from '@/types/breeding.interface';
+import { getAllMilkProductions } from '@/actions/milk-production.action';
+import { IMilkProduction } from '@/types/milk.production.interface';
+import { getAllSales } from '@/actions/sale.action';
+import { ISales } from '@/types/sales.interface';
 
 export default async function TopDashboardCard() {
+    const cattails = await getAllCattails();
+    const breedings = await getAllBreedings();
+    const milkProductions = await getAllMilkProductions();
+    const sales = await getAllSales();
+
+    const males = cattails.filter(
+        (cattle: ICattle) => cattle.gender === 'Male'
+    );
+    const females = cattails.filter(
+        (cattle: ICattle) => cattle.gender === 'Female'
+    );
+
+    const pending = breedings.filter(
+        (breeding: IBreeding) =>
+            breeding.checkForSemenSuccessStatus === 'Pending'
+    );
+    const failed = breedings.filter(
+        (breeding: IBreeding) =>
+            breeding.checkForSemenSuccessStatus === 'Failed'
+    );
+    const successful = breedings.filter(
+        (breeding: IBreeding) =>
+            breeding.checkForSemenSuccessStatus === 'Successful'
+    );
+
+    const today = new Date();
+    const todayDate = today.toISOString().split('T')[0];
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+
+    const calculateMilkProduction = (startDate: Date, endDate: Date) => {
+        return milkProductions
+            .filter((production: IMilkProduction) => {
+                if (!production.milkCollectionDate) return false;
+                const productionDate = new Date(production.milkCollectionDate);
+                return productionDate >= startDate && productionDate <= endDate;
+            })
+            .reduce(
+                (total: number, production: IMilkProduction) =>
+                    total + (Number(production.milkQuantity) || 0),
+                0
+            );
+    };
+
+    const todayMilkProduction = milkProductions
+        .filter((production: IMilkProduction) => {
+            if (!production.milkCollectionDate) return false;
+            return new Date(production.milkCollectionDate)
+                .toISOString()
+                .startsWith(todayDate);
+        })
+        .reduce(
+            (total: number, production: IMilkProduction) =>
+                total + (Number(production.milkQuantity) || 0),
+            0
+        );
+
+    const monthMilkProduction = calculateMilkProduction(firstDayOfMonth, today);
+    const yearMilkProduction = calculateMilkProduction(firstDayOfYear, today);
+
+    const filterByDateRange = (startDate: Date, endDate: Date) => {
+        return sales.filter((sale: ISales) => {
+            if (!sale.salesDate) return false;
+            const saleDate = new Date(sale.salesDate);
+            return saleDate >= startDate && saleDate <= endDate;
+        });
+    };
+
+    const calculateTotal = (data: ISales[]) => {
+        return data.reduce(
+            (acc: { totalDue: number; totalPaid: number }, sale: ISales) => {
+                acc.totalDue += sale.dueAmount || 0;
+                acc.totalPaid += sale.paymentAmount || 0;
+                return acc;
+            },
+            { totalDue: 0, totalPaid: 0 }
+        );
+    };
+
+    const todaySales = sales.filter((sale: ISales) => {
+        if (!sale.salesDate) return false;
+        const saleDate = new Date(sale.salesDate);
+        return saleDate.toISOString().startsWith(todayDate);
+    });
+    const { totalDue: todayDue, totalPaid: todayPaid } =
+        calculateTotal(todaySales);
+
+    const monthSales = filterByDateRange(firstDayOfMonth, today);
+    const { totalDue: monthDue, totalPaid: monthPaid } =
+        calculateTotal(monthSales);
+
+    const yearSales = filterByDateRange(firstDayOfYear, today);
+    const { totalDue: yearDue, totalPaid: yearPaid } =
+        calculateTotal(yearSales);
+
+    const dashboardData = [
+        {
+            title: 'Registered Cattle',
+            description: 'Total count of registered male and female cattle',
+            stats: [
+                {
+                    label: 'Males',
+                    value: males.length,
+                    icon: <Circle className="w-3 h-3 text-blue-500" />,
+                },
+                {
+                    label: 'Females',
+                    value: females.length,
+                    icon: <Circle className="w-3 h-3 text-pink-500" />,
+                },
+            ],
+            badge: cattails.length,
+            image: 'https://iili.io/2UXRcXV.png',
+            trend: males.length > females.length ? 'up' : 'down',
+            color: 'bg-blue-50',
+        },
+        {
+            title: 'Breeding Status',
+            description: 'Overview of breeding success rates',
+            stats: [
+                {
+                    label: 'Pending',
+                    value: pending.length,
+                    icon: <Circle className="w-3 h-3 text-yellow-500" />,
+                },
+                {
+                    label: 'Failed',
+                    value: failed.length,
+                    icon: <Circle className="w-3 h-3 text-red-500" />,
+                },
+                {
+                    label: 'Successful',
+                    value: successful.length,
+                    icon: <Circle className="w-3 h-3 text-green-500" />,
+                },
+            ],
+            badge: breedings.length,
+            image: 'https://iili.io/2UXRazQ.png',
+            trend: successful.length > failed.length ? 'up' : 'down',
+            color: 'bg-purple-50',
+        },
+        {
+            title: 'Milk Production',
+            description: 'Summary of milk production by period',
+            stats: [
+                {
+                    label: 'Today',
+                    value: `${todayMilkProduction} L`,
+                    icon: <Circle className="w-3 h-3 text-cyan-500" />,
+                },
+                {
+                    label: 'Monthly',
+                    value: `${monthMilkProduction} L`,
+                    icon: <Circle className="w-3 h-3 text-teal-500" />,
+                },
+                {
+                    label: 'Yearly',
+                    value: `${yearMilkProduction} L`,
+                    icon: <Circle className="w-3 h-3 text-blue-500" />,
+                },
+            ],
+            badge: `${yearMilkProduction} L`,
+            image: 'https://iili.io/2UXRE11.png',
+            trend:
+                monthMilkProduction > todayMilkProduction * 25 ? 'up' : 'down',
+            color: 'bg-cyan-50',
+        },
+        {
+            title: 'Sales Overview',
+            description: 'Financial summary of all sales',
+            stats: [
+                {
+                    label: 'Today',
+                    value: `$${todayPaid}`,
+                    icon: <Circle className="w-3 h-3 text-green-500" />,
+                    subtext: `Due: $${todayDue || 0}`,
+                },
+                {
+                    label: 'Monthly',
+                    value: `$${monthPaid}`,
+                    icon: <Circle className="w-3 h-3 text-emerald-500" />,
+                    subtext: `Due: $${monthDue || 0}`,
+                },
+                {
+                    label: 'Yearly',
+                    value: `$${yearPaid}`,
+                    icon: <Circle className="w-3 h-3 text-lime-500" />,
+                    subtext: `Due: $${yearDue || 0}`,
+                },
+            ],
+            badge: `$${yearPaid}`,
+            image: 'https://iili.io/2UXR7mx.png',
+            trend: monthPaid > todayPaid * 15 ? 'up' : 'down',
+            color: 'bg-green-50',
+        },
+    ];
+
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
-                <div className="flex justify-center items-center gap-2">
-                    <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold ">
-                            নিবন্ধিত গবাদি পশু
-                        </h3>
-                        <p className="text-[#313131] text-base font-bold ">
-                            মোট: ১২
-                        </p>
-                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
-                            <span>এই বছর:</span>
-                            <span>১২</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {dashboardData.map((card, index) => (
+                <Card
+                    key={index}
+                    className="overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-100 hover:border-green-200 font-inter w-full"
+                >
+                    <CardHeader className={`pb-2 ${card.color} rounded-t-lg`}>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <CardTitle className="text-green-700 text-base font-bold">
+                                    {card.title}
+                                </CardTitle>
+                            </div>
+                            <Badge
+                                variant="outline"
+                                className="bg-white/80 text-green-700"
+                            >
+                                {card.trend === 'up' ? (
+                                    <ArrowUp className="mr-1 h-3 w-3 text-green-600" />
+                                ) : (
+                                    <ArrowDown className="mr-1 h-3 w-3 text-red-500" />
+                                )}
+                                {card.badge}
+                            </Badge>
                         </div>
-                    </div>
+                    </CardHeader>
 
-                    <div className="flex items-end justify-end">
-                        <Image
-                            src={'https://iili.io/2UXRcXV.png'}
-                            alt="card image"
-                            width={123}
-                            height={86}
-                        />
-                    </div>
-                </div>
-            </div>
+                    <CardContent className="p-4">
+                        <div className="flex justify-between items-center">
+                            <div className="space-y-3">
+                                {card.stats.map((stat, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex items-center space-x-2"
+                                    >
+                                        {stat.icon}
+                                        <div>
+                                            <p className="text-gray-700 text-sm">
+                                                <span className="font-medium">
+                                                    {stat.label}:
+                                                </span>{' '}
+                                                {stat.value}
+                                            </p>
+                                            {'subtext' in stat && (
+                                                <p className="text-gray-500 text-xs">
+                                                    {stat.subtext}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
 
-            <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
-                <div className="flex justify-center items-center gap-2">
-                    <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold ">
-                            গবাদি পশুর মোট মূল্য
-                        </h3>
-                        <p className="text-[#313131] text-base font-bold ">
-                            মোট: ৫৫৫০০০০ টাকা
-                        </p>
-                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
-                            <span>মোট গবাদি পশু:</span>
-                            <span>৪০</span>
+                            <div
+                                className={`${card.color} p-3 rounded-full shadow-sm`}
+                            >
+                                <Image
+                                    src={card.image}
+                                    alt={card.title}
+                                    width={65}
+                                    height={55}
+                                    className="object-contain transition-transform duration-300 hover:scale-110"
+                                />
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="flex items-end justify-end">
-                        <Image
-                            src={'https://iili.io/2UXRazQ.png'}
-                            alt="card image"
-                            width={123}
-                            height={86}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
-                <div className="flex justify-center items-center gap-2">
-                    <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold ">
-                            বিক্রিত গবাদি পশুর মোট মূল্য
-                        </h3>
-                        <p className="text-[#313131] text-base font-bold ">
-                            মোট: ২৫,৫০,০০০ টাকা
-                        </p>
-                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
-                            <span>বিক্রিত গবাদি পশু:</span>
-                            <span>০৬</span>
-                        </div>
-                    </div>
-
-                    <div className="flex items-end justify-end">
-                        <Image
-                            src={'https://iili.io/2UXRE11.png'}
-                            alt="card image"
-                            width={123}
-                            height={86}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="p-4 w-72 h-[180px] bg-white rounded-2xl shadow-[4px_3px_15px_0px_rgba(82,170,70,0.10)] border flex flex-col items-center justify-center">
-                <div className="flex justify-center items-center gap-2">
-                    <div className="space-y-4">
-                        <h3 className="text-green-500 text-base font-bold ">
-                            দুধ উৎপাদন
-                        </h3>
-                        <p className="text-[#313131] text-base font-bold ">
-                            মোট: ২৫০ লিটার
-                        </p>
-                        <div className="text-[#666666] text-xs font-normal  flex items-center gap-2 justify-between">
-                            <span>এই বছর:</span>
-                            <span>২৫০</span>
-                        </div>
-                    </div>
-
-                    <div className="flex items-end justify-end">
-                        <Image
-                            src={'https://iili.io/2UXR7mx.png'}
-                            alt="card image"
-                            width={123}
-                            height={86}
-                        />
-                    </div>
-                </div>
-            </div>
-        </section>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
     );
 }

@@ -317,16 +317,16 @@ export default function UpdateBreeding() {
                                             <SelectContent>
                                                 {[
                                                     {
-                                                        label: 'Pending for approval',
-                                                        value: 'pending for approval',
+                                                        label: 'Pending',
+                                                        value: 'Pending',
                                                     },
                                                     {
-                                                        label: 'Failed to Conceive',
-                                                        value: 'failed for conceive',
+                                                        label: 'Failed',
+                                                        value: 'Failed',
                                                     },
                                                     {
-                                                        label: 'Successfully Conceive',
-                                                        value: 'successfully conceive',
+                                                        label: 'Successful',
+                                                        value: 'Successful',
                                                     },
                                                 ].map(
                                                     (
