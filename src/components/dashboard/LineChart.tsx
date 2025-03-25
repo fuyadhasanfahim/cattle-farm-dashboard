@@ -54,7 +54,7 @@ export default function MilkProductionChart() {
 
                 const finalData = last30Days.map((date) => ({
                     date,
-                    quantity: groupedData[date] || 0,
+                    quantity: parseFloat((groupedData[date] || 0).toFixed(2)),
                 }));
 
                 const sortedData = finalData.sort((a, b) =>
@@ -99,7 +99,8 @@ export default function MilkProductionChart() {
                         <Bar
                             dataKey="quantity"
                             fill="hsl(var(--chart-5))"
-                            radius={8}
+                            radius={[8, 8, 0, 0]}
+                            label={{ position: 'top' }}
                         />
                     </BarChart>
                 </ChartContainer>
