@@ -19,6 +19,7 @@ interface MyCalenderProps {
     label: string;
     placeholder?: string;
     name: string;
+    disabled?: boolean;
 }
 
 export default function MyCalender({
@@ -26,6 +27,7 @@ export default function MyCalender({
     label,
     placeholder,
     name,
+    disabled = false,
 }: MyCalenderProps) {
     return (
         <FormField
@@ -50,7 +52,7 @@ export default function MyCalender({
                                         <span>
                                             {placeholder
                                                 ? placeholder
-                                                : 'তারিখ নির্বাচন করুন'}
+                                                : 'Select a date'}
                                         </span>
                                     )}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -62,9 +64,12 @@ export default function MyCalender({
                                 mode="single"
                                 selected={field.value}
                                 onSelect={(date) => field.onChange(date)}
-                                disabled={(date) =>
-                                    date > new Date() ||
-                                    date < new Date('1900-01-01')
+                                disabled={
+                                    disabled
+                                        ? true
+                                        : (date) =>
+                                              date > new Date() ||
+                                              date < new Date('1900-01-01')
                                 }
                                 initialFocus
                             />

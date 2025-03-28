@@ -16,6 +16,7 @@ import {
     Folder,
     Warehouse,
     ClipboardCheck,
+    Wallet,
 } from 'lucide-react';
 import React from 'react';
 
@@ -28,6 +29,7 @@ const sidebarItems = [
     { icon: GitPullRequest, label: 'Fattening', link: '/fattening' },
     { icon: Heart, label: 'Animal Breeding', link: '/animal-breeding' },
     { icon: ShoppingCart, label: 'Sales', link: '/sales' },
+    { icon: Wallet, label: 'Expense', link: '/expense' },
     { icon: Users, label: 'Customer', link: '/customers' },
     { icon: Folder, label: 'Party', link: '/party' },
     { icon: Warehouse, label: 'Inventory', link: '/inventory' },
