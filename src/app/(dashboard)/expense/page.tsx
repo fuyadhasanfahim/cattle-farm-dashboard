@@ -6,6 +6,8 @@ import { BadgeDollarSign, ShoppingBasket } from 'lucide-react';
 import AddPurchase from '@/components/expense/AddPurchase';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ExpenseDataTable from '@/components/expense/ExpenseDataTable';
 
 export default function ExpensePage() {
     const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -36,6 +38,23 @@ export default function ExpensePage() {
                     <BadgeDollarSign />
                     Add Sale
                 </Button>
+            </div>
+
+            <div className="mt-6">
+                <Tabs defaultValue="PurchaseHistory">
+                    <TabsList>
+                        <TabsTrigger value="PurchaseHistory">
+                            Purchase History
+                        </TabsTrigger>
+                        <TabsTrigger value="SalesHistory">
+                            Sales History
+                        </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="PurchaseHistory">
+                        <ExpenseDataTable />
+                    </TabsContent>
+                    <TabsContent value="SalesHistory"></TabsContent>
+                </Tabs>
             </div>
         </section>
     );
