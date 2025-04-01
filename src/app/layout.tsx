@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Noto_Sans_Bengali } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
@@ -7,13 +7,6 @@ const inter = Inter({
     subsets: ['latin'],
     display: 'swap',
     variable: '--',
-    weight: ['400', '900'],
-});
-
-const notoSansBengali = Noto_Sans_Bengali({
-    subsets: ['latin'],
-    display: 'swap',
-    variable: '--font-noto-sans-bengali',
     weight: ['400', '900'],
 });
 
@@ -30,7 +23,7 @@ export default function RootLayout({
     return (
         <html lang="bn">
             <body
-                className={`${inter.variable} ${notoSansBengali.variable} antialiased`}
+                className={`${inter.variable} antialiased`}
             >
                 {children}
                 <Toaster position="bottom-right" reverseOrder={false} />

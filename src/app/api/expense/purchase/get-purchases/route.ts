@@ -46,17 +46,6 @@ export async function GET(req: NextRequest) {
             .lean()
             .sort({ createdAt: -1 });
 
-        if (data.length === 0) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: 'No data found.',
-                    data: [],
-                },
-                { status: 404 }
-            );
-        }
-
         return NextResponse.json(
             {
                 success: true,

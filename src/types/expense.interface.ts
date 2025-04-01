@@ -36,19 +36,17 @@ export interface IPurchase {
 
 export interface ISale {
     _id?: string;
-    receiptNumber?: string;
     category: string;
     itemName: string;
     quantity: number;
+    pricePerItem?: number;
     price: number;
-    totalPrice?: number;
-    saleDate: Date;
-    buyer: IBuyer;
-    note?: string;
+    salesDate: Date;
+    buyerName: string;
     paymentStatus: string;
-    paymentType: string;
     paymentAmount: number;
-    dueAmount: number;
+    dueAmount?: number;
+    notes?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

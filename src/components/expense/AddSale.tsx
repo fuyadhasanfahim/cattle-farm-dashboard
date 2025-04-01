@@ -38,35 +38,36 @@ import {
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { PurchaseValidationSchema } from '@/validator/expense.validation.schema';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
-import { ICategory, ISeller } from '@/types/expense.interface';
+import { IBuyer, ICategory } from '@/types/expense.interface';
+import { SaleValidationSchema } from '@/validator/expense.validation.schema';
 
 const PAYMENT_STATUSES = ['Paid', 'Pending', 'Partial'];
 
-export default function AddPurchaseForm() {
+export default function AddSale() {
     const [categories, setCategories] = useState<ICategory[]>([]);
-    const [sellers, setSellers] = useState<ISeller[]>([]);
+    const [buyers, setBuyers] = useState<IBuyer[]>([]);
     const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] =
-        useState(false);
-    const [isNewSellerDialogOpen, setIsNewSellerDialogOpen] = useState(false);
-    const [newSeller, setNewSeller] = useState({
+        useState<boolean>(false);
+    const [isNewBuyerDialogOpen, setIsNewBuyerDialogOpen] =
+        useState<boolean>(false);
+    const [newBuyer, setNewBuyer] = useState<IBuyer>({
         name: '',
         contact: '',
         address: '',
     });
 
-    const form = useForm<z.infer<typeof PurchaseValidationSchema>>({
-        resolver: zodResolver(PurchaseValidationSchema),
+    const form = useForm<z.infer<typeof SaleValidationSchema>>({
+        resolver: zodResolver(SaleValidationSchema),
         defaultValues: {
             category: '',
             itemName: '',
             quantity: '',
             pricePerItem: '',
             price: '',
-            purchaseDate: new Date(),
-            sellerName: '',
+            salesDate: new Date(),
+            buyerName: '',
             paymentStatus: '',
             paymentAmount: '',
             dueAmount: '',
@@ -90,23 +91,23 @@ export default function AddPurchaseForm() {
         }
     };
 
-    const fetchSellers = async () => {
+    const fetchBuyers = async () => {
         try {
-            const response = await fetch(`/api/expense/seller/get-sellers`);
+            const response = await fetch(`/api/expense/buyer/get-buyers`);
             const { data } = await response.json();
             if (response.ok) {
-                setSellers(data);
+                setBuyers(data);
             } else {
-                toast.error('Failed to fetch sellers');
+                toast.error('Failed to fetch buyers');
             }
         } catch (error) {
-            toast.error('Failed to fetch sellers');
+            toast.error('Failed to fetch buyers');
             console.error(error);
         }
     };
 
     useEffect(() => {
-        fetchSellers();
+        fetchBuyers();
     }, []);
 
     useEffect(() => {
@@ -146,21 +147,21 @@ export default function AddPurchaseForm() {
         }
     };
 
-    const handleAddSeller = async () => {
-        const { name, contact, address } = newSeller;
+    const handleAddBuyer = async () => {
+        const { name, contact, address } = newBuyer;
 
         if (!name || !contact) {
             toast.error('Name and Contact are required.');
             return;
         }
 
-        if (sellers.some((seller) => seller.name === name)) {
+        if (buyers.some((seller) => seller.name === name)) {
             toast.error('Seller already exists.');
             return;
         }
 
         try {
-            const response = await fetch(`/api/expense/seller/add-seller`, {
+            const response = await fetch(`/api/expense/buyer/add-buyer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, contact, address }),
@@ -168,10 +169,10 @@ export default function AddPurchaseForm() {
 
             if (response.ok) {
                 toast.success('Seller added successfully');
-                setIsNewSellerDialogOpen(false);
-                setNewSeller({ name: '', contact: '', address: '' });
+                setIsNewBuyerDialogOpen(false);
+                setNewBuyer({ name: '', contact: '', address: '' });
 
-                fetchSellers();
+                fetchBuyers();
             } else {
                 toast.error('Failed to add seller');
             }
@@ -194,9 +195,6 @@ export default function AddPurchaseForm() {
         if (paymentStatus === 'Paid') {
             form.setValue('paymentAmount', calculatedPrice);
             form.setValue('dueAmount', '0');
-        } else if (paymentStatus === 'Pending') {
-            form.setValue('paymentAmount', '0');
-            form.setValue('dueAmount', calculatedPrice);
         } else {
             const calculatedDue = (
                 Number(calculatedPrice) - Number(paymentAmount)
@@ -205,9 +203,9 @@ export default function AddPurchaseForm() {
         }
     }, [quantity, pricePerItem, paymentAmount, paymentStatus, form]);
 
-    const onSubmit = async (data: z.infer<typeof PurchaseValidationSchema>) => {
+    const onSubmit = async (data: z.infer<typeof SaleValidationSchema>) => {
         try {
-            const response = await fetch(`/api/expense/purchase/add-purchase`, {
+            const response = await fetch(`/api/expense/sale/add-sale`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -218,8 +216,8 @@ export default function AddPurchaseForm() {
                         ? Number(data.pricePerItem)
                         : undefined,
                     price: Number(data.price),
-                    purchaseDate: new Date(data.purchaseDate).toISOString(),
-                    sellerName: data.sellerName,
+                    salesDate: new Date(data.salesDate).toISOString(),
+                    buyerName: data.buyerName,
                     paymentStatus: data.paymentStatus,
                     paymentAmount: Number(data.paymentAmount),
                     dueAmount: Number(data.dueAmount) || 0,
@@ -250,10 +248,10 @@ export default function AddPurchaseForm() {
                 <div className="grid grid-cols-2 items-center gap-6">
                     <FormField
                         control={form.control}
-                        name="purchaseDate"
+                        name="salesDate"
                         render={({ field }) => (
                             <FormItem className="flex flex-col mt-2">
-                                <FormLabel>Purchase Date *</FormLabel>
+                                <FormLabel>Sales Date *</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -456,10 +454,10 @@ export default function AddPurchaseForm() {
 
                     <FormField
                         control={form.control}
-                        name="sellerName"
+                        name="buyerName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Seller Name *</FormLabel>
+                                <FormLabel>Buyer Name *</FormLabel>
                                 <div className="flex items-center space-x-2">
                                     <Select
                                         onValueChange={field.onChange}
@@ -471,7 +469,7 @@ export default function AddPurchaseForm() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {sellers.map((seller) => (
+                                            {buyers.map((seller) => (
                                                 <SelectItem
                                                     key={seller._id}
                                                     value={seller.name}
@@ -480,9 +478,9 @@ export default function AddPurchaseForm() {
                                                 </SelectItem>
                                             ))}
                                             <Dialog
-                                                open={isNewSellerDialogOpen}
+                                                open={isNewBuyerDialogOpen}
                                                 onOpenChange={
-                                                    setIsNewSellerDialogOpen
+                                                    setIsNewBuyerDialogOpen
                                                 }
                                             >
                                                 <DialogTrigger asChild>
@@ -491,7 +489,7 @@ export default function AddPurchaseForm() {
                                                         size="sm"
                                                         className="w-full"
                                                     >
-                                                        + Add Seller
+                                                        + Add Buyer
                                                     </Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
@@ -502,20 +500,20 @@ export default function AddPurchaseForm() {
                                                     </DialogHeader>
                                                     <div className="space-y-4">
                                                         <div>
-                                                            <Label htmlFor="newSellerName">
+                                                            <Label htmlFor="newBuyerName">
                                                                 Name *
                                                             </Label>
                                                             <Input
-                                                                id="newSellerName"
+                                                                id="newBuyerName"
                                                                 type="text"
                                                                 placeholder="Enter the seller name"
                                                                 value={
-                                                                    newSeller.name
+                                                                    newBuyer.name
                                                                 }
                                                                 onChange={(e) =>
-                                                                    setNewSeller(
+                                                                    setNewBuyer(
                                                                         {
-                                                                            ...newSeller,
+                                                                            ...newBuyer,
                                                                             name: e
                                                                                 .target
                                                                                 .value,
@@ -525,20 +523,20 @@ export default function AddPurchaseForm() {
                                                             />
                                                         </div>
                                                         <div>
-                                                            <Label htmlFor="newSellerContact">
+                                                            <Label htmlFor="newBuyerContact">
                                                                 Phone *
                                                             </Label>
                                                             <Input
-                                                                id="newSellerContact"
+                                                                id="newBuyerContact"
                                                                 type="text"
                                                                 placeholder="Enter the seller phone"
                                                                 value={
-                                                                    newSeller.contact
+                                                                    newBuyer.contact
                                                                 }
                                                                 onChange={(e) =>
-                                                                    setNewSeller(
+                                                                    setNewBuyer(
                                                                         {
-                                                                            ...newSeller,
+                                                                            ...newBuyer,
                                                                             contact:
                                                                                 e
                                                                                     .target
@@ -549,20 +547,20 @@ export default function AddPurchaseForm() {
                                                             />
                                                         </div>
                                                         <div>
-                                                            <Label htmlFor="newSellerAddress">
+                                                            <Label htmlFor="newBuyerAddress">
                                                                 Address
                                                             </Label>
                                                             <Input
-                                                                id="newSellerAddress"
+                                                                id="newBuyerAddress"
                                                                 type="text"
                                                                 placeholder="Enter the address"
                                                                 value={
-                                                                    newSeller.address
+                                                                    newBuyer.address
                                                                 }
                                                                 onChange={(e) =>
-                                                                    setNewSeller(
+                                                                    setNewBuyer(
                                                                         {
-                                                                            ...newSeller,
+                                                                            ...newBuyer,
                                                                             address:
                                                                                 e
                                                                                     .target
@@ -576,10 +574,10 @@ export default function AddPurchaseForm() {
                                                             type="button"
                                                             className="w-full mt-2"
                                                             onClick={
-                                                                handleAddSeller
+                                                                handleAddBuyer
                                                             }
                                                         >
-                                                            Save Seller
+                                                            Save Buyer
                                                         </Button>
                                                     </div>
                                                 </DialogContent>
@@ -633,7 +631,6 @@ export default function AddPurchaseForm() {
                                     <Input
                                         type="text"
                                         placeholder="Payment amount"
-                                        readOnly={paymentStatus === 'Pending'}
                                         {...field}
                                     />
                                 </FormControl>

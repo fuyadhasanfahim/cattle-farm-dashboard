@@ -1,13 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export default function AddSales() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>
-                    বিক্রয়ের জন্য বিষয় সিলেক্ট করুন
-                </CardTitle>
+                <CardTitle>Select what to sale</CardTitle>
             </CardHeader>
             <CardContent>
                 <div>
@@ -17,5 +15,5 @@ export default function AddSales() {
                 </div>
             </CardContent>
         </Card>
-    )
+    );
 }

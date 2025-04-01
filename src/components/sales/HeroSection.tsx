@@ -1,10 +1,8 @@
 'use client';
 
-import { Plus, Droplet, DollarSign, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Droplet, DollarSign, AlertCircle, Milk } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ISales } from '@/types/sales.interface';
@@ -13,6 +11,8 @@ export default function MilkDashboardHero() {
     const [loading, setLoading] = useState(true);
     const [milkLoading, setMilkLoading] = useState(true);
     const [todaysMilk, setTodaysMilk] = useState(0);
+    const [milkInStockLoading, setMilkInStockLoading] = useState(false);
+    const [milkInStock, setMilkInStock] = useState(0);
     const [totalFullAmount, setTotalFullAmount] = useState(0);
     const [totalDueAmount, setTotalDueAmount] = useState(0);
 
@@ -20,7 +20,11 @@ export default function MilkDashboardHero() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                await Promise.all([fetchSalesData(), fetchTodaysMilk()]);
+                await Promise.all([
+                    fetchSalesData(),
+                    fetchTodaysMilk(),
+                    fetchMilkAmount(),
+                ]);
             } catch (error) {
                 toast.error(
                     (error as Error).message || 'An unexpected error occurred'
@@ -47,8 +51,8 @@ export default function MilkDashboardHero() {
                 0
             );
 
-            setTotalFullAmount(fullAmount);
-            setTotalDueAmount(dueAmount);
+            setTotalFullAmount(fullAmount || 0);
+            setTotalDueAmount(dueAmount || 0);
         } else {
             toast.error(result.message || 'Failed to fetch sales data');
         }
@@ -75,21 +79,26 @@ export default function MilkDashboardHero() {
         }
     };
 
-    return (
-        <section className="space-y-6 py-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 className="text-2xl font-bold tracking-tight">
-                    Milk Dashboard
-                </h1>
-                <Button asChild>
-                    <Link href="/sales/add-sales">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Milk Collection
-                    </Link>
-                </Button>
-            </div>
+    const fetchMilkAmount = async () => {
+        setMilkInStockLoading(true);
+        try {
+            const response = await fetch(`/api/milk/get-milk-amount`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            setMilkInStock(result?.data?.saleMilkAmount || 0);
+        } catch (error) {
+            toast.error((error as Error).message);
+        } finally {
+            setMilkInStockLoading(false);
+        }
+    };
+
+    return (
+        <section className="space-y-6 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <StatCard
                     title="Today's Milk"
                     value={todaysMilk}
@@ -103,6 +112,18 @@ export default function MilkDashboardHero() {
                 />
 
                 <StatCard
+                    title="Milk in Stock"
+                    value={milkInStock}
+                    isLoading={milkInStockLoading}
+                    icon={<Milk className="h-5 w-5" />}
+                    gradient="from-yellow-50 to-yellow-100"
+                    textColor="text-yellow-800"
+                    valueColor="text-yellow-900"
+                    unit="Liters"
+                    format={(val) => val.toFixed(2)}
+                />
+
+                <StatCard
                     title="Full Amount"
                     value={totalFullAmount}
                     isLoading={loading}
@@ -111,7 +132,7 @@ export default function MilkDashboardHero() {
                     textColor="text-green-800"
                     valueColor="text-green-900"
                     unit="Taka"
-                    format={(val) => val.toLocaleString()}
+                    format={(val) => val.toFixed(2)}
                 />
 
                 <StatCard
@@ -123,7 +144,7 @@ export default function MilkDashboardHero() {
                     textColor="text-red-800"
                     valueColor="text-red-900"
                     unit="Taka"
-                    format={(val) => val.toLocaleString()}
+                    format={(val) => val.toFixed(2)}
                 />
             </div>
         </section>

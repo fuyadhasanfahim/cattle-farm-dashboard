@@ -59,17 +59,15 @@ const PurchaseSchema = new Schema<IPurchase>(
 
 const SaleSchema = new Schema<ISale>(
     {
-        receiptNumber: { type: String },
         category: { type: String, required: true },
         itemName: { type: String, required: true },
         quantity: { type: Number, required: true },
+        pricePerItem: { type: Number, required: true },
         price: { type: Number, required: true },
-        totalPrice: { type: Number },
-        saleDate: { type: Date, required: true },
-        buyer: { type: BuyerSchema, required: true },
-        note: { type: String },
+        salesDate: { type: Date, required: true },
+        buyerName: { type: String, required: true },
+        notes: { type: String },
         paymentStatus: { type: String, required: true },
-        paymentType: { type: String, required: true },
         paymentAmount: { type: Number, required: true },
         dueAmount: { type: Number },
     },
