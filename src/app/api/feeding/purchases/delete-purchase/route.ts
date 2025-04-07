@@ -38,17 +38,12 @@ export async function DELETE(req: NextRequest) {
 
         const totalPrice = existingPurchase.totalPrice;
 
-        const balance = await BalanceModel.find();
-
-        const totalBalance = balance.reduce(
-            (acc, item) => acc + item.balance,
-            0
-        );
+        const balance = await BalanceModel.findOne().sort({ createdAt: -1 });
 
         await BalanceModel.findOneAndUpdate(
             {},
             {
-                $set: { balance: totalBalance + totalPrice },
+                $set: { balance: balance.balance + totalPrice },
                 $inc: { expense: -totalPrice },
                 date: new Date(),
             },

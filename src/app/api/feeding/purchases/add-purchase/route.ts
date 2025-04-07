@@ -32,17 +32,12 @@ export async function POST(req: NextRequest) {
             { new: true, upsert: true }
         );
 
-        const balance = await BalanceModel.find();
-
-        const totalBalance = balance.reduce(
-            (acc, item) => acc + item.balance,
-            0
-        );
+        const balance = await BalanceModel.findOne().sort({ createdAt: -1 });
 
         await BalanceModel.findOneAndUpdate(
             {},
             {
-                $set: { balance: totalBalance - totalPrice },
+                $set: { balance: balance.balance - totalPrice },
                 $inc: { expense: totalPrice },
                 date: new Date(),
             },

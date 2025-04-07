@@ -20,8 +20,15 @@ export async function POST(req: NextRequest) {
 
         await dbConfig();
 
-        const newData = new BalanceModel(data);
-        await newData.save();
+        await BalanceModel.updateOne(
+            {},
+            {
+                $set: {
+                    balance: data.balance,
+                },
+            },
+            { upsert: true, new: true }
+        );
 
         return NextResponse.json(
             {

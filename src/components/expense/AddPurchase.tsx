@@ -56,6 +56,8 @@ export default function AddPurchaseForm() {
         contact: '',
         address: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [balance, setBalance] = useState<number>(0);
 
     const form = useForm<z.infer<typeof PurchaseValidationSchema>>({
         resolver: zodResolver(PurchaseValidationSchema),
@@ -180,10 +182,10 @@ export default function AddPurchaseForm() {
         }
     };
 
-    const quantity = form.getValues('quantity');
-    const pricePerItem = form.getValues('pricePerItem');
-    const paymentStatus = form.getValues('paymentStatus');
-    const paymentAmount = form.getValues('paymentAmount');
+    const quantity = form.watch('quantity');
+    const pricePerItem = form.watch('pricePerItem');
+    const paymentStatus = form.watch('paymentStatus');
+    const paymentAmount = form.watch('paymentAmount');
 
     useEffect(() => {
         const calculatedPrice = (
@@ -206,39 +208,81 @@ export default function AddPurchaseForm() {
     }, [quantity, pricePerItem, paymentAmount, paymentStatus, form]);
 
     const onSubmit = async (data: z.infer<typeof PurchaseValidationSchema>) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         try {
+            if (balance < Number(data.paymentAmount)) {
+                toast.error('Insufficient balance. Add balance first.');
+                return;
+            }
+
             const response = await fetch(`/api/expense/purchase/add-purchase`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    category: data.category,
-                    itemName: data.itemName,
-                    quantity: data.quantity,
-                    pricePerItem: data.pricePerItem
-                        ? Number(data.pricePerItem)
-                        : undefined,
-                    price: Number(data.price),
-                    purchaseDate: new Date(data.purchaseDate).toISOString(),
-                    sellerName: data.sellerName,
-                    paymentStatus: data.paymentStatus,
-                    paymentAmount: Number(data.paymentAmount),
-                    dueAmount: Number(data.dueAmount) || 0,
-                    notes: data.notes || '',
-                }),
+                body: JSON.stringify({ ...data, price: Number(data.price) }),
             });
 
-            const result = await response.json();
+            if (!response.ok) throw new Error('Failed to add purchase.');
 
-            if (response.ok) {
-                toast.success('Purchase added successfully');
+            await updateBalance({
+                paymentAmount: Number(data.paymentAmount),
+                dueAmount: Number(data.dueAmount) || 0,
+            });
 
-                form.reset();
-            } else {
-                toast.error(result.message || 'Failed to add purchase');
-            }
+            toast.success('Purchase added successfully');
+            form.reset();
         } catch (error) {
-            toast.error((error as Error).message || 'Failed to add purchase.');
+            toast.error((error as Error).message);
+        } finally {
+            setIsSubmitting(false);
         }
+    };
+
+    useEffect(() => {
+        const fetchBalance = async () => {
+            try {
+                const response = await fetch('/api/balance/get-balances');
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    setBalance(
+                        result.data.reduce(
+                            (acc: number, val: { balance: number }) =>
+                                acc + val.balance,
+                            0
+                        )
+                    );
+                } else {
+                    toast.error('Failed to fetch balance');
+                }
+            } catch (error) {
+                toast.error('Failed to fetch balance');
+                console.error(error);
+            }
+        };
+
+        fetchBalance();
+    }, []);
+
+    const updateBalance = async ({
+        paymentAmount,
+        dueAmount,
+    }: {
+        paymentAmount: number;
+        dueAmount: number;
+    }) => {
+        const response = await fetch(`/api/balance/update-balance`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                balance: paymentAmount,
+                expense: paymentAmount,
+                due: dueAmount,
+            }),
+        });
+        if (!response.ok) throw new Error('Failed to update balance.');
     };
 
     return (
@@ -304,7 +348,7 @@ export default function AddPurchaseForm() {
                                 <div className="flex items-center space-x-2">
                                     <Select
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value}
                                     >
                                         <FormControl>
                                             <SelectTrigger>
@@ -463,7 +507,7 @@ export default function AddPurchaseForm() {
                                 <div className="flex items-center space-x-2">
                                     <Select
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value}
                                     >
                                         <FormControl>
                                             <SelectTrigger>
@@ -600,7 +644,7 @@ export default function AddPurchaseForm() {
                                 <FormLabel>Payment Status *</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                 >
                                     <FormControl>
                                         <SelectTrigger>

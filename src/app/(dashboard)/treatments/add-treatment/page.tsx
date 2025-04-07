@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { ITreatment } from '@/types/treatment.interface';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import MyCalender from '@/components/shared/MyCalender';
 
 interface CattleTag {
     tagId: string;
@@ -163,6 +164,13 @@ export default function AddTreatment() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
+                        <MyCalender
+                            form={form}
+                            label="Select Treatment Date"
+                            name="treatmentDate"
+                            placeholder="Select Date"
+                        />
+
                         <FormField
                             control={form.control}
                             name="cattleId"
