@@ -1,4 +1,5 @@
 import dbConfig from '@/lib/dbConfig';
+import BalanceModel from '@/models/balance.model';
 import { FeedInventoryModel, FeedPurchaseModel } from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -33,6 +34,25 @@ export async function DELETE(req: NextRequest) {
                 $inc: { totalStock: -quantityPurchased },
                 lastUpdated: new Date(),
             }
+        );
+
+        const totalPrice = existingPurchase.totalPrice;
+
+        const balance = await BalanceModel.find();
+
+        const totalBalance = balance.reduce(
+            (acc, item) => acc + item.balance,
+            0
+        );
+
+        await BalanceModel.findOneAndUpdate(
+            {},
+            {
+                $set: { balance: totalBalance + totalPrice },
+                $inc: { expense: -totalPrice },
+                date: new Date(),
+            },
+            { new: true, upsert: true }
         );
 
         await FeedPurchaseModel.findByIdAndDelete(id);

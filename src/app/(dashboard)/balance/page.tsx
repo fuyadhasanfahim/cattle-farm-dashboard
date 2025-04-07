@@ -127,6 +127,60 @@ export default function BalancePage() {
 
             toast.success('Transaction added successfully');
             form.reset();
+
+            const dialogCloseButton = document.getElementById(
+                'close-dialog'
+            ) as HTMLElement;
+            dialogCloseButton?.click();
+
+            const fetchData = async () => {
+                try {
+                    setLoading(true);
+
+                    const response = await fetch('/api/balance/get-balances');
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        setBalance(
+                            result.data.reduce(
+                                (acc: number, val: { balance: number }) =>
+                                    acc + val.balance,
+                                0
+                            )
+                        );
+                        setEarning(
+                            result.data.reduce(
+                                (acc: number, val: { earning: number }) =>
+                                    acc + val.earning,
+                                0
+                            )
+                        );
+                        setExpense(
+                            result.data.reduce(
+                                (acc: number, val: { expense: number }) =>
+                                    acc + val.expense,
+                                0
+                            )
+                        );
+                        setDue(
+                            result.data.reduce(
+                                (acc: number, val: { due: number }) =>
+                                    acc + val.due,
+                                0
+                            )
+                        );
+                    }
+                } catch (error) {
+                    toast.error(
+                        (error as Error).message || 'Something went wrong'
+                    );
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchData();
         } catch (error) {
             toast.error((error as Error).message || 'Something went wrong');
         }
@@ -193,7 +247,7 @@ export default function BalancePage() {
                             </div>
 
                             <DialogFooter className="mt-4">
-                                <DialogClose asChild>
+                                <DialogClose asChild id="close-dialog">
                                     <Button type="button" variant="secondary">
                                         <X />
                                         Close

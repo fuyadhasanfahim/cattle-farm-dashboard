@@ -28,6 +28,8 @@ const feedSchema = z.object({
 export default function AddFeed() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
+    const [balance, setBalance] = useState<number>(0);
 
     const form = useForm({
         resolver: zodResolver(feedSchema),
@@ -41,11 +43,52 @@ export default function AddFeed() {
         },
     });
 
+    const { setError, formState } = form;
+
     const quantity = form.watch('quantityPurchased');
     const pricePerKg = form.watch('perKgPrice');
+    const totalPrice = quantity * pricePerKg;
+
     useEffect(() => {
-        form.setValue('totalPrice', quantity * pricePerKg);
-    }, [quantity, pricePerKg, form]);
+        form.setValue('totalPrice', totalPrice);
+
+        if (totalPrice > balance) {
+            setError('perKgPrice', {
+                type: 'custom',
+                message: 'Total price exceeds available balance',
+            });
+        } else {
+            form.clearErrors('perKgPrice');
+        }
+    }, [quantity, pricePerKg, totalPrice, balance, form, setError]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setBalanceLoading(true);
+
+                const response = await fetch('/api/balance/get-balances');
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    setBalance(
+                        result.data.reduce(
+                            (acc: number, val: { balance: number }) =>
+                                acc + val.balance,
+                            0
+                        )
+                    );
+                }
+            } catch (error) {
+                toast.error((error as Error).message || 'Something went wrong');
+            } finally {
+                setBalanceLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const onSubmit = async (data: IFeedPurchase) => {
         setLoading(true);
@@ -78,7 +121,15 @@ export default function AddFeed() {
     return (
         <Card className="max-w-lg mx-auto">
             <CardHeader>
-                <CardTitle>Add Feed Purchase</CardTitle>
+                <CardTitle>
+                    <div>Add Feed Purchase</div>
+                    <div>
+                        <span className="text-sm text-gray-500">
+                            Balance: {balanceLoading ? 'Loading...' : balance}{' '}
+                            Taka
+                        </span>
+                    </div>
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -206,7 +257,11 @@ export default function AddFeed() {
 
                             <Button
                                 type="submit"
-                                disabled={loading}
+                                disabled={
+                                    loading ||
+                                    Object.keys(formState.errors || {}).length >
+                                        0
+                                }
                                 className="w-full"
                             >
                                 {loading ? 'Adding...' : 'Add Feed'}

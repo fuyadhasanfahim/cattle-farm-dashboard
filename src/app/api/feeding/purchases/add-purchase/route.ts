@@ -1,4 +1,5 @@
 import dbConfig from '@/lib/dbConfig';
+import BalanceModel from '@/models/balance.model';
 import { FeedInventoryModel, FeedPurchaseModel } from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -31,6 +32,23 @@ export async function POST(req: NextRequest) {
             { new: true, upsert: true }
         );
 
+        const balance = await BalanceModel.find();
+
+        const totalBalance = balance.reduce(
+            (acc, item) => acc + item.balance,
+            0
+        );
+
+        await BalanceModel.findOneAndUpdate(
+            {},
+            {
+                $set: { balance: totalBalance - totalPrice },
+                $inc: { expense: totalPrice },
+                date: new Date(),
+            },
+            { new: true, upsert: true }
+        );
+
         return NextResponse.json(
             {
                 message: 'Feed purchase added',
@@ -40,6 +58,7 @@ export async function POST(req: NextRequest) {
             { status: 201 }
         );
     } catch (error) {
+        console.log((error as Error).message);
         return NextResponse.json(
             {
                 success: false,

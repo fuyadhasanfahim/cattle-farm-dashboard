@@ -1,4 +1,5 @@
 import dbConfig from '@/lib/dbConfig';
+import BalanceModel from '@/models/balance.model';
 import { FeedInventoryModel, FeedPurchaseModel } from '@/models/feeding.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -25,19 +26,35 @@ export async function PUT(req: NextRequest) {
             );
         }
 
-        let quantityDiff;
-        if (quantityPurchased > existingPurchase.quantityPurchased) {
-            quantityDiff =
-                quantityPurchased - existingPurchase.quantityPurchased;
-        } else {
-            quantityDiff =
-                existingPurchase.quantityPurchased - quantityPurchased;
-        }
-
         if (quantityPurchased !== existingPurchase.quantityPurchased) {
+            const quantityDiff =
+                quantityPurchased - existingPurchase.quantityPurchased;
+
             await FeedInventoryModel.findOneAndUpdate(
                 { feedType },
-                { $inc: { totalStock: quantityDiff }, lastUpdated: new Date() }
+                {
+                    $inc: { totalStock: quantityDiff },
+                    lastUpdated: new Date(),
+                }
+            );
+        }
+
+        if (totalPrice !== existingPurchase.totalPrice) {
+            const priceDiff = totalPrice - existingPurchase.totalPrice;
+
+            console.log(priceDiff);
+
+            await BalanceModel.findOneAndUpdate(
+                {},
+                {
+                    $inc: {
+                        balance: -priceDiff,
+                        expense: priceDiff,
+                    },
+                    $set: {
+                        date: new Date(),
+                    },
+                }
             );
         }
 

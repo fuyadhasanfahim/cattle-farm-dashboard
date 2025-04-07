@@ -27,6 +27,8 @@ const feedSchema = z.object({
 export default function FeedingDetails() {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
+    const [balance, setBalance] = useState<number>(0);
+    const [originalTotalPrice, setOriginalTotalPrice] = useState<number>(0);
     const router = useRouter();
 
     const form = useForm({
@@ -56,7 +58,6 @@ export default function FeedingDetails() {
 
                 const result = await response.json();
 
-                form.reset(result.feedPurchases);
                 form.reset({
                     feedType: result.feedPurchases.feedType,
                     purchaseDate: new Date(result.feedPurchases.purchaseDate),
@@ -65,6 +66,7 @@ export default function FeedingDetails() {
                     totalPrice: result.feedPurchases.totalPrice,
                     paymentType: result.feedPurchases.paymentType,
                 });
+                setOriginalTotalPrice(result.feedPurchases.totalPrice);
             } catch (error) {
                 toast.error((error as Error).message);
             } finally {
@@ -75,12 +77,55 @@ export default function FeedingDetails() {
         fetchData();
     }, [form, id]);
 
+    const { setError, formState } = form;
+
+    const quantity = form.watch('quantityPurchased');
+    const pricePerKg = form.watch('perKgPrice');
+
     useEffect(() => {
-        const quantity = form.watch('quantityPurchased');
-        const price = form.watch('perKgPrice');
-        const totalPrice = quantity * price;
-        form.setValue('totalPrice', totalPrice);
-    }, [form]);
+        const newTotalPrice = quantity * pricePerKg;
+        form.setValue('totalPrice', newTotalPrice);
+
+        const priceDifference = newTotalPrice - originalTotalPrice;
+
+        if (priceDifference > 0 && priceDifference > balance) {
+            setError('perKgPrice', {
+                type: 'manual',
+                message: 'You don’t have enough balance for this change.',
+            });
+        } else if (balance === 0 && priceDifference > 0) {
+            setError('perKgPrice', {
+                type: 'manual',
+                message: 'Cannot increase cost. Your balance is 0.',
+            });
+        } else {
+            form.clearErrors('perKgPrice');
+        }
+    }, [quantity, pricePerKg, originalTotalPrice, balance, form, setError]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/api/balance/get-balances');
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    setBalance(
+                        result.data.reduce(
+                            (acc: number, val: { balance: number }) =>
+                                acc + val.balance,
+                            0
+                        )
+                    );
+                }
+            } catch (error) {
+                toast.error((error as Error).message || 'Something went wrong');
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const onSubmit = async (data: IFeedPurchase) => {
         try {
@@ -244,7 +289,11 @@ export default function FeedingDetails() {
 
                             <Button
                                 type="submit"
-                                disabled={loading}
+                                disabled={
+                                    loading ||
+                                    Object.keys(formState.errors || {}).length >
+                                        0
+                                }
                                 className="w-full"
                             >
                                 {loading ? 'Updating...' : 'Update Feed'}
