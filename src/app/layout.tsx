@@ -22,9 +22,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="bn">
-            <body
-                className={`${inter.variable} antialiased`}
-            >
+            <body className={`${inter.variable} antialiased`}>
                 {children}
                 <Toaster position="bottom-right" reverseOrder={false} />
             </body>
