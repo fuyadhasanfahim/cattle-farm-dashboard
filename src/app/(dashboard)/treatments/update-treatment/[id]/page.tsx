@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { ITreatment } from '@/types/treatment.interface';
 import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import MyCalender from '@/components/shared/MyCalender';
 
 const formSchema = z.object({
     cattleId: z.string().min(1, 'Cattle ID is required'),
@@ -241,6 +242,13 @@ export default function UpdateTreatment() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
+                        <MyCalender
+                            form={form}
+                            label="Select Treatment Date"
+                            name="treatmentDate"
+                            placeholder="Select Date"
+                        />
+
                         <FormField
                             control={form.control}
                             name="cattleId"
