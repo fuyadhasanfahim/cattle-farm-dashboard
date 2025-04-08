@@ -66,8 +66,14 @@ export default async function TopDashboardCard() {
             0
         );
 
-    const monthMilkProduction = calculateMilkProduction(firstDayOfMonth, today);
-    const yearMilkProduction = calculateMilkProduction(firstDayOfYear, today);
+    const monthMilkProduction = calculateMilkProduction(
+        firstDayOfMonth,
+        today
+    );
+    const yearMilkProduction = calculateMilkProduction(
+        firstDayOfYear,
+        today
+    );
 
     const dashboardData = [
         {
@@ -121,21 +127,21 @@ export default async function TopDashboardCard() {
             stats: [
                 {
                     label: 'Today',
-                    value: `${todayMilkProduction.tofixed(2)} L`,
+                    value: `${todayMilkProduction.toFixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-cyan-500" />,
                 },
                 {
                     label: 'Monthly',
-                    value: `${monthMilkProduction.tofixed(2)} L`,
+                    value: `${monthMilkProduction.toFixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-teal-500" />,
                 },
                 {
                     label: 'Yearly',
-                    value: `${yearMilkProduction.tofixed(2)} L`,
+                    value: `${yearMilkProduction.toFixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-blue-500" />,
                 },
             ],
-            badge: `${yearMilkProduction} L`,
+            badge: `${yearMilkProduction.toFixed(2)} L`,
             image: 'https://iili.io/2UXRE11.png',
             trend:
                 monthMilkProduction > todayMilkProduction * 25 ? 'up' : 'down',
