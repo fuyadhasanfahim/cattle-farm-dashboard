@@ -78,7 +78,7 @@ export default function TreatmentTable() {
     };
 
     return (
-        <Card className="shadow-xl border border-gray-100 rounded-xl overflow-hidden mt-6">
+        <Card className="font-inter shadow-xl border border-gray-100 rounded-xl overflow-hidden mt-6">
             <CardHeader className="bg-gradient-to-r from-green-500 to-green-700 text-white">
                 <CardTitle className="text-xl flex items-center justify-between">
                     <div>Sales List</div>
