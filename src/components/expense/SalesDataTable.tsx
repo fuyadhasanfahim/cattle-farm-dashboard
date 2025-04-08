@@ -229,7 +229,7 @@ export default function SalesDataTable() {
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <Link
-                                                    href={`/expense/details/${_id}`}
+                                                    href={`/expense/sales-details/${_id}`}
                                                 >
                                                     <span className="hover:text-green-500 hover:underline">
                                                         View

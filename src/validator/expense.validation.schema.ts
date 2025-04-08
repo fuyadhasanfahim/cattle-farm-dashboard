@@ -22,7 +22,7 @@ const PurchaseValidationSchema = z.object({
 
 const SaleValidationSchema = z.object({
     category: z.string().nonempty(),
-    itemName: z.string().nonempty(),
+    itemName: z.string().optional(),
     quantity: z.string().nonempty(),
     pricePerItem: z.string().nonempty(),
     price: z.string().nonempty(),

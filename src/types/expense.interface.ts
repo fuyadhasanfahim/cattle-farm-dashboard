@@ -37,7 +37,7 @@ export interface IPurchase {
 export interface ISale {
     _id?: string;
     category: string;
-    itemName: string;
+    itemName?: string;
     quantity: number;
     pricePerItem?: number;
     price: number;

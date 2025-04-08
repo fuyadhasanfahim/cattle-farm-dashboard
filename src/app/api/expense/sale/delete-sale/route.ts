@@ -3,55 +3,44 @@ import BalanceModel from '@/models/balance.model';
 import { SaleModel } from '@/models/expense.model';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function DELETE(request: NextRequest) {
     try {
-        const data = await req.json();
+        await dbConfig();
 
-        if (!data) {
+        const { searchParams } = new URL(request.nextUrl);
+        const id = searchParams.get('id');
+
+        if (!id) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: 'Please fill all required fields!',
+                    message: 'Please provide a valid ID',
                 },
                 { status: 400 }
             );
         }
 
-        await dbConfig();
-
-        const newData = new SaleModel(data);
-
-        let earning = 0;
-        let due = 0;
-
-        if (data.paymentStatus === 'Paid') {
-            earning = data.paymentAmount ?? 0;
-        } else if (data.paymentStatus === 'Pending') {
-            due = data.dueAmount ?? 0;
-        } else if (data.paymentStatus === 'Partial') {
-            earning = data.paymentAmount ?? 0;
-            due = data.dueAmount ?? 0;
-        }
+        const saleData = await SaleModel.findById(id);
 
         await BalanceModel.findOneAndUpdate(
             {},
             {
                 $inc: {
-                    earning,
-                    due,
+                    earning: -saleData.paymentAmount,
+                    due: -saleData.dueAmount,
                 },
             },
             { new: true }
         );
 
-        await newData.save();
+        await SaleModel.findByIdAndDelete(id);
 
         return NextResponse.json(
             {
                 success: true,
-                message: 'Sale added successfully!',
+                message: 'Sale deleted successfully!',
             },
-            { status: 201 }
+            { status: 200 }
         );
     } catch (error) {
         return NextResponse.json(
