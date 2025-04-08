@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         await BalanceModel.updateOne(
             {},
             {
-                $set: {
+                $inc: {
                     balance: data.balance,
                 },
             },
