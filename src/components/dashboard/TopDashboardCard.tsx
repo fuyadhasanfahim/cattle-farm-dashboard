@@ -121,17 +121,17 @@ export default async function TopDashboardCard() {
             stats: [
                 {
                     label: 'Today',
-                    value: `${todayMilkProduction} L`,
+                    value: `${todayMilkProduction.tofixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-cyan-500" />,
                 },
                 {
                     label: 'Monthly',
-                    value: `${monthMilkProduction} L`,
+                    value: `${monthMilkProduction.tofixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-teal-500" />,
                 },
                 {
                     label: 'Yearly',
-                    value: `${yearMilkProduction} L`,
+                    value: `${yearMilkProduction.tofixed(2)} L`,
                     icon: <Circle className="w-3 h-3 text-blue-500" />,
                 },
             ],
