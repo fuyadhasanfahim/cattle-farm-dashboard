@@ -69,7 +69,10 @@ export default function ExpenseDetailsPage() {
     const handleDelete = async () => {
         try {
             const response = await fetch(
-                `/api/expense/purchase/delete-purchase?id=${id}`
+                `/api/expense/purchase/delete-purchase?id=${id}`,
+                {
+                    method: 'DELETE',
+                }
             );
 
             if (response.ok) {

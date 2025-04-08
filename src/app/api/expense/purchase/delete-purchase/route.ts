@@ -1,5 +1,7 @@
 import dbConfig from '@/lib/dbConfig';
+import BalanceModel from '@/models/balance.model';
 import { PurchaseModel } from '@/models/expense.model';
+import { IPurchase } from '@/types/expense.interface';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(req: NextRequest) {
@@ -15,6 +17,29 @@ export async function DELETE(req: NextRequest) {
                 { status: 400 }
             );
         }
+
+        const purchaseData = (await PurchaseModel.findById(id)) as IPurchase;
+
+        if (!purchaseData) {
+            return NextResponse.json(
+                { success: false, message: 'Purchase not found.' },
+                { status: 404 }
+            );
+        }
+
+        await BalanceModel.findOneAndUpdate(
+            {},
+            {
+                $inc: {
+                    balance: purchaseData.paymentAmount,
+                    due: -(purchaseData.dueAmount ?? 0),
+                    expense: -purchaseData.paymentAmount,
+                },
+            },
+            {
+                new: true,
+            }
+        );
 
         const deletedPurchase = await PurchaseModel.findByIdAndDelete(id);
 

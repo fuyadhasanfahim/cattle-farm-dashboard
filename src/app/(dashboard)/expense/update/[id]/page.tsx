@@ -217,10 +217,10 @@ export default function UpdateExpense() {
         }
     };
 
-    const quantity = form.getValues('quantity');
-    const pricePerItem = form.getValues('pricePerItem');
-    const paymentStatus = form.getValues('paymentStatus');
-    const paymentAmount = form.getValues('paymentAmount');
+    const quantity = form.watch('quantity');
+    const pricePerItem = form.watch('pricePerItem');
+    const paymentStatus = form.watch('paymentStatus');
+    const paymentAmount = form.watch('paymentAmount');
 
     useEffect(() => {
         const calculatedPrice = (
@@ -231,6 +231,9 @@ export default function UpdateExpense() {
         if (paymentStatus === 'Paid') {
             form.setValue('paymentAmount', calculatedPrice);
             form.setValue('dueAmount', '0');
+        } else if (paymentStatus === 'Pending') {
+            form.setValue('paymentAmount', '0');
+            form.setValue('dueAmount', calculatedPrice);
         } else {
             const calculatedDue = (
                 Number(calculatedPrice) - Number(paymentAmount)
