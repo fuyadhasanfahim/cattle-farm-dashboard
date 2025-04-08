@@ -8,14 +8,11 @@ import { getAllBreedings } from '@/actions/breeding.action';
 import IBreeding from '@/types/breeding.interface';
 import { getAllMilkProductions } from '@/actions/milk-production.action';
 import { IMilkProduction } from '@/types/milk.production.interface';
-import { getAllSales } from '@/actions/sale.action';
-import { ISales } from '@/types/sales.interface';
 
 export default async function TopDashboardCard() {
     const cattails = await getAllCattails();
     const breedings = await getAllBreedings();
     const milkProductions = await getAllMilkProductions();
-    const sales = await getAllSales();
 
     const males = cattails.filter(
         (cattle: ICattle) => cattle.gender === 'Male'
@@ -71,41 +68,6 @@ export default async function TopDashboardCard() {
 
     const monthMilkProduction = calculateMilkProduction(firstDayOfMonth, today);
     const yearMilkProduction = calculateMilkProduction(firstDayOfYear, today);
-
-    const filterByDateRange = (startDate: Date, endDate: Date) => {
-        return sales.filter((sale: ISales) => {
-            if (!sale.salesDate) return false;
-            const saleDate = new Date(sale.salesDate);
-            return saleDate >= startDate && saleDate <= endDate;
-        });
-    };
-
-    const calculateTotal = (data: ISales[]) => {
-        return data.reduce(
-            (acc: { totalDue: number; totalPaid: number }, sale: ISales) => {
-                acc.totalDue += sale.dueAmount || 0;
-                acc.totalPaid += sale.paymentAmount || 0;
-                return acc;
-            },
-            { totalDue: 0, totalPaid: 0 }
-        );
-    };
-
-    const todaySales = sales.filter((sale: ISales) => {
-        if (!sale.salesDate) return false;
-        const saleDate = new Date(sale.salesDate);
-        return saleDate.toISOString().startsWith(todayDate);
-    });
-    const { totalDue: todayDue, totalPaid: todayPaid } =
-        calculateTotal(todaySales);
-
-    const monthSales = filterByDateRange(firstDayOfMonth, today);
-    const { totalDue: monthDue, totalPaid: monthPaid } =
-        calculateTotal(monthSales);
-
-    const yearSales = filterByDateRange(firstDayOfYear, today);
-    const { totalDue: yearDue, totalPaid: yearPaid } =
-        calculateTotal(yearSales);
 
     const dashboardData = [
         {
@@ -185,26 +147,26 @@ export default async function TopDashboardCard() {
             stats: [
                 {
                     label: 'Today',
-                    value: `$${todayPaid}`,
+                    value: `$${123}`,
                     icon: <Circle className="w-3 h-3 text-green-500" />,
-                    subtext: `Due: $${todayDue || 0}`,
+                    subtext: `Due: $${0}`,
                 },
                 {
                     label: 'Monthly',
-                    value: `$${monthPaid}`,
+                    value: `$${123}`,
                     icon: <Circle className="w-3 h-3 text-emerald-500" />,
-                    subtext: `Due: $${monthDue || 0}`,
+                    subtext: `Due: $${0}`,
                 },
                 {
                     label: 'Yearly',
-                    value: `$${yearPaid}`,
+                    value: `$${123}`,
                     icon: <Circle className="w-3 h-3 text-lime-500" />,
-                    subtext: `Due: $${yearDue || 0}`,
+                    subtext: `Due: $${0}`,
                 },
             ],
-            badge: `$${yearPaid}`,
+            badge: `$${13}`,
             image: 'https://iili.io/2UXR7mx.png',
-            trend: monthPaid > todayPaid * 15 ? 'up' : 'down',
+            trend: 123 > 123 * 15 ? 'up' : 'down',
             color: 'bg-green-50',
         },
     ];

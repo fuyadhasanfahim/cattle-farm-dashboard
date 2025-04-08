@@ -25,7 +25,6 @@ import SalesDataTable from '@/components/expense/SalesDataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import toast from 'react-hot-toast';
-import { ISales } from '@/types/sales.interface';
 import AddSale from '@/components/expense/AddSale';
 
 export default function ExpensePage() {
@@ -63,17 +62,8 @@ export default function ExpensePage() {
         const result = await response.json();
 
         if (result.success) {
-            const fullAmount = result.data.reduce(
-                (sum: number, sale: ISales) => sum + sale.totalPrice,
-                0
-            );
-            const dueAmount = result.data.reduce(
-                (sum: number, sale: ISales) => sum + sale.dueAmount,
-                0
-            );
-
-            setTotalFullAmount(fullAmount || 0);
-            setTotalDueAmount(dueAmount || 0);
+            setTotalFullAmount(0);
+            setTotalDueAmount(0);
         } else {
             toast.error(result.message || 'Failed to fetch sales data');
         }
