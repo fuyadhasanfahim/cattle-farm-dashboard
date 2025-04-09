@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { ArrowLeft, CalendarIcon } from 'lucide-react';
 import { ICattle } from '@/types/cattle.interface';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
@@ -56,6 +56,11 @@ const fatteningStatusOptions = [
     { value: 'Inactive', label: 'Inactive' },
 ];
 
+const MilkingAndDryStatusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' },
+];
+
 const transferStatusOptions = [
     { value: 'In farm', label: 'In farm' },
     { value: 'Sold', label: 'Sold' },
@@ -84,12 +89,14 @@ export default function AddCattle({
             percentage: '',
             weight: '',
             gender: '',
+            MilkingAndDryStatus: '',
             fatteningStatus: '',
             cattleType: '',
             cattleCategory: '',
             location: '',
             status: '',
             description: '',
+            profileImage: '',
         },
     });
 
@@ -163,373 +170,367 @@ export default function AddCattle({
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="grid grid-cols-2 gap-6"
                 >
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="tagId"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Tag ID *</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Cattle tag ID"
-                                            type="number"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="registrationDate"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Registrations Date *</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    className={cn(
-                                                        'w-full pl-3 text-left font-normal',
-                                                        !field.value &&
-                                                            'text-muted-foreground'
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(
-                                                            field.value,
-                                                            'PPP'
-                                                        )
-                                                    ) : (
-                                                        <span>
-                                                            Select the Date
-                                                        </span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-auto p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={(date) => {
-                                                    if (date) {
-                                                        field.onChange(date);
-                                                    }
-                                                }}
-                                                disabled={(date) =>
-                                                    date > new Date() ||
-                                                    date <
-                                                        new Date('1900-01-01')
+                    <FormField
+                        control={form.control}
+                        name="tagId"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Tag ID *</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Cattle tag ID"
+                                        type="number"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="registrationDate"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Registrations Date *</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    'w-full pl-3 text-left font-normal',
+                                                    !field.value &&
+                                                        'text-muted-foreground'
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, 'PPP')
+                                                ) : (
+                                                    <span>Select the Date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        className="w-auto p-0"
+                                        align="start"
+                                    >
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={(date) => {
+                                                if (date) {
+                                                    field.onChange(date);
                                                 }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                                            }}
+                                            disabled={(date) =>
+                                                date > new Date() ||
+                                                date < new Date('1900-01-01')
+                                            }
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="dateOfBirth"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Select Birthdate *</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    className={cn(
-                                                        'w-full pl-3 text-left font-normal',
-                                                        !field.value &&
-                                                            'text-muted-foreground'
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(
-                                                            field.value,
-                                                            'PPP'
-                                                        )
-                                                    ) : (
-                                                        <span>
-                                                            Select the date
-                                                        </span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-auto p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={(date) => {
-                                                    if (date) {
-                                                        handleBirthDateChange(
-                                                            date
-                                                        );
-                                                    }
-                                                }}
-                                                disabled={(date) =>
-                                                    date > new Date() ||
-                                                    date <
-                                                        new Date('1900-01-01')
+                    <FormField
+                        control={form.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Select Birthdate *</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    'w-full pl-3 text-left font-normal',
+                                                    !field.value &&
+                                                        'text-muted-foreground'
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, 'PPP')
+                                                ) : (
+                                                    <span>Select the date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        className="w-auto p-0"
+                                        align="start"
+                                    >
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={(date) => {
+                                                if (date) {
+                                                    handleBirthDateChange(date);
                                                 }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="age"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Age *</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Select birthdate for this"
-                                            type="text"
-                                            {...field}
-                                            readOnly
+                                            }}
+                                            disabled={(date) =>
+                                                date > new Date() ||
+                                                date < new Date('1900-01-01')
+                                            }
+                                            initialFocus
                                         />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="stallNumber"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Stall Number *</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: 25"
-                                            type="number"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="age"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Age *</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Select birthdate for this"
+                                        type="text"
+                                        {...field}
+                                        readOnly
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <FormField
-                            control={form.control}
-                            name="weight"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Weight (KG) *</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: 650"
-                                            type="number"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="stallNumber"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Stall Number *</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: 25"
+                                        type="number"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <SelectOption
-                            data={genderOptions}
-                            form={form}
-                            label="Select Gender *"
-                            name="gender"
-                            placeholder="eg: Male"
-                        />
+                    <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Weight (KG) *</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: 650"
+                                        type="number"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <SelectOption
-                            data={fatteningStatusOptions}
-                            form={form}
-                            name="fatteningStatus"
-                            label="Select Fattening Status *"
-                            placeholder="eg: Inactive"
-                        />
-                    </div>
+                    <SelectOption
+                        data={genderOptions}
+                        form={form}
+                        label="Select Gender *"
+                        name="gender"
+                        placeholder="eg: Male"
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="breed"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Breed (Optional)</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: Holstein Friesian"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <SelectOption
+                        data={fatteningStatusOptions}
+                        form={form}
+                        name="fatteningStatus"
+                        label="Select Fattening Status *"
+                        placeholder="eg: Inactive"
+                    />
 
-                        <FormField
-                            control={form.control}
-                            name="fatherName"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>
-                                        {`Father's Name (Optional)`}
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: xyz"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <SelectOption
+                        data={MilkingAndDryStatusOptions}
+                        form={form}
+                        name="MilkingAndDryStatus"
+                        label="Select milking and dry Status *"
+                        placeholder="eg: Inactive"
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="fatherId"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>{`Fathers ID (Optional)`}</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: 1200"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="breed"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Breed (Optional)</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: Holstein Friesian"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <FormField
-                            control={form.control}
-                            name="motherName"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>{`Mothers Name (Optional)`}</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: zyx"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="fatherName"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>
+                                    {`Father's Name (Optional)`}
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: xyz"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <FormField
-                            control={form.control}
-                            name="motherId"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>{`Mothers ID (Optional)`}</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: 1300"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="fatherId"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>{`Fathers ID (Optional)`}</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: 1200"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <FormField
-                            control={form.control}
-                            name="percentage"
-                            render={({ field }) => (
-                                <FormItem className="w-full">
-                                    <FormLabel>Percentage (Optional)</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="eg: 50% holstein & 50% friesian"
-                                            type="text"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="motherName"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>{`Mothers Name (Optional)`}</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: zyx"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <SelectOption
-                            data={cattleTypeOptions}
-                            form={form}
-                            name="cattleType"
-                            label="Cattle Type *"
-                            placeholder="eg: Cow"
-                        />
+                    <FormField
+                        control={form.control}
+                        name="motherId"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>{`Mothers ID (Optional)`}</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: 1300"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <SelectOption
-                            data={categoryOptions}
-                            form={form}
-                            name="cattleCategory"
-                            label="Cattle Category *"
-                            placeholder="eg: Milk"
-                        />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="percentage"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Percentage (Optional)</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="eg: 50% holstein & 50% friesian"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <div className="flex items-center gap-6">
-                        <SelectOption
-                            data={deathStatusOptions}
-                            form={form}
-                            name="status"
-                            label="Status *"
-                            placeholder="eg: Dead"
-                        />
+                    <FormField
+                        control={form.control}
+                        name="profileImage"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>ProfileImage *</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Upload the image in cloudinary and pest the link here"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <SelectOption
-                            data={transferStatusOptions}
-                            form={form}
-                            name="location"
-                            label="Location *"
-                            placeholder="eg: Sold"
-                        />
-                    </div>
+                    <SelectOption
+                        data={cattleTypeOptions}
+                        form={form}
+                        name="cattleType"
+                        label="Cattle Type *"
+                        placeholder="eg: Cow"
+                    />
 
-                    <div>
+                    <SelectOption
+                        data={categoryOptions}
+                        form={form}
+                        name="cattleCategory"
+                        label="Cattle Category *"
+                        placeholder="eg: Milk"
+                    />
+
+                    <SelectOption
+                        data={deathStatusOptions}
+                        form={form}
+                        name="status"
+                        label="Status *"
+                        placeholder="eg: Dead"
+                    />
+
+                    <SelectOption
+                        data={transferStatusOptions}
+                        form={form}
+                        name="location"
+                        label="Location *"
+                        placeholder="eg: Sold"
+                    />
+
+                    <div className="col-span-2">
                         <FormField
                             control={form.control}
                             name="description"
@@ -551,16 +552,24 @@ export default function AddCattle({
                     </div>
 
                     <div className="flex justify-end items-center gap-2">
-                        <Button
-                            type="submit"
-                            className="btn-primary"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : null}
-                            Add
-                        </Button>
+                        <div className="flex items-center gap-6">
+                            <Button
+                                onClick={() => router.back()}
+                                className="w-full"
+                                type="button"
+                                variant={'outline'}
+                            >
+                                <ArrowLeft className="size-5" />
+                                <span>Back</span>
+                            </Button>
+
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : null}
+                                Update
+                            </Button>
+                        </div>
                     </div>
                 </form>
             </Form>

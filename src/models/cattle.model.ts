@@ -35,6 +35,10 @@ const cattleSchema = new mongoose.Schema<ICattle>(
             type: String,
             required: false,
         },
+        MilkingAndDryStatus: {
+            type: String,
+            required: true,
+        },
         motherName: {
             type: String,
             required: false,
@@ -76,6 +80,10 @@ const cattleSchema = new mongoose.Schema<ICattle>(
             required: true,
         },
         description: {
+            type: String,
+            required: false,
+        },
+        profileImage: {
             type: String,
             required: false,
         },

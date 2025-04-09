@@ -102,7 +102,6 @@ export default function AddMilkProduction() {
             if (response.ok) {
                 toast.success('Milk production data saved successfully.');
                 form.reset();
-                router.push('/milk-production');
             } else {
                 toast.error(
                     result.message || 'Failed to save milk production data.'

@@ -26,6 +26,13 @@ import {
 import Link from 'next/link';
 import CustomPagination from '../shared/CustomPagination';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '../ui/tooltip';
 
 export default function DataTable() {
     const [data, setData] = useState<ICattle[]>([]);
@@ -74,7 +81,7 @@ export default function DataTable() {
     };
 
     return (
-        <Card className="shadow-xl border border-gray-100 rounded-xl overflow-hidden">
+        <Card className="border border-gray-100 rounded-xl overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-green-500 to-green-700 text-white">
                 <CardTitle className="text-xl flex items-center justify-between">
                     <div>Cattle List</div>
@@ -131,10 +138,13 @@ export default function DataTable() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="border-r text-center">
-                                        Registration Date
+                                        Tag ID
                                     </TableHead>
                                     <TableHead className="border-r text-center">
-                                        Tag ID
+                                        {`Mother's ID`}
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Birth Date
                                     </TableHead>
                                     <TableHead className="border-r text-center">
                                         Breed
@@ -143,31 +153,16 @@ export default function DataTable() {
                                         Gender
                                     </TableHead>
                                     <TableHead className="border-r text-center">
+                                        Milking and Dry Status
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
+                                        Fattening
+                                    </TableHead>
+                                    <TableHead className="border-r text-center">
                                         {`Father's ID`}
                                     </TableHead>
                                     <TableHead className="border-r text-center">
                                         {`Father's Name`}
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        {`Mother's Name`}
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Weight
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Type
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Category
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Location
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Status
-                                    </TableHead>
-                                    <TableHead className="border-r text-center">
-                                        Fattening
                                     </TableHead>
                                     <TableHead className="text-center">
                                         Actions
@@ -180,18 +175,16 @@ export default function DataTable() {
                                         {
                                             _id,
                                             tagId,
-                                            registrationDate,
-                                            status,
-                                            location,
-                                            cattleCategory,
-                                            cattleType,
-                                            weight,
                                             gender,
                                             breed,
                                             fatteningStatus,
                                             fatherId,
                                             fatherName,
                                             motherId,
+                                            dateOfBirth,
+                                            MilkingAndDryStatus,
+                                            profileImage,
+                                            description,
                                         },
                                         index
                                     ) => (
@@ -203,18 +196,59 @@ export default function DataTable() {
                                                     : 'bg-gray-50'
                                             }`}
                                         >
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <TableCell className="border-r text-center flex items-center justify-center gap-3 cursor-pointer">
+                                                            {tagId}
+                                                            <figure className="relative w-8 h-8 overflow-hidden rounded-full">
+                                                                <Image
+                                                                    src={
+                                                                        profileImage
+                                                                    }
+                                                                    alt={`Profile image of ${tagId}`}
+                                                                    layout="fill"
+                                                                    objectFit="cover"
+                                                                    priority
+                                                                />
+                                                            </figure>
+                                                        </TableCell>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="max-w-md p-4 rounded-lg shadow-md bg-white dark:bg-gray-800 text-black dark:text-white">
+                                                        <div className="flex items-center gap-4">
+                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5">
+                                                                <Image
+                                                                    src={
+                                                                        profileImage
+                                                                    }
+                                                                    alt={`Profile image of ${tagId}`}
+                                                                    width={800}
+                                                                    height={800}
+                                                                    priority
+                                                                />
+                                                            </figure>
+                                                            <div>
+                                                                <p className="text-lg font-semibold">
+                                                                    ID: {tagId}
+                                                                </p>
+                                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                                    {
+                                                                        description
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+
                                             <TableCell className="border-r text-center">
-                                                {registrationDate
-                                                    ? format(
-                                                          new Date(
-                                                              registrationDate
-                                                          ),
-                                                          'PPP'
-                                                      )
-                                                    : 'N/A'}
+                                                {motherId}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
-                                                {tagId}
+                                                {dateOfBirth
+                                                    ? format(dateOfBirth, 'PP')
+                                                    : 'N/A'}
                                             </TableCell>
                                             <TableCell className="border-r text-center">
                                                 {breed}
@@ -222,29 +256,16 @@ export default function DataTable() {
                                             <TableCell className="border-r text-center">
                                                 {gender}
                                             </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {fatherId}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {fatherName}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {motherId}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {weight} KG
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {cattleType}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {cattleCategory}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {location}
-                                            </TableCell>
-                                            <TableCell className="border-r text-center">
-                                                {status}
+                                            <TableCell
+                                                className={cn(
+                                                    'border-r text-center text-white',
+                                                    MilkingAndDryStatus ===
+                                                        'Active'
+                                                        ? 'bg-green-500'
+                                                        : 'bg-yellow-500'
+                                                )}
+                                            >
+                                                {MilkingAndDryStatus}
                                             </TableCell>
                                             <TableCell
                                                 className={cn(
@@ -255,6 +276,12 @@ export default function DataTable() {
                                                 )}
                                             >
                                                 {fatteningStatus}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {fatherId}
+                                            </TableCell>
+                                            <TableCell className="border-r text-center">
+                                                {fatherName}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <Link

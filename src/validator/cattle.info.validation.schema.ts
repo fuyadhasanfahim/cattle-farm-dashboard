@@ -11,7 +11,9 @@ export const cattleInfoValidationSchema = z.object({
     fatteningStatus: z.string(),
     cattleType: z.string(),
     category: z.string(),
+    MilkingAndDryStatus: z.string(),
     transferStatus: z.string(),
     deathStatus: z.string(),
     description: z.string(),
+    profileImage: z.string(),
 });

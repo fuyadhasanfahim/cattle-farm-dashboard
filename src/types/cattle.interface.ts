@@ -11,6 +11,7 @@ export interface ICattle {
     motherName?: string;
     motherId?: string;
     percentage?: string;
+    MilkingAndDryStatus: string;
     weight: string;
     gender: string;
     fatteningStatus: string;
@@ -19,4 +20,5 @@ export interface ICattle {
     location: string;
     status: string;
     description?: string;
+    profileImage: string;
 }

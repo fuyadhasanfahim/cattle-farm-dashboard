@@ -21,11 +21,13 @@ export async function POST(req: NextRequest) {
             weight,
             gender,
             fatteningStatus,
+            MilkingAndDryStatus,
             cattleType,
             cattleCategory,
             location,
             status,
             description,
+            profileImage,
         } = await req.json();
 
         if (
@@ -36,11 +38,13 @@ export async function POST(req: NextRequest) {
             !stallNumber ||
             !weight ||
             !gender ||
+            !MilkingAndDryStatus ||
             !fatteningStatus ||
             !cattleType ||
             !cattleCategory ||
             !location ||
-            !status
+            !status ||
+            !profileImage
         ) {
             return NextResponse.json({
                 success: false,
@@ -72,12 +76,14 @@ export async function POST(req: NextRequest) {
             percentage,
             weight,
             gender,
+            MilkingAndDryStatus,
             fatteningStatus,
             cattleType,
             cattleCategory,
             location,
             status,
             description,
+            profileImage,
         });
 
         return NextResponse.json(
