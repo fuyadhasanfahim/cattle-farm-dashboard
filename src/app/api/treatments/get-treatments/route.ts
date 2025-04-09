@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
         const limit = parseInt(searchParams.get('limit') || '10', 10);
         const page = parseInt(searchParams.get('page') || '1', 10);
-        const skip = (page - 1) * limit;
+        const skip = Math.max((page - 1) * limit, 0);
 
         const sort = searchParams.get('sort') || 'createdAt';
         const sortOrder: SortOrder =
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
                             $options: 'i',
                         },
                     },
-                    { dewormingCount: { $regex: search, $options: 'i' } },
+                    { dewormCount: { $regex: search, $options: 'i' } },
                     { vaccinationCount: { $regex: search, $options: 'i' } },
                     { generalCount: { $regex: search, $options: 'i' } },
                 ],
