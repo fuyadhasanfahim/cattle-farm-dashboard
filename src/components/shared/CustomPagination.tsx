@@ -94,7 +94,11 @@ export default function CustomPagination({
                             <PaginationLink
                                 href="#"
                                 isActive={currentPage === page}
-                                className={cn(currentPage === page ? "bg-green-500" : "")}
+                                className={cn(
+                                    currentPage === page
+                                        ? 'bg-green-500 text-white'
+                                        : ''
+                                )}
                                 onClick={(e) =>
                                     handlePageClick(page as number, e)
                                 }
