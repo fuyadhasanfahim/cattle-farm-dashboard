@@ -216,14 +216,14 @@ export default function DataTable() {
                                                     </TooltipTrigger>
                                                     <TooltipContent className="max-w-md p-4 rounded-lg shadow-md bg-white dark:bg-gray-800 text-black dark:text-white">
                                                         <div className="flex items-center gap-4">
-                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5">
+                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5 relative w-24 h-24">
                                                                 <Image
                                                                     src={
                                                                         profileImage
                                                                     }
                                                                     alt={`Profile image of ${tagId}`}
-                                                                    width={800}
-                                                                    height={800}
+                                                                    layout="fill"
+                                                                    objectFit="cover"
                                                                     priority
                                                                 />
                                                             </figure>
