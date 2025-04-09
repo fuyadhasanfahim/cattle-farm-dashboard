@@ -216,7 +216,7 @@ export default function DataTable() {
                                                     </TooltipTrigger>
                                                     <TooltipContent className="max-w-md p-4 rounded-lg shadow-md bg-white dark:bg-gray-800 text-black dark:text-white">
                                                         <div className="grid grid-cols-3 items-center gap-4">
-                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5 relative col-span-1">
+                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5 relative col-span-1 w-32 h-32">
                                                                 <Image
                                                                     src={
                                                                         profileImage
