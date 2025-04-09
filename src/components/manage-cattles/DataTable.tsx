@@ -215,8 +215,8 @@ export default function DataTable() {
                                                         </TableCell>
                                                     </TooltipTrigger>
                                                     <TooltipContent className="max-w-md p-4 rounded-lg shadow-md bg-white dark:bg-gray-800 text-black dark:text-white">
-                                                        <div className="flex items-center gap-4">
-                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5 relative w-24 h-24">
+                                                        <div className="grid grid-cols-3 items-center gap-4">
+                                                            <figure className="rounded-md overflow-hidden aspect-square border border-black/5 relative col-span-1">
                                                                 <Image
                                                                     src={
                                                                         profileImage
@@ -227,7 +227,7 @@ export default function DataTable() {
                                                                     priority
                                                                 />
                                                             </figure>
-                                                            <div>
+                                                            <div className="col-span-2">
                                                                 <p className="text-lg font-semibold">
                                                                     ID: {tagId}
                                                                 </p>
