@@ -77,6 +77,7 @@ export default function ExpenseDetailsPage() {
 
             if (response.ok) {
                 toast.success('Purchase deleted successfully');
+                
                 router.back();
             } else {
                 toast.error('Failed to delete purchase');

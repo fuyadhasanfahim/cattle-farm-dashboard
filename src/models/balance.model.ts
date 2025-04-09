@@ -8,7 +8,7 @@ const BalanceSchema = new Schema<IBalance>(
         expense: { type: Number, default: 0 },
         due: { type: Number, default: 0 },
         description: { type: String, required: false },
-        date: { type: Date, required: true },
+        date: { type: Date, required: true, default: new Date() },
     },
     {
         timestamps: true,

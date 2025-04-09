@@ -41,7 +41,7 @@ const BuyerSchema = new Schema<IBuyer>(
 const PurchaseSchema = new Schema<IPurchase>(
     {
         category: { type: String, required: true },
-        itemName: { type: String, required: true },
+        itemName: { type: String },
         quantity: { type: Number, required: true },
         pricePerItem: { type: Number, required: true },
         price: { type: Number, required: true },

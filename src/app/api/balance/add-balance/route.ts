@@ -20,15 +20,7 @@ export async function POST(req: NextRequest) {
 
         await dbConfig();
 
-        await BalanceModel.updateOne(
-            {},
-            {
-                $inc: {
-                    balance: data.balance,
-                },
-            },
-            { upsert: true, new: true }
-        );
+        await BalanceModel.create(data);
 
         return NextResponse.json(
             {

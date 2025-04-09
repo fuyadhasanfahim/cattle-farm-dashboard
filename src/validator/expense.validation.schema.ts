@@ -8,7 +8,7 @@ const BuyerValidationSchema = z.object({
 
 const PurchaseValidationSchema = z.object({
     category: z.string().nonempty(),
-    itemName: z.string().nonempty(),
+    itemName: z.string(),
     quantity: z.string().nonempty(),
     pricePerItem: z.string().nonempty(),
     price: z.string().nonempty(),

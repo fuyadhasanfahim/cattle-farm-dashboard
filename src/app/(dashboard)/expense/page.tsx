@@ -14,9 +14,7 @@ import {
     DollarSign,
     Droplet,
     Milk,
-    ShoppingBasket,
 } from 'lucide-react';
-import AddPurchase from '@/components/expense/AddPurchase';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -26,6 +24,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import toast from 'react-hot-toast';
 import AddSale from '@/components/expense/AddSale';
+import { getDue, getTotalBalance } from '@/actions/balance.action';
+import AddPurchaseForm from '@/components/expense/AddPurchase';
 
 export default function ExpensePage() {
     const [loading, setLoading] = useState(true);
@@ -58,15 +58,8 @@ export default function ExpensePage() {
     }, []);
 
     const fetchSalesData = async () => {
-        const response = await fetch(`/api/sales/get-sales`);
-        const result = await response.json();
-
-        if (result.success) {
-            setTotalFullAmount(0);
-            setTotalDueAmount(0);
-        } else {
-            toast.error(result.message || 'Failed to fetch sales data');
-        }
+        setTotalFullAmount(await getTotalBalance());
+        setTotalDueAmount(await getDue());
     };
 
     const fetchTodaysMilk = async () => {
@@ -109,25 +102,7 @@ export default function ExpensePage() {
     return (
         <section className="space-y-6">
             <div className="flex items-center gap-6">
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size={'lg'}>
-                            <ShoppingBasket />
-                            Add Purchase
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-5xl !pr-0">
-                        <ScrollArea className="h-[80vh] pr-8">
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl text-green-500">
-                                    Add Purchase Form
-                                </DialogTitle>
-                            </DialogHeader>
-
-                            <AddPurchase />
-                        </ScrollArea>
-                    </DialogContent>
-                </Dialog>
+                <AddPurchaseForm />
 
                 <Dialog>
                     <DialogTrigger asChild>

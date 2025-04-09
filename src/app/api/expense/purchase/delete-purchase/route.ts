@@ -27,19 +27,11 @@ export async function DELETE(req: NextRequest) {
             );
         }
 
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    balance: purchaseData.paymentAmount,
-                    due: -(purchaseData.dueAmount ?? 0),
-                    expense: -purchaseData.paymentAmount,
-                },
-            },
-            {
-                new: true,
-            }
-        );
+        await BalanceModel.create({
+            balance: purchaseData.paymentAmount,
+            due: -(purchaseData.dueAmount ?? 0),
+            expense: -purchaseData.paymentAmount,
+        });
 
         const deletedPurchase = await PurchaseModel.findByIdAndDelete(id);
 
@@ -55,7 +47,6 @@ export async function DELETE(req: NextRequest) {
             { status: 200 }
         );
     } catch (error) {
-        console.error('DELETE API Error:', error);
         return NextResponse.json(
             { success: false, message: 'Failed to delete purchase.', error },
             { status: 500 }

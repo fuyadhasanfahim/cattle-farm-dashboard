@@ -23,20 +23,11 @@ export async function PUT(request: NextRequest) {
             );
         }
 
-        console.log(data);
-
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    balance: -data.balance,
-                    expense: data.expense,
-                    due: data.due || 0,
-                },
-                $set: { date: new Date() },
-            },
-            { upsert: true, new: true }
-        );
+        await BalanceModel.create({
+            balance: -data.balance,
+            expense: data.expense,
+            due: data.due || 0,
+        });
 
         return NextResponse.json(
             {

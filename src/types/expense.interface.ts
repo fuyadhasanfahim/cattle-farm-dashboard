@@ -20,7 +20,7 @@ export interface IBuyer {
 export interface IPurchase {
     _id?: string;
     category: string;
-    itemName: string;
+    itemName?: string;
     quantity: number;
     pricePerItem?: number;
     price: number;

@@ -69,7 +69,16 @@ export async function PUT(req: NextRequest) {
                 balanceUpdate.due += dueDiff;
             }
 
-            await BalanceModel.findOneAndUpdate({}, { $inc: balanceUpdate });
+            const shouldLog =
+                balanceUpdate.balance !== 0 ||
+                balanceUpdate.expense !== 0 ||
+                balanceUpdate.due !== 0;
+
+            if (shouldLog) {
+                await BalanceModel.create({
+                    ...balanceUpdate,
+                });
+            }
         }
 
         return NextResponse.json(
