@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
         const limit = parseInt(searchParams.get('limit') || '10', 10);
         const page = parseInt(searchParams.get('page') || '1', 10);
-        const skip = Math.max((page - 1) * limit, 0);
+        const skip = (page - 1) * limit;
 
         const sort = searchParams.get('sort') || 'createdAt';
         const sortOrder: SortOrder =

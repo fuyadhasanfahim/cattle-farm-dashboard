@@ -69,7 +69,7 @@ export default function TreatmentTable() {
     };
 
     const handleItemsPerPageChange = (value: string) => {
-        setItemsPerPage(parseInt(value, 10));
+        setItemsPerPage(Number(value));
         setCurrentPage(1);
     };
 
@@ -269,7 +269,7 @@ export default function TreatmentTable() {
                     <div className="mt-6 flex justify-center">
                         <CustomPagination
                             currentPage={currentPage}
-                            totalPages={totalItems}
+                            totalPages={Math.ceil(totalItems / itemsPerPage)}
                             onPageChange={handlePageChange}
                         />
                     </div>
