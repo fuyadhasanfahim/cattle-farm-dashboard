@@ -1,29 +1,10 @@
-import toast from 'react-hot-toast';
-
-export async function getBalance() {
-    try {
-        const response = await fetch('/api/balance/get-balances');
-
-        const result = await response.json();
-
-        if (response.ok) {
-            return result.data.reduce(
-                (acc: number, val: { balance: number }) => acc + val.balance,
-                0
-            );
-        } else {
-            toast.error(
-                'Something went wrong, getting balance. Try again later.'
-            );
-        }
-    } catch (error) {
-        toast.error((error as Error).message);
-    }
-}
+'use server';
 
 export async function getTotalBalance() {
     try {
-        const response = await fetch('/api/balance/get-balances');
+        const response = await fetch(
+            `${process.env.DOMAIN!}/api/balance/get-balances`
+        );
 
         const result = await response.json();
 
@@ -40,18 +21,43 @@ export async function getTotalBalance() {
 
             return balance + earnings;
         } else {
-            toast.error(
+            throw new Error(
                 'Something went wrong, getting total balance. Try again later.'
             );
         }
     } catch (error) {
-        toast.error((error as Error).message);
+        throw new Error((error as Error).message);
+    }
+}
+
+export async function getBalance() {
+    try {
+        const response = await fetch(
+            `${process.env.DOMAIN!}/api/balance/get-balances`
+        );
+
+        const result = await response.json();
+
+        if (response.ok) {
+            return result.data.reduce(
+                (acc: number, val: { balance: number }) => acc + val.balance,
+                0
+            );
+        } else {
+            throw new Error(
+                'Something went wrong, getting balance. Try again later.'
+            );
+        }
+    } catch (error) {
+        throw new Error((error as Error).message);
     }
 }
 
 export async function getExpense() {
     try {
-        const response = await fetch('/api/balance/get-balances');
+        const response = await fetch(
+            `${process.env.DOMAIN!}/api/balance/get-balances`
+        );
 
         const result = await response.json();
 
@@ -61,18 +67,20 @@ export async function getExpense() {
                 0
             );
         } else {
-            toast.error(
+            throw new Error(
                 'Something went wrong, getting expense. Try again later.'
             );
         }
     } catch (error) {
-        toast.error((error as Error).message);
+        throw new Error((error as Error).message);
     }
 }
 
 export async function getEarnings() {
     try {
-        const response = await fetch('/api/balance/get-balances');
+        const response = await fetch(
+            `${process.env.DOMAIN!}/api/balance/get-balances`
+        );
 
         const result = await response.json();
 
@@ -82,18 +90,20 @@ export async function getEarnings() {
                 0
             );
         } else {
-            toast.error(
+            throw new Error(
                 'Something went wrong, getting earnings. Try again later.'
             );
         }
     } catch (error) {
-        toast.error((error as Error).message);
+        throw new Error((error as Error).message);
     }
 }
 
 export async function getDue() {
     try {
-        const response = await fetch('/api/balance/get-balances');
+        const response = await fetch(
+            `${process.env.DOMAIN!}/api/balance/get-balances`
+        );
 
         const result = await response.json();
 
@@ -103,9 +113,11 @@ export async function getDue() {
                 0
             );
         } else {
-            toast.error('Something went wrong, getting due. Try again later.');
+            throw new Error(
+                'Something went wrong, getting due. Try again later.'
+            );
         }
     } catch (error) {
-        toast.error((error as Error).message);
+        throw new Error((error as Error).message);
     }
 }

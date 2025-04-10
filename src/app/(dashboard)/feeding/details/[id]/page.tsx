@@ -157,7 +157,12 @@ export default function FeedingDetails() {
                             (acc: number, val: { balance: number }) =>
                                 acc + val.balance,
                             0
-                        )
+                        ) +
+                            result.data.reduce(
+                                (acc: number, val: { earning: number }) =>
+                                    acc + val.earning,
+                                0
+                            )
                     );
                 }
             } catch (error) {
@@ -315,24 +320,6 @@ export default function FeedingDetails() {
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="totalPrice"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Total Price</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                {...field}
-                                                disabled
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
                             <SelectOption
                                 data={[
                                     {
@@ -349,6 +336,24 @@ export default function FeedingDetails() {
                                 name="paymentType"
                                 placeholder="Select Payment Type"
                                 required
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="totalPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                disabled
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
 
                             <div className="flex items-center gap-6 w-full col-span-2">

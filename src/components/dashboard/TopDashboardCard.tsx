@@ -8,6 +8,12 @@ import { getAllBreedings } from '@/actions/breeding.action';
 import IBreeding from '@/types/breeding.interface';
 import { getAllMilkProductions } from '@/actions/milk-production.action';
 import { IMilkProduction } from '@/types/milk.production.interface';
+import {
+    getBalance,
+    getDue,
+    getEarnings,
+    getExpense,
+} from '@/actions/balance.action';
 
 export default async function TopDashboardCard() {
     const cattails = await getAllCattails();
@@ -66,14 +72,8 @@ export default async function TopDashboardCard() {
             0
         );
 
-    const monthMilkProduction = calculateMilkProduction(
-        firstDayOfMonth,
-        today
-    );
-    const yearMilkProduction = calculateMilkProduction(
-        firstDayOfYear,
-        today
-    );
+    const monthMilkProduction = calculateMilkProduction(firstDayOfMonth, today);
+    const yearMilkProduction = calculateMilkProduction(firstDayOfYear, today);
 
     const dashboardData = [
         {
@@ -152,27 +152,30 @@ export default async function TopDashboardCard() {
             description: 'Financial summary of all sales',
             stats: [
                 {
-                    label: 'Today',
-                    value: `$${123}`,
+                    label: 'Total Balance',
+                    value: `$${(
+                        (await getBalance()) + (await getEarnings())
+                    ).toFixed(2)}`,
                     icon: <Circle className="w-3 h-3 text-green-500" />,
-                    subtext: `Due: $${0}`,
                 },
                 {
-                    label: 'Monthly',
-                    value: `$${123}`,
-                    icon: <Circle className="w-3 h-3 text-emerald-500" />,
-                    subtext: `Due: $${0}`,
-                },
-                {
-                    label: 'Yearly',
-                    value: `$${123}`,
+                    label: 'Expense',
+                    value: `$${(await getExpense()).toFixed(2)}`,
                     icon: <Circle className="w-3 h-3 text-lime-500" />,
-                    subtext: `Due: $${0}`,
+                },
+                {
+                    label: 'Due',
+                    value: `$${(await getDue()).toFixed(2)}`,
+                    icon: <Circle className="w-3 h-3 text-red-500" />,
                 },
             ],
-            badge: `$${13}`,
+            badge: `$${await getBalance()}`,
             image: 'https://iili.io/2UXR7mx.png',
-            trend: 123 > 123 * 15 ? 'up' : 'down',
+            trend:
+                (await getBalance()) + (await getEarnings()).toFixed(2) >
+                (await getBalance()) * 25
+                    ? 'up'
+                    : 'down',
             color: 'bg-green-50',
         },
     ];
@@ -223,7 +226,7 @@ export default async function TopDashboardCard() {
                                             </p>
                                             {'subtext' in stat && (
                                                 <p className="text-gray-500 text-xs">
-                                                    {stat.subtext}
+                                                    {/* {stat.subtext} */}
                                                 </p>
                                             )}
                                         </div>

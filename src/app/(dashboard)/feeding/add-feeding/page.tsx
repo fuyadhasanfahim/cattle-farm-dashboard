@@ -51,12 +51,13 @@ export default function AddFeed() {
     const { setError, formState } = form;
     const quantity = form.watch('quantityPurchased');
     const pricePerKg = form.watch('perKgPrice');
+    const paymentType = form.watch('paymentType');
     const totalPrice = Number(quantity) * Number(pricePerKg);
 
     useEffect(() => {
         form.setValue('totalPrice', totalPrice.toString());
 
-        if (totalPrice > balance) {
+        if (paymentType === 'Paid' && totalPrice > balance) {
             setError('totalPrice', {
                 type: 'custom',
                 message: 'Total price exceeds available balance',
@@ -64,7 +65,15 @@ export default function AddFeed() {
         } else {
             form.clearErrors('totalPrice');
         }
-    }, [quantity, pricePerKg, totalPrice, balance, form, setError]);
+    }, [
+        quantity,
+        pricePerKg,
+        totalPrice,
+        balance,
+        form,
+        setError,
+        paymentType,
+    ]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -78,7 +87,12 @@ export default function AddFeed() {
                             (acc: number, val: { balance: number }) =>
                                 acc + val.balance,
                             0
-                        )
+                        ) +
+                            result.data.reduce(
+                                (acc: number, val: { earning: number }) =>
+                                    acc + val.earning,
+                                0
+                            )
                     );
                 }
             } catch (error) {
@@ -205,24 +219,6 @@ export default function AddFeed() {
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="totalPrice"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Total Price</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                {...field}
-                                                disabled
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
                             <SelectOption
                                 data={[
                                     {
@@ -239,6 +235,24 @@ export default function AddFeed() {
                                 name="paymentType"
                                 placeholder="Select Payment Type"
                                 required
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="totalPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                disabled
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
 
                             <div className="flex items-center gap-6 w-full col-span-2">
