@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import dbConfig from '@/lib/dbConfig';
 import { SellerModel } from '@/models/expense.model';
 import { NextRequest, NextResponse } from 'next/server';
