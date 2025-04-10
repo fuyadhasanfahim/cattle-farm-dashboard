@@ -73,22 +73,22 @@ export function PieChartComponent() {
                 const updatedChartData = [
                     {
                         name: 'Earnings',
-                        value: earning || 0,
+                        value: earning.toFixed(2) || 0,
                         fill: 'hsl(var(--chart-1))',
                     },
                     {
                         name: 'Expenses',
-                        value: expense || 0,
+                        value: expense.toFixed(2) || 0,
                         fill: 'hsl(var(--chart-2))',
                     },
                     {
                         name: 'Balance',
-                        value: balance || 0,
+                        value: balance.toFixed(2) || 0,
                         fill: 'hsl(var(--chart-3))',
                     },
                     {
                         name: 'Due',
-                        value: due || 0,
+                        value: due.toFixed(2) || 0,
                         fill: 'hsl(var(--chart-4))',
                     },
                 ];
