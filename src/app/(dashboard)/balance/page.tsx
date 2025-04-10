@@ -31,6 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
+import BalanceDataTable from '@/components/balance/BalanceDataTable';
 
 export default function BalancePage() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -186,146 +187,139 @@ export default function BalancePage() {
     };
 
     return (
-        <section>
-            <div className="space-y-6">
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size={'lg'}>
-                            <ShoppingBasket />
-                            Add Balance
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                        <DialogHeader>
-                            <DialogTitle>Add Balance</DialogTitle>
-                            <DialogDescription></DialogDescription>
-                        </DialogHeader>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <div className="space-y-2">
-                                    <MyCalender
-                                        form={form}
-                                        label="Balance Date *"
-                                        name="date"
-                                        placeholder="Select Date"
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="balance"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Enter Balance *
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="eg: 50"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+        <section className="space-y-6">
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button size={'lg'}>
+                        <ShoppingBasket />
+                        Add Balance
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Add Balance</DialogTitle>
+                        <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="space-y-2">
+                                <MyCalender
+                                    form={form}
+                                    label="Balance Date *"
+                                    name="date"
+                                    placeholder="Select Date"
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="balance"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Enter Balance *
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="eg: 50"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Description
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        placeholder="Type your message here..."
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="Type your message here..."
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
-                                <DialogFooter className="mt-4">
-                                    <DialogClose asChild id="close-dialog">
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                        >
-                                            <X />
-                                            Close
-                                        </Button>
-                                    </DialogClose>
-                                    <Button type="submit">
-                                        {form.formState.isSubmitting ? (
-                                            <Loader2 className="animate-spin" />
-                                        ) : (
-                                            <Save />
-                                        )}
-                                        {form.formState.isSubmitting
-                                            ? 'Saving...'
-                                            : 'Save changes'}
+                            <DialogFooter className="mt-4">
+                                <DialogClose asChild id="close-dialog">
+                                    <Button type="button" variant="secondary">
+                                        <X />
+                                        Close
                                     </Button>
-                                </DialogFooter>
-                            </form>
-                        </Form>
-                    </DialogContent>
-                </Dialog>
+                                </DialogClose>
+                                <Button type="submit">
+                                    {form.formState.isSubmitting ? (
+                                        <Loader2 className="animate-spin" />
+                                    ) : (
+                                        <Save />
+                                    )}
+                                    {form.formState.isSubmitting
+                                        ? 'Saving...'
+                                        : 'Save changes'}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </Dialog>
 
-                <div className="grid grid-cols-4 gap-6 items-center">
-                    <StatCard
-                        title="Balance"
-                        value={balance}
-                        isLoading={loading}
-                        icon={<DollarSign className="h-5 w-5" />}
-                        gradient="from-green-50 to-green-100"
-                        textColor="text-green-800"
-                        valueColor="text-green-900"
-                        unit="Taka"
-                        format={(val) => val.toFixed(2)}
-                    />
+            <div className="grid grid-cols-4 gap-6 items-center">
+                <StatCard
+                    title="Balance"
+                    value={balance}
+                    isLoading={loading}
+                    icon={<DollarSign className="h-5 w-5" />}
+                    gradient="from-green-50 to-green-100"
+                    textColor="text-green-800"
+                    valueColor="text-green-900"
+                    unit="Taka"
+                    format={(val) => val.toFixed(2)}
+                />
 
-                    <StatCard
-                        title="Total Earnings"
-                        value={earning}
-                        isLoading={loading}
-                        icon={<DollarSign className="h-5 w-5" />}
-                        gradient="from-yellow-50 to-yellow-100"
-                        textColor="text-yellow-800"
-                        valueColor="text-yellow-900"
-                        unit="Taka"
-                        format={(val) => val.toFixed(2)}
-                    />
+                <StatCard
+                    title="Total Earnings"
+                    value={earning}
+                    isLoading={loading}
+                    icon={<DollarSign className="h-5 w-5" />}
+                    gradient="from-yellow-50 to-yellow-100"
+                    textColor="text-yellow-800"
+                    valueColor="text-yellow-900"
+                    unit="Taka"
+                    format={(val) => val.toFixed(2)}
+                />
 
-                    <StatCard
-                        title="Total Expenses"
-                        value={expense}
-                        isLoading={loading}
-                        icon={<DollarSign className="h-5 w-5" />}
-                        gradient="from-blue-50 to-blue-100"
-                        textColor="text-blue-800"
-                        valueColor="text-blue-900"
-                        unit="Taka"
-                        format={(val) => val.toFixed(2)}
-                    />
+                <StatCard
+                    title="Total Expenses"
+                    value={expense}
+                    isLoading={loading}
+                    icon={<DollarSign className="h-5 w-5" />}
+                    gradient="from-blue-50 to-blue-100"
+                    textColor="text-blue-800"
+                    valueColor="text-blue-900"
+                    unit="Taka"
+                    format={(val) => val.toFixed(2)}
+                />
 
-                    <StatCard
-                        title="Total Due"
-                        value={due}
-                        isLoading={loading}
-                        icon={<DollarSign className="h-5 w-5" />}
-                        gradient="from-red-50 to-red-100"
-                        textColor="text-red-800"
-                        valueColor="text-red-900"
-                        unit="Taka"
-                        format={(val) => val.toFixed(2)}
-                    />
-                </div>
+                <StatCard
+                    title="Total Due"
+                    value={due}
+                    isLoading={loading}
+                    icon={<DollarSign className="h-5 w-5" />}
+                    gradient="from-red-50 to-red-100"
+                    textColor="text-red-800"
+                    valueColor="text-red-900"
+                    unit="Taka"
+                    format={(val) => val.toFixed(2)}
+                />
             </div>
 
-            
+            <BalanceDataTable />
         </section>
     );
 }
