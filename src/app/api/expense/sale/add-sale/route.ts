@@ -21,28 +21,24 @@ export async function POST(req: NextRequest) {
 
         const newData = new SaleModel(data);
 
-        let earning = 0;
         let due = 0;
+        let earning = 0;
 
         if (data.paymentStatus === 'Paid') {
-            earning = data.paymentAmount ?? 0;
+            earning = data.price;
         } else if (data.paymentStatus === 'Pending') {
-            due = data.dueAmount ?? 0;
-        } else if (data.paymentStatus === 'Partial') {
-            earning = data.paymentAmount ?? 0;
-            due = data.dueAmount ?? 0;
+            due = data.dueAmount;
+        } else {
+            earning = data.paymentAmount;
+            due = data.dueAmount;
         }
 
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    earning,
-                    due,
-                },
-            },
-            { new: true }
-        );
+        await BalanceModel.create({
+            due,
+            earning,
+            description: data.description,
+            date: new Date(),
+        });
 
         await newData.save();
 

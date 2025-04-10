@@ -11,11 +11,11 @@ export async function PUT(request: NextRequest) {
         const id = searchParams.get('id');
         const data = await request.json();
 
-        if (!id) {
+        if (!id || !data) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: 'Please provide a valid ID',
+                    message: 'Please provide valid data and ID.',
                 },
                 { status: 400 }
             );
@@ -27,66 +27,61 @@ export async function PUT(request: NextRequest) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: 'No data found',
+                    message: 'Sale not found.',
                 },
                 { status: 404 }
             );
         }
 
-        const oldPaymentAmount = oldSale.paymentAmount ?? 0;
-        const oldDueAmount = oldSale.dueAmount ?? 0;
-        const oldStatus = oldSale.paymentStatus;
+        const {
+            paymentAmount: oldPayment = 0,
+            dueAmount: oldDue = 0,
+            paymentStatus: oldStatus = 'Pending',
+        } = oldSale;
 
-        const newPaymentAmount = data.paymentAmount ?? 0;
-        const newDueAmount = data.dueAmount ?? 0;
-        const newStatus = data.paymentStatus;
+        const {
+            paymentAmount: newPayment = 0,
+            dueAmount: newDue = 0,
+            paymentStatus: newStatus = 'Pending',
+        } = data;
 
-        let earningDiff = 0;
-        let dueDiff = 0;
-
-        if (
-            oldStatus !== newStatus ||
-            oldPaymentAmount !== newPaymentAmount ||
-            oldDueAmount !== newDueAmount
-        ) {
-            if (oldStatus === 'Paid') {
-                earningDiff -= oldPaymentAmount;
-            } else if (oldStatus === 'Pending') {
-                dueDiff -= oldDueAmount;
-            } else if (oldStatus === 'Partial') {
-                earningDiff -= oldPaymentAmount;
-                dueDiff -= oldDueAmount;
-            }
-
-            if (newStatus === 'Paid') {
-                earningDiff += newPaymentAmount;
-            } else if (newStatus === 'Pending') {
-                dueDiff += newDueAmount;
-            } else if (newStatus === 'Partial') {
-                earningDiff += newPaymentAmount;
-                dueDiff += newDueAmount;
-            }
-
-            await BalanceModel.findOneAndUpdate(
-                {},
-                {
-                    $inc: {
-                        earning: earningDiff,
-                        due: dueDiff,
-                    },
-                },
-                { new: true }
-            );
-        }
+        const paymentDiff = newPayment - oldPayment;
+        const dueDiff = newDue - oldDue;
 
         const updatedSale = await SaleModel.findByIdAndUpdate(id, data, {
             new: true,
         });
 
+        if (paymentDiff !== 0 || dueDiff !== 0 || oldStatus !== newStatus) {
+            const balanceUpdate = {
+                earning: 0,
+                due: 0,
+            };
+
+            if (paymentDiff > 0) {
+                balanceUpdate.earning += paymentDiff;
+            } else if (paymentDiff < 0) {
+                balanceUpdate.earning -= Math.abs(paymentDiff);
+            }
+
+            if (dueDiff !== 0) {
+                balanceUpdate.due += dueDiff;
+            }
+
+            const shouldLog =
+                balanceUpdate.earning !== 0 || balanceUpdate.due !== 0;
+
+            if (shouldLog) {
+                await BalanceModel.create({
+                    ...balanceUpdate,
+                });
+            }
+        }
+
         return NextResponse.json(
             {
                 success: true,
-                message: 'Sale updated successfully.',
+                message: 'Sale updated and balances adjusted.',
                 data: updatedSale,
             },
             { status: 200 }
@@ -95,7 +90,7 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json(
             {
                 success: false,
-                message: 'Internal server error',
+                message: 'An error occurred while updating the sale.',
                 error,
             },
             { status: 500 }

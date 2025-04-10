@@ -21,8 +21,6 @@ export async function POST(req: NextRequest) {
 
         const newPurchase = new PurchaseModel(data);
 
-        console.log(data.dueAmount);
-
         let balance = 0;
         let due = 0;
         const earning = 0;

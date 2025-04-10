@@ -22,16 +22,24 @@ export async function DELETE(request: NextRequest) {
 
         const saleData = await SaleModel.findById(id);
 
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $inc: {
-                    earning: -saleData.paymentAmount,
-                    due: -saleData.dueAmount,
-                },
-            },
-            { new: true }
-        );
+        let due = 0;
+        let earning = 0;
+
+        if (saleData.paymentStatus === 'Paid') {
+            earning = -saleData.price;
+        } else if (saleData.paymentStatus === 'Pending') {
+            due = -saleData.dueAmount;
+        } else {
+            earning = -saleData.paymentAmount;
+            due = -saleData.dueAmount;
+        }
+
+        await BalanceModel.create({
+            due,
+            earning,
+            description: saleData.description,
+            date: new Date(),
+        });
 
         await SaleModel.findByIdAndDelete(id);
 

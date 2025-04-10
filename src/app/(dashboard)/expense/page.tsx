@@ -1,21 +1,6 @@
 'use client';
 
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import {
-    AlertCircle,
-    BadgeDollarSign,
-    DollarSign,
-    Droplet,
-    Milk,
-} from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertCircle, DollarSign, Droplet, Milk } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ExpenseDataTable from '@/components/expense/ExpenseDataTable';
@@ -23,9 +8,9 @@ import SalesDataTable from '@/components/expense/SalesDataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import toast from 'react-hot-toast';
-import AddSale from '@/components/expense/AddSale';
 import { getDue, getTotalBalance } from '@/actions/balance.action';
 import AddPurchaseForm from '@/components/expense/AddPurchase';
+import AddSaleForm from '@/components/expense/AddSale';
 
 export default function ExpensePage() {
     const [loading, setLoading] = useState(true);
@@ -103,26 +88,7 @@ export default function ExpensePage() {
         <section className="space-y-6">
             <div className="flex items-center gap-6">
                 <AddPurchaseForm />
-
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size={'lg'}>
-                            <BadgeDollarSign />
-                            Add Sale
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-5xl !pr-0">
-                        <ScrollArea className="h-[80vh] pr-8">
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl text-green-500">
-                                    Add Sale Form
-                                </DialogTitle>
-                            </DialogHeader>
-
-                            <AddSale />
-                        </ScrollArea>
-                    </DialogContent>
-                </Dialog>
+                <AddSaleForm />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
