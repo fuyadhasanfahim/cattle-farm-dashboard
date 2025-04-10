@@ -8,6 +8,13 @@ export async function PUT(req: NextRequest) {
         const { searchParams } = new URL(req.nextUrl);
         const id = searchParams.get('id');
 
+        if (!id) {
+            return NextResponse.json(
+                { message: 'ID is required' },
+                { status: 400 }
+            );
+        }
+
         await dbConfig();
 
         const {
@@ -39,23 +46,46 @@ export async function PUT(req: NextRequest) {
             );
         }
 
-        if (totalPrice !== existingPurchase.totalPrice) {
-            const priceDiff = totalPrice - existingPurchase.totalPrice;
+        let balance;
+        let expense;
+        let due;
 
-            console.log(priceDiff);
+        const totalPriceChanged = totalPrice !== existingPurchase.totalPrice;
+        const paymentTypeChanged = paymentType !== existingPurchase.paymentType;
 
-            await BalanceModel.findOneAndUpdate(
-                {},
-                {
-                    $inc: {
-                        balance: -priceDiff,
-                        expense: priceDiff,
-                    },
-                    $set: {
-                        date: new Date(),
-                    },
+        if (totalPriceChanged || paymentTypeChanged) {
+            const oldPaymentType = existingPurchase.paymentType;
+            const oldTotalPrice = existingPurchase.totalPrice;
+            const newTotalPrice = totalPrice;
+
+            if (oldPaymentType === 'Paid') {
+                if (paymentType === 'Paid') {
+                    const priceDiff = newTotalPrice - oldTotalPrice;
+                    balance = -priceDiff;
+                    expense = priceDiff;
+                } else {
+                    balance = oldTotalPrice;
+                    expense = -oldTotalPrice;
+                    due = newTotalPrice;
                 }
-            );
+            } else {
+                if (paymentType === 'Paid') {
+                    balance = -newTotalPrice;
+                    expense = newTotalPrice;
+                    due = -oldTotalPrice;
+                } else {
+                    const priceDiff = newTotalPrice - oldTotalPrice;
+                    due = priceDiff;
+                }
+            }
+
+            await BalanceModel.create({
+                balance,
+                expense,
+                due,
+                description: `Feed purchase update for ${feedType}`,
+                date: new Date(),
+            });
         }
 
         const updatedPurchase = await FeedPurchaseModel.findByIdAndUpdate(

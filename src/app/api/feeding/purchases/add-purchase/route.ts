@@ -32,17 +32,22 @@ export async function POST(req: NextRequest) {
             { new: true, upsert: true }
         );
 
-        const balance = await BalanceModel.findOne().sort({ createdAt: -1 });
+        let balance;
+        let due;
+        let expense;
 
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $set: { balance: balance.balance - totalPrice },
-                $inc: { expense: totalPrice },
-                date: new Date(),
-            },
-            { new: true, upsert: true }
-        );
+        if (paymentType === 'Paid') {
+            balance = -totalPrice;
+            expense = totalPrice;
+        } else {
+            due = totalPrice;
+        }
+
+        await BalanceModel.create({
+            balance,
+            due,
+            expense,
+        });
 
         return NextResponse.json(
             {

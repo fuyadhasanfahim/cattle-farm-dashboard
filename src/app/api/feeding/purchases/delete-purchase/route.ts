@@ -26,7 +26,7 @@ export async function DELETE(req: NextRequest) {
             );
         }
 
-        const { feedType, quantityPurchased } = existingPurchase;
+        const { feedType, quantityPurchased, paymentType } = existingPurchase;
 
         await FeedInventoryModel.findOneAndUpdate(
             { feedType },
@@ -38,17 +38,22 @@ export async function DELETE(req: NextRequest) {
 
         const totalPrice = existingPurchase.totalPrice;
 
-        const balance = await BalanceModel.findOne().sort({ createdAt: -1 });
+        let balance;
+        let due;
+        let expense;
 
-        await BalanceModel.findOneAndUpdate(
-            {},
-            {
-                $set: { balance: balance.balance + totalPrice },
-                $inc: { expense: -totalPrice },
-                date: new Date(),
-            },
-            { new: true, upsert: true }
-        );
+        if (paymentType === 'Paid') {
+            balance = totalPrice;
+            expense = -totalPrice;
+        } else {
+            due = -totalPrice;
+        }
+
+        await BalanceModel.create({
+            balance,
+            due,
+            expense,
+        });
 
         await FeedPurchaseModel.findByIdAndDelete(id);
 

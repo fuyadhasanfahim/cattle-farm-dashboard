@@ -5,22 +5,29 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { IFeedPurchase } from '@/types/feeding.interface';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form } from '@/components/ui/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
 import MyCalender from '@/components/shared/MyCalender';
+import SelectOption from '@/components/shared/Select';
+import { IFeedPurchase } from '@/types/feeding.interface';
 
 const feedSchema = z.object({
     feedType: z.string().min(1, 'Feed Type is required'),
     purchaseDate: z.date(),
-    quantityPurchased: z.number().positive('Quantity must be greater than 0'),
-    perKgPrice: z.number().positive('Price must be greater than 0'),
-    totalPrice: z.number().positive('Total Price must be greater than 0'),
+    quantityPurchased: z.string().nonempty(),
+    perKgPrice: z.string().nonempty(),
+    totalPrice: z.string().nonempty(),
     paymentType: z.string().min(1, 'Payment Type is required'),
 });
 
@@ -29,6 +36,7 @@ export default function FeedingDetails() {
     const [loading, setLoading] = useState(false);
     const [balance, setBalance] = useState<number>(0);
     const [originalTotalPrice, setOriginalTotalPrice] = useState<number>(0);
+    const [balanceLoading, setBalanceLoading] = useState(false);
     const router = useRouter();
 
     const form = useForm({
@@ -36,9 +44,9 @@ export default function FeedingDetails() {
         defaultValues: {
             feedType: '',
             purchaseDate: new Date(),
-            quantityPurchased: 0,
-            perKgPrice: 0,
-            totalPrice: 0,
+            quantityPurchased: '',
+            perKgPrice: '',
+            totalPrice: '',
             paymentType: '',
         },
     });
@@ -56,17 +64,18 @@ export default function FeedingDetails() {
                     throw new Error('Failed to fetch data');
                 }
 
-                const result = await response.json();
+                const { feedPurchases } = await response.json();
 
                 form.reset({
-                    feedType: result.feedPurchases.feedType,
-                    purchaseDate: new Date(result.feedPurchases.purchaseDate),
-                    quantityPurchased: result.feedPurchases.quantityPurchased,
-                    perKgPrice: result.feedPurchases.perKgPrice,
-                    totalPrice: result.feedPurchases.totalPrice,
-                    paymentType: result.feedPurchases.paymentType,
+                    feedType: feedPurchases.feedType as string,
+                    purchaseDate: new Date(feedPurchases.purchaseDate),
+                    quantityPurchased:
+                        feedPurchases.quantityPurchased.toString(),
+                    perKgPrice: feedPurchases.perKgPrice.toString(),
+                    totalPrice: feedPurchases.totalPrice.toString(),
+                    paymentType: feedPurchases.paymentType as string,
                 });
-                setOriginalTotalPrice(result.feedPurchases.totalPrice);
+                setOriginalTotalPrice(feedPurchases.totalPrice);
             } catch (error) {
                 toast.error((error as Error).message);
             } finally {
@@ -77,16 +86,40 @@ export default function FeedingDetails() {
         fetchData();
     }, [form, id]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setBalanceLoading(true);
+                const response = await fetch('/api/balance/get-balances');
+                const result = await response.json();
+                if (response.ok) {
+                    setBalance(
+                        result.data.reduce(
+                            (acc: number, val: { balance: number }) =>
+                                acc + val.balance,
+                            0
+                        )
+                    );
+                }
+            } catch (error) {
+                toast.error((error as Error).message || 'Something went wrong');
+            } finally {
+                setBalanceLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
     const { setError, formState } = form;
 
     const quantity = form.watch('quantityPurchased');
     const pricePerKg = form.watch('perKgPrice');
+    const totalPrice = Number(quantity) * Number(pricePerKg);
 
     useEffect(() => {
-        const newTotalPrice = quantity * pricePerKg;
-        form.setValue('totalPrice', newTotalPrice);
+        form.setValue('totalPrice', totalPrice.toString());
 
-        const priceDifference = newTotalPrice - originalTotalPrice;
+        const priceDifference = totalPrice - originalTotalPrice;
 
         if (priceDifference > 0 && priceDifference > balance) {
             setError('perKgPrice', {
@@ -101,7 +134,15 @@ export default function FeedingDetails() {
         } else {
             form.clearErrors('perKgPrice');
         }
-    }, [quantity, pricePerKg, originalTotalPrice, balance, form, setError]);
+    }, [
+        quantity,
+        pricePerKg,
+        originalTotalPrice,
+        balance,
+        form,
+        setError,
+        totalPrice,
+    ]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -127,17 +168,25 @@ export default function FeedingDetails() {
         fetchData();
     }, []);
 
-    const onSubmit = async (data: IFeedPurchase) => {
+    const onSubmit = async (data: z.infer<typeof feedSchema>) => {
         try {
             setLoading(true);
+
+            const payload: IFeedPurchase = {
+                feedType: data.feedType,
+                purchaseDate: data.purchaseDate,
+                quantityPurchased: Number(data.quantityPurchased),
+                perKgPrice: Number(data.perKgPrice),
+                totalPrice: Number(data.totalPrice),
+                paymentType: data.paymentType,
+            };
+
             const response = await fetch(
                 `/api/feeding/purchases/update-purchase?id=${id}`,
                 {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
                 }
             );
 
@@ -145,7 +194,7 @@ export default function FeedingDetails() {
                 toast.success('Purchases updated successfully');
                 router.push('/feeding');
             } else {
-                throw new Error('Failed to update data');
+                toast.error('Failed to update data');
             }
         } catch (error) {
             toast.error((error as Error).message);
@@ -185,133 +234,163 @@ export default function FeedingDetails() {
     };
 
     return (
-        <Card className="max-w-lg mx-auto">
-            <CardHeader>
-                <CardTitle>Add Feed Purchase</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4"
-                    >
-                        <MyCalender
-                            form={form}
-                            label="Select Purchase Date"
-                            name="purchaseDate"
-                        />
-
+        <section className="flex items-center justify-center h-[83vh] w-full">
+            <Card className="max-w-xl mx-auto">
+                <CardHeader>
+                    <CardTitle>
+                        <div>Update Feed Purchase</div>
                         <div>
-                            <Label htmlFor="feedType">Feed Type</Label>
-                            <Input
-                                {...form.register('feedType')}
-                                placeholder="Enter feed type"
-                            />
-                            {form.formState.errors.feedType && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.feedType.message}
-                                </p>
-                            )}
+                            <span className="text-sm text-gray-500">
+                                Balance:{' '}
+                                {balanceLoading ? 'Loading...' : balance} Taka
+                            </span>
                         </div>
-
-                        <div>
-                            <Label htmlFor="quantityPurchased">
-                                Quantity (kg)
-                            </Label>
-                            <Input
-                                type="number"
-                                {...form.register('quantityPurchased', {
-                                    valueAsNumber: true,
-                                })}
-                                placeholder="Enter quantity"
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="grid grid-cols-2 gap-x-6 gap-y-4 items-center"
+                        >
+                            <MyCalender
+                                form={form}
+                                label="Select Purchase Date"
+                                name="purchaseDate"
                             />
-                            {form.formState.errors.quantityPurchased && (
-                                <p className="text-red-500 text-sm">
+
+                            <SelectOption
+                                data={[
                                     {
-                                        form.formState.errors.quantityPurchased
-                                            .message
+                                        value: 'Dung',
+                                        label: 'Dung',
+                                    },
+                                    {
+                                        value: 'Grass',
+                                        label: 'Grass',
+                                    },
+                                    {
+                                        value: 'Grain Feed',
+                                        label: 'Grain Feed',
+                                    },
+                                ]}
+                                form={form}
+                                label="Feed Type"
+                                name="feedType"
+                                placeholder="Select Feed Type"
+                                required
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="quantityPurchased"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Quantity (kg)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter quantity"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="perKgPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Price per Kg</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter price per kg"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="totalPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                disabled
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <SelectOption
+                                data={[
+                                    {
+                                        value: 'Paid',
+                                        label: 'Paid',
+                                    },
+                                    {
+                                        value: 'Pending',
+                                        label: 'Pending',
+                                    },
+                                ]}
+                                form={form}
+                                label="Payment Type"
+                                name="paymentType"
+                                placeholder="Select Payment Type"
+                                required
+                            />
+
+                            <div className="flex items-center gap-6 w-full col-span-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={loading}
+                                    className="w-full"
+                                    onClick={() => router.back()}
+                                >
+                                    <ArrowLeft />
+                                    Back
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={
+                                        loading ||
+                                        Object.keys(formState.errors).length > 0
                                     }
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="perKgPrice">Price per Kg</Label>
-                            <Input
-                                type="number"
-                                {...form.register('perKgPrice', {
-                                    valueAsNumber: true,
-                                })}
-                                placeholder="Enter price per kg"
-                            />
-                            {form.formState.errors.perKgPrice && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.perKgPrice.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="totalPrice">Total Price</Label>
-                            <Input
-                                type="number"
-                                {...form.register('totalPrice', {
-                                    valueAsNumber: true,
-                                })}
-                                disabled
-                            />
-                        </div>
-
-                        <div>
-                            <Label htmlFor="paymentType">Payment Type</Label>
-                            <Input
-                                {...form.register('paymentType')}
-                                placeholder="Enter payment type"
-                            />
-                            {form.formState.errors.paymentType && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.paymentType.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-6">
-                            <Button
-                                type="button"
-                                variant={'outline'}
-                                disabled={loading}
-                                className="w-full"
-                                onClick={() => router.back()}
-                            >
-                                <ArrowLeft />
-                                Back
-                            </Button>
-
-                            <Button
-                                type="submit"
-                                disabled={
-                                    loading ||
-                                    Object.keys(formState.errors || {}).length >
-                                        0
-                                }
-                                className="w-full"
-                            >
-                                {loading ? 'Updating...' : 'Update Feed'}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant={'destructive'}
-                                disabled={loading}
-                                className="w-full"
-                                onClick={() => handleDelete(id as string)}
-                            >
-                                Delete Record
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
+                                    className="w-full"
+                                >
+                                    {form.formState.isSubmitting
+                                        ? 'Updating...'
+                                        : 'Update Feed'}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant={'destructive'}
+                                    disabled={
+                                        loading ||
+                                        Object.keys(formState.errors).length > 0
+                                    }
+                                    onClick={() => handleDelete(id as string)}
+                                    className="w-full"
+                                >
+                                    Delete Feed
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </section>
     );
 }

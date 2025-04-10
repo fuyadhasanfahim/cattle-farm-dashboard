@@ -8,57 +8,61 @@ import { toast } from 'react-hot-toast';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
-import { IFeedPurchase } from '@/types/feeding.interface';
 import MyCalender from '@/components/shared/MyCalender';
-import { Form } from '@/components/ui/form';
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+} from '@/components/ui/form';
 import { ArrowLeft } from 'lucide-react';
 import SelectOption from '@/components/shared/Select';
 
 const feedSchema = z.object({
     feedType: z.string().min(1, 'Feed Type is required'),
     purchaseDate: z.date(),
-    quantityPurchased: z.number().positive('Quantity must be greater than 0'),
-    perKgPrice: z.number().positive('Price must be greater than 0'),
-    totalPrice: z.number().positive('Total Price must be greater than 0'),
+    quantityPurchased: z.string().nonempty(),
+    perKgPrice: z.string().nonempty(),
+    totalPrice: z.string().nonempty(),
     paymentType: z.string().min(1, 'Payment Type is required'),
 });
 
 export default function AddFeed() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
-    const [balance, setBalance] = useState<number>(0);
+    const [balanceLoading, setBalanceLoading] = useState(false);
+    const [balance, setBalance] = useState(0);
 
     const form = useForm({
         resolver: zodResolver(feedSchema),
         defaultValues: {
             feedType: '',
             purchaseDate: new Date(),
-            quantityPurchased: 0,
-            perKgPrice: 0,
-            totalPrice: 0,
+            quantityPurchased: '',
+            perKgPrice: '',
+            totalPrice: '',
             paymentType: '',
         },
     });
 
     const { setError, formState } = form;
-
     const quantity = form.watch('quantityPurchased');
     const pricePerKg = form.watch('perKgPrice');
-    const totalPrice = quantity * pricePerKg;
+    const totalPrice = Number(quantity) * Number(pricePerKg);
 
     useEffect(() => {
-        form.setValue('totalPrice', totalPrice);
+        form.setValue('totalPrice', totalPrice.toString());
 
         if (totalPrice > balance) {
-            setError('perKgPrice', {
+            setError('totalPrice', {
                 type: 'custom',
                 message: 'Total price exceeds available balance',
             });
         } else {
-            form.clearErrors('perKgPrice');
+            form.clearErrors('totalPrice');
         }
     }, [quantity, pricePerKg, totalPrice, balance, form, setError]);
 
@@ -66,11 +70,8 @@ export default function AddFeed() {
         const fetchData = async () => {
             try {
                 setBalanceLoading(true);
-
                 const response = await fetch('/api/balance/get-balances');
-
                 const result = await response.json();
-
                 if (response.ok) {
                     setBalance(
                         result.data.reduce(
@@ -86,11 +87,10 @@ export default function AddFeed() {
                 setBalanceLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
-    const onSubmit = async (data: IFeedPurchase) => {
+    const onSubmit = async (data: z.infer<typeof feedSchema>) => {
         setLoading(true);
         try {
             const response = await fetch(
@@ -98,15 +98,20 @@ export default function AddFeed() {
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify({
+                        feedType: data.feedType,
+                        purchaseDate: data.purchaseDate,
+                        quantityPurchased: Number(data.quantityPurchased),
+                        perKgPrice: Number(data.perKgPrice),
+                        totalPrice: Number(data.totalPrice),
+                        paymentType: data.paymentType,
+                    }),
                 }
             );
 
             if (response.ok) {
                 toast.success('Feed added successfully!');
-
                 form.reset();
-
                 router.back();
             } else {
                 toast.error('Failed to add feed.');
@@ -119,31 +124,31 @@ export default function AddFeed() {
     };
 
     return (
-        <Card className="max-w-lg mx-auto">
-            <CardHeader>
-                <CardTitle>
-                    <div>Add Feed Purchase</div>
-                    <div>
-                        <span className="text-sm text-gray-500">
-                            Balance: {balanceLoading ? 'Loading...' : balance}{' '}
-                            Taka
-                        </span>
-                    </div>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4"
-                    >
-                        <MyCalender
-                            form={form}
-                            label="Select Purchase Date"
-                            name="purchaseDate"
-                        />
-
+        <section className="flex items-center justify-center h-[83vh] w-full">
+            <Card className="max-w-xl mx-auto">
+                <CardHeader>
+                    <CardTitle>
+                        <div>Add Feed Purchase</div>
                         <div>
+                            <span className="text-sm text-gray-500">
+                                Balance:{' '}
+                                {balanceLoading ? 'Loading...' : balance} Taka
+                            </span>
+                        </div>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="grid grid-cols-2 gap-x-6 gap-y-4 items-center"
+                        >
+                            <MyCalender
+                                form={form}
+                                label="Select Purchase Date"
+                                name="purchaseDate"
+                            />
+
                             <SelectOption
                                 data={[
                                     {
@@ -165,65 +170,64 @@ export default function AddFeed() {
                                 placeholder="Select Feed Type"
                                 required
                             />
-                            {form.formState.errors.feedType && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.feedType.message}
-                                </p>
-                            )}
-                        </div>
 
-                        <div>
-                            <Label htmlFor="quantityPurchased">
-                                Quantity (kg)
-                            </Label>
-                            <Input
-                                type="number"
-                                {...form.register('quantityPurchased', {
-                                    valueAsNumber: true,
-                                })}
-                                placeholder="Enter quantity"
+                            <FormField
+                                control={form.control}
+                                name="quantityPurchased"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Quantity (kg)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter quantity"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                            {form.formState.errors.quantityPurchased && (
-                                <p className="text-red-500 text-sm">
-                                    {
-                                        form.formState.errors.quantityPurchased
-                                            .message
-                                    }
-                                </p>
-                            )}
-                        </div>
 
-                        <div>
-                            <Label htmlFor="perKgPrice">Price per Kg</Label>
-                            <Input
-                                type="number"
-                                {...form.register('perKgPrice', {
-                                    valueAsNumber: true,
-                                })}
-                                placeholder="Enter price per kg"
+                            <FormField
+                                control={form.control}
+                                name="perKgPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Price per Kg</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter price per kg"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                            {form.formState.errors.perKgPrice && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.perKgPrice.message}
-                                </p>
-                            )}
-                        </div>
 
-                        <div>
-                            <Label htmlFor="totalPrice">Total Price</Label>
-                            <Input
-                                type="number"
-                                {...form.register('totalPrice')}
-                                disabled
+                            <FormField
+                                control={form.control}
+                                name="totalPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                disabled
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                        </div>
 
-                        <div>
                             <SelectOption
                                 data={[
                                     {
-                                        value: 'Payed',
-                                        label: 'Payed',
+                                        value: 'Paid',
+                                        label: 'Paid',
                                     },
                                     {
                                         value: 'Pending',
@@ -236,40 +240,33 @@ export default function AddFeed() {
                                 placeholder="Select Payment Type"
                                 required
                             />
-                            {form.formState.errors.feedType && (
-                                <p className="text-red-500 text-sm">
-                                    {form.formState.errors.feedType.message}
-                                </p>
-                            )}
-                        </div>
 
-                        <div className="flex items-center gap-6">
-                            <Button
-                                type="button"
-                                variant={'outline'}
-                                disabled={loading}
-                                className="w-full"
-                                onClick={() => router.back()}
-                            >
-                                <ArrowLeft />
-                                Back
-                            </Button>
-
-                            <Button
-                                type="submit"
-                                disabled={
-                                    loading ||
-                                    Object.keys(formState.errors || {}).length >
-                                        0
-                                }
-                                className="w-full"
-                            >
-                                {loading ? 'Adding...' : 'Add Feed'}
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
+                            <div className="flex items-center gap-6 w-full col-span-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={loading}
+                                    className="w-full"
+                                    onClick={() => router.back()}
+                                >
+                                    <ArrowLeft />
+                                    Back
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={
+                                        loading ||
+                                        Object.keys(formState.errors).length > 0
+                                    }
+                                    className="w-full"
+                                >
+                                    {loading ? 'Adding...' : 'Add Feed'}
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </section>
     );
 }
