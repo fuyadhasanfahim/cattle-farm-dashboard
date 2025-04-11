@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { Label, Pie, PieChart } from 'recharts';
 
@@ -26,6 +25,7 @@ import {
     getExpense,
     getTotalBalance,
 } from '@/actions/balance.action';
+import { useEffect, useState } from 'react';
 
 const chartConfig = {
     earning: {
@@ -47,12 +47,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PieChartComponent() {
-    const [financialData, setFinancialData] = React.useState<
+    const [financialData, setFinancialData] = useState<
         { name: string; value: number; fill: string }[]
     >([]);
-    const [total, setTotal] = React.useState(0);
+    const [total, setTotal] = useState(0);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
             return setTotal(await getTotalBalance());
         };
@@ -60,7 +60,7 @@ export function PieChartComponent() {
         fetchData();
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         async function fetchData() {
             try {
                 const [earning, expense, balance, due] = await Promise.all([
@@ -73,22 +73,22 @@ export function PieChartComponent() {
                 const updatedChartData = [
                     {
                         name: 'Earnings',
-                        value: earning.toFixed(2) || 0,
+                        value: Number(earning.toFixed(2)) || 0,
                         fill: 'hsl(var(--chart-1))',
                     },
                     {
                         name: 'Expenses',
-                        value: expense.toFixed(2) || 0,
+                        value: Number(expense.toFixed(2)) || 0,
                         fill: 'hsl(var(--chart-2))',
                     },
                     {
                         name: 'Balance',
-                        value: balance.toFixed(2) || 0,
+                        value: Number(balance.toFixed(2)) || 0,
                         fill: 'hsl(var(--chart-3))',
                     },
                     {
                         name: 'Due',
-                        value: due.toFixed(2) || 0,
+                        value: Number(due.toFixed(2)) || 0,
                         fill: 'hsl(var(--chart-4))',
                     },
                 ];
@@ -115,53 +115,62 @@ export function PieChartComponent() {
                     config={chartConfig}
                     className="mx-auto aspect-square max-h-[250px]"
                 >
-                    <PieChart>
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Pie
-                            data={financialData}
-                            dataKey="value"
-                            nameKey="name"
-                            innerRadius={60}
-                            strokeWidth={5}
-                        >
-                            <Label
-                                content={({ viewBox }) => {
-                                    if (
-                                        viewBox &&
-                                        'cx' in viewBox &&
-                                        'cy' in viewBox
-                                    ) {
-                                        return (
-                                            <text
-                                                x={viewBox.cx}
-                                                y={viewBox.cy}
-                                                textAnchor="middle"
-                                                dominantBaseline="middle"
-                                            >
-                                                <tspan
+                    {financialData.length === 0 ? (
+                        <div className="text-center text-muted">
+                            No financial data found
+                        </div>
+                    ) : (
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={financialData}
+                                dataKey="value"
+                                nameKey="name"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (
+                                            viewBox &&
+                                            'cx' in viewBox &&
+                                            'cy' in viewBox
+                                        ) {
+                                            return (
+                                                <text
                                                     x={viewBox.cx}
                                                     y={viewBox.cy}
-                                                    className="fill-foreground text-3xl font-bold"
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
                                                 >
-                                                    {total.toLocaleString()}
-                                                </tspan>
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) + 24}
-                                                    className="fill-muted-foreground"
-                                                >
-                                                    Total
-                                                </tspan>
-                                            </text>
-                                        );
-                                    }
-                                }}
-                            />
-                        </Pie>
-                    </PieChart>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {total.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={
+                                                            (viewBox.cy || 0) +
+                                                            24
+                                                        }
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Total
+                                                    </tspan>
+                                                </text>
+                                            );
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                        </PieChart>
+                    )}
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">

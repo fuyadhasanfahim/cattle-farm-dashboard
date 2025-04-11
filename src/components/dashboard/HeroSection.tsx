@@ -1,5 +1,5 @@
 import { getUserData } from '@/actions/user.action';
-import { DatePicker } from '../shared/DatePicker';
+// import { DatePicker } from '../shared/DatePicker';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Loader2 } from 'lucide-react';
 
@@ -29,7 +29,7 @@ export default async function HeroSection() {
                     </div>
                 </div>
 
-                <DatePicker />
+                {/* <DatePicker /> */}
             </div>
         </section>
     );

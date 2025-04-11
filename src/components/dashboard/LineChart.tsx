@@ -91,7 +91,13 @@ export default function MilkProductionChart() {
                             angle={0}
                             interval={0}
                         />
-                        <YAxis />
+                        <YAxis
+                            domain={[
+                                0,
+                                (dataMax: number) =>
+                                    dataMax === 0 ? 100 : dataMax + 100,
+                            ]}
+                        />
                         <ChartTooltip
                             cursor={true}
                             content={<ChartTooltipContent hideLabel />}

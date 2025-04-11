@@ -63,7 +63,7 @@ export async function getExpense() {
 
         if (response.ok) {
             return result.data.reduce(
-                (acc: number, val: { earning: number }) => acc + val.earning,
+                (acc: number, val: { expense: number }) => acc + val.expense,
                 0
             );
         } else {
