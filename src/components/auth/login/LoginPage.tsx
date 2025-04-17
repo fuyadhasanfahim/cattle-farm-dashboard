@@ -49,7 +49,7 @@ export default function LoginPage() {
         <div className="flex flex-col gap-6 w-full max-w-md">
             <Card className="">
                 <CardHeader>
-                    <CardTitle className="text-2xl">লগইন</CardTitle>
+                    <CardTitle className="text-2xl">Login</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form
@@ -57,7 +57,7 @@ export default function LoginPage() {
                         onSubmit={handleSubmit}
                     >
                         <div className="grid gap-2">
-                            <Label htmlFor="email">ইমেইল</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -71,7 +71,7 @@ export default function LoginPage() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="password">পাসওয়ার্ড</Label>
+                            <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -92,7 +92,7 @@ export default function LoginPage() {
                             className="w-full bg-green-500"
                             disabled={isLoading}
                         >
-                            {isLoading ? 'লোডিং...' : 'লগইন'}
+                            {isLoading ? 'Loading...' : 'Login'}
                         </Button>
                     </form>
                 </CardContent>
