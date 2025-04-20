@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import HeroSection from '@/components/dashboard/HeroSection';
 import LineChartComponent from '@/components/dashboard/LineChart';
 import { PieChartComponent } from '@/components/dashboard/PieChart';
