@@ -1,14 +1,6 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
-
-const inter = Inter({
-    subsets: ['latin'],
-    display: 'swap',
-    variable: '--',
-    weight: ['400', '900'],
-});
 
 export const metadata: Metadata = {
     title: 'Dashboard | Cattle Farm',
@@ -22,7 +14,14 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="bn">
-            <body className={`${inter.variable} antialiased`}>
+            <head>
+                {/* Font Credentials */}
+                <link
+                    href="https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap"
+                    rel="stylesheet"
+                />
+            </head>
+            <body className={`antialiased`}>
                 {children}
                 <Toaster position="bottom-right" reverseOrder={false} />
             </body>

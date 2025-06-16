@@ -13,6 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../ui/select';
+import { cn } from '@/lib/utils';
 
 interface SelectOptionProps<T extends FieldValues> {
     data: {
@@ -28,6 +29,7 @@ interface SelectOptionProps<T extends FieldValues> {
     required?: boolean;
     disabled?: boolean;
     onChange?: (value: string) => void;
+    className?: string;
 }
 
 export default function SelectOption<T extends FieldValues>({
@@ -39,13 +41,14 @@ export default function SelectOption<T extends FieldValues>({
     disabled = false,
     required,
     onChange,
+    className,
 }: SelectOptionProps<T>) {
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
-                <FormItem className="w-full">
+                <FormItem className={cn('w-full', className)}>
                     <FormLabel>{label}</FormLabel>
                     <Select
                         onValueChange={(value) => {

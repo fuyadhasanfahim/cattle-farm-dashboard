@@ -12,9 +12,6 @@ import {
     GitPullRequest,
     Heart,
     Users,
-    Folder,
-    Warehouse,
-    ClipboardCheck,
     Wallet,
     Scale,
 } from 'lucide-react';
@@ -31,9 +28,6 @@ const sidebarItems = [
     { icon: Scale, label: 'Balance', link: '/balance' },
     { icon: Wallet, label: 'Expense', link: '/expense' },
     { icon: Users, label: 'Customer', link: '/customers' },
-    { icon: Folder, label: 'Party', link: '/party' },
-    { icon: Warehouse, label: 'Inventory', link: '/inventory' },
-    { icon: ClipboardCheck, label: 'Reports', link: '/reports' },
 ];
 
 export default function Sidebar() {

@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 500;
 }
 
 @layer base {
@@ -41,7 +42,7 @@ body {
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground font-inter;
+        @apply bg-background text-foreground;
     }
 }
 

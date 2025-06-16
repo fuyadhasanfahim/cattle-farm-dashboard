@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
@@ -14,16 +14,20 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { ArrowLeft, CalendarIcon, Loader2, Save } from 'lucide-react';
+import {
+    ArrowLeft,
+    CalendarIcon,
+    Loader2,
+    Plus,
+    Save,
+    Trash2,
+} from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import SelectOption from '../shared/Select';
 import toast from 'react-hot-toast';
 import { Input } from '../ui/input';
 import { useRouter } from 'next/navigation';
-import { milkProductionValidationSchema } from '@/validator/milk.production.validation.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ICattle } from '@/types/cattle.interface';
-import { IMilkProduction } from '@/types/milk.production.interface';
 
 const milkingOptions = [
     {
@@ -44,20 +48,40 @@ const milkingOptions = [
     },
 ];
 
+type MilkProductionEntry = {
+    cattleTagId: string;
+    milkQuantity: string;
+    fatPercentage: string;
+};
+
+type MilkProductionFormData = {
+    milkCollectionDate: Date;
+    time: string;
+    entries: MilkProductionEntry[];
+};
+
 export default function AddMilkProduction() {
     const [isLoading, setIsLoading] = useState(false);
     const [cattles, setCattles] = useState<ICattle[] | []>([]);
     const router = useRouter();
 
-    const form = useForm({
-        resolver: zodResolver(milkProductionValidationSchema),
+    const form = useForm<MilkProductionFormData>({
         defaultValues: {
             milkCollectionDate: new Date(),
-            cattleTagId: '',
-            milkQuantity: '',
-            fatPercentage: '',
             time: '',
+            entries: [
+                {
+                    cattleTagId: '',
+                    milkQuantity: '',
+                    fatPercentage: '',
+                },
+            ],
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'entries',
     });
 
     useEffect(() => {
@@ -65,8 +89,7 @@ export default function AddMilkProduction() {
             setIsLoading(true);
             try {
                 const response = await fetch('/api/cattle/get-all-tag-id');
-                if (!response.ok)
-                    throw new Error('Failed to fetch cattle data');
+                if (!response.ok) toast.error('Failed to fetch cattle data');
 
                 const { data } = await response.json();
                 setCattles(data);
@@ -82,10 +105,18 @@ export default function AddMilkProduction() {
         fetchData();
     }, []);
 
-    const onSubmit = async (data: IMilkProduction) => {
+    const onSubmit = async (data: MilkProductionFormData) => {
         setIsLoading(true);
 
         try {
+            const payload = data.entries.map((entry) => ({
+                milkCollectionDate: data.milkCollectionDate,
+                time: data.time,
+                cattleTagId: entry.cattleTagId,
+                milkQuantity: entry.milkQuantity,
+                fatPercentage: entry.fatPercentage,
+            }));
+
             const response = await fetch(
                 '/api/milk-production/add-milk-production',
                 {
@@ -93,7 +124,7 @@ export default function AddMilkProduction() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify(payload),
                 }
             );
 
@@ -101,7 +132,17 @@ export default function AddMilkProduction() {
 
             if (response.ok) {
                 toast.success('Milk production data saved successfully.');
-                form.reset();
+                form.reset({
+                    milkCollectionDate: new Date(),
+                    time: '',
+                    entries: [
+                        {
+                            cattleTagId: '',
+                            milkQuantity: '',
+                            fatPercentage: '',
+                        },
+                    ],
+                });
             } else {
                 toast.error(
                     result.message || 'Failed to save milk production data.'
@@ -112,6 +153,14 @@ export default function AddMilkProduction() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const addAnotherEntry = () => {
+        append({
+            cattleTagId: '',
+            milkQuantity: '',
+            fatPercentage: '',
+        });
     };
 
     return (
@@ -180,78 +229,110 @@ export default function AddMilkProduction() {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 items-center">
-                    <SelectOption
-                        data={
-                            cattles.length > 0
-                                ? cattles.map((c) => ({
-                                      value: c.tagId,
-                                      label: c.tagId,
-                                  }))
-                                : [{ value: 'N/A', label: 'N/A' }]
-                        }
-                        form={form}
-                        name="cattleTagId"
-                        label="Cattle tag ID *"
-                        placeholder="eg: 1200"
-                        required
-                    />
+                <div className="space-y-6">
+                    {fields.map((field, index) => (
+                        <div
+                            key={field.id}
+                            className="grid grid-cols-7 gap-4 items-end relative"
+                        >
+                            <SelectOption
+                                data={
+                                    cattles.length > 0
+                                        ? cattles.map((c) => ({
+                                              value: c.tagId,
+                                              label: c.tagId,
+                                          }))
+                                        : [{ value: 'N/A', label: 'N/A' }]
+                                }
+                                form={form}
+                                name={`entries.${index}.cattleTagId`}
+                                label="Cattle tag ID *"
+                                placeholder="eg: 1200"
+                                className="col-span-2"
+                                required
+                            />
 
-                    <FormField
-                        control={form.control}
-                        name="milkQuantity"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>
-                                    Total Milk Quantity (Liter) *
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="eg: 200"
-                                        onChange={(e) => {
-                                            const value = e.target.value || 0;
-                                            field.onChange(value);
-                                        }}
-                                        value={field.value}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                            <FormField
+                                control={form.control}
+                                name={`entries.${index}.milkQuantity`}
+                                render={({ field }) => (
+                                    <FormItem className="w-full col-span-2">
+                                        <FormLabel>
+                                            Total Milk Quantity (Liter) *
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="eg: 200"
+                                                onChange={(e) => {
+                                                    const value =
+                                                        e.target.value || 0;
+                                                    field.onChange(value);
+                                                }}
+                                                value={field.value}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`entries.${index}.fatPercentage`}
+                                render={({ field }) => (
+                                    <FormItem className="w-full col-span-2">
+                                        <FormLabel>
+                                            Fat Percentage (Optional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="eg: 50"
+                                                min="0"
+                                                max="100"
+                                                step="0.1"
+                                                onChange={(e) => {
+                                                    let value =
+                                                        e.target.value || 0;
+                                                    if (Number(value) > 100)
+                                                        value = 100;
+                                                    field.onChange(value);
+                                                }}
+                                                value={field.value}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {index > 0 && (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    className="col-span-1"
+                                    onClick={() => remove(index)}
+                                >
+                                    <Trash2 className="size-5" />
+                                </Button>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 items-center">
-                    <FormField
-                        control={form.control}
-                        name="fatPercentage"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>Fat Percentage (Optional)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="eg: 50"
-                                        min="0"
-                                        max="100"
-                                        step="0.1"
-                                        onChange={(e) => {
-                                            let value = e.target.value || 0;
-                                            if (Number(value) > 100)
-                                                value = 100;
-                                            field.onChange(value);
-                                        }}
-                                        value={field.value}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div></div>
+                <div className="flex items-center justify-end">
+                    <Button
+                        size={'lg'}
+                        variant={'secondary'}
+                        type="button"
+                        onClick={addAnotherEntry}
+                    >
+                        <Plus className="size-5" />
+                        <span>Another</span>
+                    </Button>
                 </div>
 
-                <div className="flex items-center justify-center gap-6">
+                <div className="grid grid-cols-2 items-center gap-6">
                     <Button
                         onClick={() => router.back()}
                         type="button"

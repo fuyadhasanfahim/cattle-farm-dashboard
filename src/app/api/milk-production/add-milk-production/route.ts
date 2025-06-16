@@ -6,85 +6,116 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const {
-            milkCollectionDate,
-            cattleTagId,
-            milkQuantity,
-            fatPercentage,
-            time,
-        } = await request.json();
+        const entries = await request.json();
 
-        if (!milkCollectionDate || !milkQuantity || !time) {
+        // Check if entries is an array
+        if (!Array.isArray(entries)) {
             return NextResponse.json(
-                { success: false, message: 'All fields are required!' },
+                {
+                    success: false,
+                    message: 'Expected an array of milk production entries',
+                },
                 { status: 400 }
             );
         }
 
-        await dbConfig();
+        // Validate all entries
+        for (const entry of entries) {
+            const { milkCollectionDate, cattleTagId, milkQuantity, time } =
+                entry;
 
-        const normalizedDate = format(
-            new Date(milkCollectionDate),
-            'yyyy-MM-dd'
-        );
-
-        const isDuplicate = await MilkProductionModel.findOne({
-            milkCollectionDate: normalizedDate,
-            cattleTagId,
-            time,
-        });
-
-        if (isDuplicate) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message:
-                        'Duplicate entry! Milk production record already exists for this date, cattle ID, and time.',
-                },
-                { status: 409 }
-            );
+            if (!milkCollectionDate || !milkQuantity || !time || !cattleTagId) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message:
+                            'All fields (date, cattleTagId, quantity, time) are required for each entry!',
+                    },
+                    { status: 400 }
+                );
+            }
         }
 
-        const milkProduction = new MilkProductionModel({
-            milkCollectionDate,
-            cattleTagId,
-            milkQuantity,
-            fatPercentage,
-            time,
-        });
+        await dbConfig();
 
+        const savedEntries = [];
+        let totalMilkQuantity = 0;
+
+        // Process each entry
+        for (const entry of entries) {
+            const {
+                milkCollectionDate,
+                cattleTagId,
+                milkQuantity,
+                fatPercentage,
+                time,
+            } = entry;
+
+            const normalizedDate = format(
+                new Date(milkCollectionDate),
+                'yyyy-MM-dd'
+            );
+
+            // Check for duplicate
+            const isDuplicate = await MilkProductionModel.findOne({
+                milkCollectionDate: normalizedDate,
+                cattleTagId,
+                time,
+            });
+
+            if (isDuplicate) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: `Duplicate entry! Milk production record already exists for cattle ${cattleTagId} on ${normalizedDate} at ${time}.`,
+                    },
+                    { status: 409 }
+                );
+            }
+
+            // Create new milk production record
+            const milkProduction = new MilkProductionModel({
+                milkCollectionDate,
+                cattleTagId,
+                milkQuantity,
+                fatPercentage: fatPercentage || '',
+                time,
+            });
+
+            await milkProduction.save();
+            savedEntries.push(milkProduction);
+            totalMilkQuantity += parseFloat(milkQuantity);
+        }
+
+        // Update the milk summary
         const lastMilkEntry = await MilkModel.findOne().sort({ _id: -1 });
 
         if (lastMilkEntry) {
             const newSaleMilkAmount =
-                parseFloat(lastMilkEntry.saleMilkAmount) +
-                parseFloat(milkQuantity);
+                parseFloat(lastMilkEntry.saleMilkAmount) + totalMilkQuantity;
             lastMilkEntry.saleMilkAmount = newSaleMilkAmount.toFixed(2);
-
             await lastMilkEntry.save();
         } else {
             await MilkModel.create({
-                saleMilkAmount: parseFloat(milkQuantity).toFixed(2),
+                saleMilkAmount: totalMilkQuantity.toFixed(2),
             });
         }
-
-        await milkProduction.save();
 
         return NextResponse.json(
             {
                 success: true,
-                message: 'Milk production added successfully!',
-                data: milkProduction,
+                message: `${entries.length} milk production records added successfully!`,
+                data: savedEntries,
             },
             { status: 201 }
         );
     } catch (error) {
-        console.log((error as Error).message);
+        console.error((error as Error).message);
         return NextResponse.json(
             {
                 success: false,
                 message: 'An unexpected error occurred.',
-                error,
+                error: (error as Error).message,
             },
             { status: 500 }
         );
