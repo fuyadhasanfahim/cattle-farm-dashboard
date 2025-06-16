@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
@@ -23,9 +23,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { ITreatment } from '@/types/treatment.interface';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import MyCalender from '@/components/shared/MyCalender';
 
 interface CattleTag {
@@ -33,7 +32,6 @@ interface CattleTag {
 }
 
 const formSchema = z.object({
-    cattleId: z.string().min(1, 'Cattle ID is required'),
     treatmentType: z.enum(['Deworming', 'Vaccination', 'General'], {
         required_error: 'Please select a treatment type',
     }),
@@ -44,30 +42,38 @@ const formSchema = z.object({
         .union([z.literal(3), z.literal(6), z.literal(9), z.literal(12)])
         .optional(),
     treatmentDate: z.date().default(new Date()),
-    dewormingCount: z.number().min(0),
-    vaccinationCount: z.number().min(0),
-    generalCount: z.number().min(0),
+    cattleEntries: z
+        .array(
+            z.object({
+                cattleId: z.string().min(1, 'Cattle ID is required'),
+            })
+        )
+        .nonempty({
+            message: 'At least one cattle must be selected',
+        }),
 });
 
 export default function AddTreatment() {
     const [treatmentType, setTreatmentType] = useState('');
-    const [cattleId, setCattleId] = useState<CattleTag[]>([]);
+    const [availableCattle, setAvailableCattle] = useState<CattleTag[]>([]);
     const router = useRouter();
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            cattleId: '',
             treatmentType: undefined,
-            medicineAmount: '',
             medicineName: '',
+            medicineAmount: '',
             medicineReason: '',
             vaccinationInterval: undefined,
             treatmentDate: new Date(),
-            dewormingCount: 0,
-            vaccinationCount: 0,
-            generalCount: 0,
+            cattleEntries: [{ cattleId: '' }],
         },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'cattleEntries',
     });
 
     useEffect(() => {
@@ -78,7 +84,7 @@ export default function AddTreatment() {
                     throw new Error('Failed to fetch cattle data');
                 }
                 const result = await response.json();
-                setCattleId(result.data);
+                setAvailableCattle(result.data);
             } catch (error) {
                 toast.error((error as Error).message);
             }
@@ -87,8 +93,21 @@ export default function AddTreatment() {
         fetchData();
     }, []);
 
-    const onSubmit = async (values: ITreatment) => {
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
+            // Prepare the data to send to the backend
+            const payload = values.cattleEntries.map((entry) => ({
+                cattleId: entry.cattleId,
+                treatmentType: values.treatmentType,
+                medicineName: values.medicineName,
+                medicineAmount: values.medicineAmount,
+                medicineReason: values.medicineReason,
+                vaccinationInterval: values.vaccinationInterval,
+                treatmentDate: values.treatmentDate,
+            }));
+
+            console.log(payload);
+
             if (values.treatmentType === 'Deworming') {
                 toast((t) => (
                     <span>
@@ -109,7 +128,7 @@ export default function AddTreatment() {
             ) {
                 toast((t) => (
                     <span>
-                        <b>Reminder:</b> Vaccination due in
+                        <b>Reminder:</b> Vaccination due in{' '}
                         {values.vaccinationInterval} months!
                         <button
                             onClick={() => toast.dismiss(t.id)}
@@ -126,35 +145,35 @@ export default function AddTreatment() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify(payload),
             });
 
             if (response.ok) {
-                toast.success('Treatment record added successfully!');
-
+                toast.success('Treatment records added successfully!');
                 form.reset({
-                    cattleId: '',
                     treatmentType: undefined,
                     medicineName: '',
+                    medicineAmount: '',
                     medicineReason: '',
                     vaccinationInterval: undefined,
                     treatmentDate: new Date(),
-                    dewormingCount: 0,
-                    vaccinationCount: 0,
-                    generalCount: 0,
+                    cattleEntries: [{ cattleId: '' }],
                 });
-
                 router.push('/treatments');
             } else {
-                toast.error('Failed to add treatment record');
+                toast.error('Failed to add treatment records');
             }
         } catch (error) {
             toast.error((error as Error).message);
         }
     };
 
+    const addAnotherCattle = () => {
+        append({ cattleId: '' });
+    };
+
     return (
-        <Card className="max-w-lg mx-auto mt-10 p-4">
+        <Card className="max-w-lg mx-auto">
             <CardHeader>
                 <CardTitle className="text-xl">Cattle Treatment Form</CardTitle>
             </CardHeader>
@@ -169,45 +188,6 @@ export default function AddTreatment() {
                             label="Select Treatment Date"
                             name="treatmentDate"
                             placeholder="Select Date"
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="cattleId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Cattle ID</FormLabel>
-                                    <Select
-                                        onValueChange={(value) => {
-                                            field.onChange(value);
-                                        }}
-                                        value={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Cattle ID" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {cattleId?.map(
-                                                ({ tagId }, index) => (
-                                                    <SelectItem
-                                                        key={index}
-                                                        value={
-                                                            tagId
-                                                                ? tagId
-                                                                : 'N/A'
-                                                        }
-                                                    >
-                                                        {tagId ? tagId : 'N/A'}
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
                         />
 
                         <FormField
@@ -346,6 +326,78 @@ export default function AddTreatment() {
                                 )}
                             />
                         )}
+
+                        <div className="space-y-4">
+                            {fields.map((field, index) => (
+                                <div
+                                    key={field.id}
+                                    className="flex items-end gap-2"
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name={`cattleEntries.${index}.cattleId`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormLabel>
+                                                    {index === 0
+                                                        ? 'Cattle ID'
+                                                        : ''}
+                                                </FormLabel>
+                                                <Select
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    value={field.value}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select Cattle ID" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {availableCattle?.map(
+                                                            ({ tagId }) => (
+                                                                <SelectItem
+                                                                    key={tagId}
+                                                                    value={
+                                                                        tagId ||
+                                                                        'N/A'
+                                                                    }
+                                                                >
+                                                                    {tagId ||
+                                                                        'N/A'}
+                                                                </SelectItem>
+                                                            )
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    {index > 0 && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => remove(index)}
+                                        >
+                                            <Trash2 className="h-4 w-4 text-red-500" />
+                                        </Button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={addAnotherCattle}
+                            className="w-full"
+                        >
+                            <Plus className="size-5 mr-2" />
+                            Add Another Cattle
+                        </Button>
 
                         <div className="flex items-center justify-between gap-6">
                             <Button
