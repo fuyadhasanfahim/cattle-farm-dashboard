@@ -13,46 +13,46 @@ export async function GET(req: NextRequest) {
         const page = parseInt(searchParams.get('page') || '1', 10);
         const skip = (page - 1) * limit;
 
-        const sort = searchParams.get('sort') || 'createdAt';
+        const sortField = searchParams.get('sort') || 'createdAt';
         const sortOrder: SortOrder =
             (searchParams.get('sortOrder') as SortOrder) || 'desc';
 
         const sortQuery: { [key: string]: SortOrder } = {
-            [sort]: sortOrder,
+            [sortField]: sortOrder,
         };
 
         const search = searchParams.get('search');
-        let searchQuery = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let searchQuery: any = {};
 
         if (search) {
+            const isNumber = !isNaN(Number(search));
+
             searchQuery = {
                 $or: [
-                    {
-                        treatmentType: {
-                            $regex: search,
-                            $options: 'i',
-                        },
-                    },
+                    { treatmentType: { $regex: search, $options: 'i' } },
                     { medicineName: { $regex: search, $options: 'i' } },
                     { medicineAmount: { $regex: search, $options: 'i' } },
                     { medicineReason: { $regex: search, $options: 'i' } },
-                    {
-                        vaccinationInterval: {
-                            $regex: search,
-                            $options: 'i',
-                        },
-                    },
-                    { dewormCount: { $regex: search, $options: 'i' } },
-                    { vaccinationCount: { $regex: search, $options: 'i' } },
-                    { generalCount: { $regex: search, $options: 'i' } },
+                    { cattleId: { $regex: search, $options: 'i' } }, // Added cattleId to search
                 ],
             };
+
+            // Only add numeric field searches if the search term is actually a number
+            if (isNumber) {
+                searchQuery.$or.push(
+                    { vaccinationInterval: Number(search) },
+                    { dewormingCount: Number(search) },
+                    { vaccinationCount: Number(search) },
+                    { generalCount: Number(search) }
+                );
+            }
         }
 
         await dbConfig();
 
         const data = await TreatmentModel.find(searchQuery)
-            .sort(sortQuery)
+            .sort(sortQuery || { createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
             {
                 success: false,
                 message: 'An error occurred while processing the request',
-                error,
+                error: error instanceof Error ? error.message : error,
             },
             { status: 500 }
         );

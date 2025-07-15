@@ -8,6 +8,7 @@ import { FormEvent, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { Loader, LogIn } from 'lucide-react';
 
 export default function LoginPage() {
     const [data, setData] = useState<{
@@ -92,6 +93,7 @@ export default function LoginPage() {
                             className="w-full bg-green-500"
                             disabled={isLoading}
                         >
+                            {isLoading ? <Loader /> : <LogIn />}
                             {isLoading ? 'Loading...' : 'Login'}
                         </Button>
                     </form>

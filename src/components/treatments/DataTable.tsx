@@ -33,15 +33,20 @@ export default function TreatmentTable() {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
-    const [sort, setSort] = useState('Cattle ID');
+    const [sort, setSort] = useState('createdAt');
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
                 const response = await fetch(
-                    `/api/treatments/get-treatments?search=${searchQuery}&sort=${sort}&limit=${itemsPerPage}&page=${currentPage}`
+                    `/api/treatments/get-treatments?search=${encodeURIComponent(
+                        searchQuery
+                    )}&sort=${encodeURIComponent(
+                        sort
+                    )}&limit=${itemsPerPage}&page=${currentPage}`
                 );
+
                 const result = await response.json();
 
                 if (!response.ok) {
@@ -108,21 +113,21 @@ export default function TreatmentTable() {
                             </SelectContent>
                         </Select>
 
-                        <Select
-                            onValueChange={handleSortChange}
-                            value={String(sort)}
-                        >
+                        <Select onValueChange={handleSortChange} value={sort}>
                             <SelectTrigger className="w-32 bg-white border-gray-200 rounded-md font-medium text-black">
-                                <SelectValue placeholder="Items" />
+                                <SelectValue placeholder="Sort By" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Cattle ID">
+                                <SelectItem value="createdAt">
+                                    Created At
+                                </SelectItem>
+                                <SelectItem value="cattleId">
                                     Cattle ID
                                 </SelectItem>
-                                <SelectItem value="Next Due Date">
+                                <SelectItem value="nextDueDate">
                                     Next Due Date
                                 </SelectItem>
-                                <SelectItem value="Treatment Date">
+                                <SelectItem value="treatmentDate">
                                     Treatment Date
                                 </SelectItem>
                             </SelectContent>

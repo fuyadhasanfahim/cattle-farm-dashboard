@@ -1,23 +1,28 @@
 import { ITreatment } from '@/types/treatment.interface';
 import mongoose, { Schema } from 'mongoose';
 
-const CattleTreatmentSchema = new Schema<ITreatment>({
-    cattleId: { type: String, ref: 'Cattle', required: true },
-    treatmentType: {
-        type: String,
-        enum: ['Deworming', 'Vaccination', 'General'],
-        required: true,
+const CattleTreatmentSchema = new Schema<ITreatment>(
+    {
+        cattleId: { type: String, ref: 'Cattle', required: true },
+        treatmentType: {
+            type: String,
+            enum: ['Deworming', 'Vaccination', 'General'],
+            required: true,
+        },
+        medicineName: { type: String, required: true },
+        medicineAmount: { type: String, required: false },
+        medicineReason: { type: String, required: false },
+        treatmentDate: { type: Date, required: true },
+        nextDueDate: { type: Date },
+        vaccinationInterval: { type: Number, enum: [3, 6, 9, 12] },
+        dewormingCount: { type: Number, default: 0 },
+        vaccinationCount: { type: Number, default: 0 },
+        generalCount: { type: Number, default: 0 },
     },
-    medicineName: { type: String, required: true },
-    medicineAmount: { type: String, required: false },
-    medicineReason: { type: String, required: false },
-    treatmentDate: { type: Date, required: true },
-    nextDueDate: { type: Date },
-    vaccinationInterval: { type: Number, enum: [3, 6, 9, 12] },
-    dewormingCount: { type: Number, default: 0 },
-    vaccinationCount: { type: Number, default: 0 },
-    generalCount: { type: Number, default: 0 },
-});
+    {
+        timestamps: true,
+    }
+);
 
 CattleTreatmentSchema.pre('save', function (next) {
     if (this.treatmentType === 'Deworming') {
